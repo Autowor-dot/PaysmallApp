@@ -315,6 +315,9 @@ try {
                 $firstDue    = (string) ($schedule[0]['due_date'] ?? '') ?: null;
                 $firstAmount = (float) ($schedule[0]['amount'] ?? 0);
             }
+            if ($deposit > 0) {
+                $firstAmount = $deposit; // the deposit is collected first
+            }
 
             db_execute(
                 'INSERT INTO installment_plans
@@ -329,6 +332,15 @@ try {
             $planId = (int) $conn->insert_id;
 
             if (table_exists('installment_payments')) {
+                // The initial deposit is the first thing to pay: installment #0 due on the first payment date
+                if ($deposit > 0) {
+                    $depositDue = $firstDue ?: date('Y-m-d');
+                    db_execute(
+                        'INSERT INTO installment_payments (plan_id, customer_id, installment_number, amount_due, due_date, status) VALUES (?, ?, 0, ?, ?, ?)',
+                        'iidss',
+                        [$planId, $userId, $deposit, $depositDue, 'upcoming']
+                    );
+                }
                 foreach ($schedule as $row) {
                     $number = (int) ($row['installment_number'] ?? 0);
                     $amount = (float) ($row['amount'] ?? 0);

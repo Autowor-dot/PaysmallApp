@@ -357,7 +357,7 @@
                 if (!rows.length) return '<p class="text-muted" style="font-size: 0.84rem;">No installment schedule recorded.</p>';
                 const st = (s) => ({ paid: 'badge-success', overdue: 'badge-danger', due: 'badge-warning' }[s] || 'badge-primary');
                 return '<table class="schedule-table"><thead><tr><th>#</th><th>Due</th><th>Amount</th><th>Status</th></tr></thead><tbody>' +
-                    rows.map(r => '<tr><td>' + r.installment_number + '</td><td>' + L.formatDate(r.due_date) + '</td><td><strong>' + L.formatTZS(r.amount_due) + '</strong></td><td><span class="badge ' + st(r.status) + '">' + L.escapeHtml(r.status) + '</span>' + (r.paid_at ? ' <small class="text-muted">' + L.formatDate(r.paid_at) + '</small>' : '') + '</td></tr>').join('') + '</tbody></table>';
+                    rows.map(r => '<tr><td>' + (r.installment_number === 0 ? 'Deposit' : r.installment_number) + '</td><td>' + L.formatDate(r.due_date) + '</td><td><strong>' + L.formatTZS(r.amount_due) + '</strong></td><td><span class="badge ' + st(r.status) + '">' + L.escapeHtml(r.status) + '</span>' + (r.paid_at ? ' <small class="text-muted">' + L.formatDate(r.paid_at) + '</small>' : '') + '</td></tr>').join('') + '</tbody></table>';
             }
 
             function viewAgreement(id) {

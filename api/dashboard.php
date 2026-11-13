@@ -63,20 +63,28 @@ try {
     }
 
     // Full installment schedule for each active plan
-    if ( !== [] && table_exists('installment_payments')) {
-         = array_column(, 'id');
-          = implode(',', array_fill(0, count(), '?'));
-         = [];
-        foreach (db_select("SELECT id, plan_id, installment_number, amount_due, due_date, status, paid_at FROM installment_payments WHERE plan_id IN ({}) ORDER BY plan_id, installment_number", str_repeat('i', count()), ) as ) {
-            [(int) ['plan_id']][] = [
-                'id' => (int) ['id'], 'installment_number' => (int) ['installment_number'], 'amount_due' => (float) ['amount_due'],
-                'due_date' => ['due_date'], 'status' => ['status'], 'paid_at' => ['paid_at'],
+    if ($installments !== [] && table_exists('installment_payments')) {
+        $planIds = array_column($installments, 'id');
+        $in      = implode(',', array_fill(0, count($planIds), '?'));
+        $byPlan  = [];
+        $scheduleRows = db_select(
+            "SELECT id, plan_id, installment_number, amount_due, due_date, status, paid_at FROM installment_payments WHERE plan_id IN ({$in}) ORDER BY plan_id, installment_number",
+            str_repeat('i', count($planIds)),
+            $planIds
+        );
+        foreach ($scheduleRows as $p) {
+            $byPlan[(int) $p['plan_id']][] = [
+                'id'                 => (int) $p['id'],
+                'installment_number' => (int) $p['installment_number'],
+                'amount_due'         => (float) $p['amount_due'],
+                'due_date'           => $p['due_date'],
+                'status'             => $p['status'],
+                'paid_at'            => $p['paid_at'],
             ];
         }
-        foreach ( as &) {
-            ['schedule'] = [['id']] ?? [];
+        foreach ($installments as $idx => $plan) {
+            $installments[$idx]['schedule'] = $byPlan[$plan['id']] ?? [];
         }
-        unset();
     }
 
     // ---------------- Upcoming payments ----------------

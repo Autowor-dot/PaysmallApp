@@ -78,17 +78,27 @@ function apply_payment_result(array $tx, string $newStatus, ?string $providerRef
             db_execute('UPDATE transactions SET verified_via = ? WHERE id = ?', 'si', [$verifiedVia, $txId]);
         }
 
-        // Mark the scheduled installment paid (or reduce it for a partial payment)
+        // Settle scheduled installments: the targeted one first, then roll any excess
+        // forward to the next unpaid installments (a partial amount just reduces one).
         $paymentId = isset($tx['payment_id']) ? (int) $tx['payment_id'] : 0;
-        if ($paymentId > 0 && table_exists('installment_payments')) {
-            $rows = db_select('SELECT * FROM installment_payments WHERE id = ? LIMIT 1', 'i', [$paymentId]);
-            if (!empty($rows)) {
-                $due = (float) $rows[0]['amount_due'];
-                if ($amount + 0.005 >= $due) {
-                    db_execute("UPDATE installment_payments SET status = 'paid', paid_at = NOW() WHERE id = ?", 'i', [$paymentId]);
+        $planIdForSchedule = isset($tx['plan_id']) ? (int) $tx['plan_id'] : 0;
+        if ($planIdForSchedule > 0 && table_exists('installment_payments')) {
+            $left = $amount;
+            $queue = db_select(
+                "SELECT id, amount_due FROM installment_payments WHERE plan_id = ? AND status <> 'paid' ORDER BY (id = ?) DESC, due_date ASC, installment_number ASC",
+                'ii', [$planIdForSchedule, $paymentId]
+            );
+            foreach ($queue as $inst) {
+                if ($left <= 0.005) {
+                    break;
+                }
+                $due = (float) $inst['amount_due'];
+                if ($left + 0.005 >= $due) {
+                    db_execute("UPDATE installment_payments SET status = 'paid', paid_at = NOW() WHERE id = ?", 'i', [(int) $inst['id']]);
+                    $left -= $due;
                 } else {
-                    $remaining = round($due - $amount, 2);
-                    db_execute('UPDATE installment_payments SET amount_due = ? WHERE id = ?', 'di', [$remaining, $paymentId]);
+                    db_execute('UPDATE installment_payments SET amount_due = ? WHERE id = ?', 'di', [round($due - $left, 2), (int) $inst['id']]);
+                    $left = 0.0;
                 }
             }
         }
