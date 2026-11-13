@@ -1,0 +1,5 @@
+{
+  "success": false,
+  "static_host": true,
+  "message": "The LipaLink API is not available on this static host. Deploy the project (including the api/ folder) to a PHP server to enable accounts, agreements and payments."
+}

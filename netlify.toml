@@ -1,0 +1,22 @@
+# Netlify configuration for the LipaLink frontend.
+#
+# Netlify serves static files only: the PHP API in /api cannot run here.
+# Every /api/* request is answered with a JSON 404 so the pages show a clear
+# "backend not available" message instead of downloading raw PHP source.
+# Host the full app (pages + api/) on a PHP server for the real backend.
+
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/api/*"
+  to = "/api-unavailable.json"
+  status = 404
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"

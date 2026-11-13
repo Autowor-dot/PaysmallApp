@@ -132,6 +132,9 @@
                     let json = null;
                     try { json = JSON.parse(text); } catch (_) { /* not JSON */ }
                     const ms = Math.round(performance.now() - started);
+                    if (json && typeof json === 'object' && json.static_host) {
+                        return { ok: false, status: res.status, message: 'Static host: PHP is not executed here.', ms: ms };
+                    }
                     if (json && typeof json === 'object') {
                         return { ok: true, status: res.status, message: json.message || (json.success ? 'OK' : ''), ms: ms };
                     }
@@ -162,6 +165,17 @@
                     h = await res.json();
                 } catch (_) {
                     h = null;
+                }
+
+                if (h && (h.static_host || h.success === false)) {
+                    const note = h.static_host
+                        ? 'This site is on a static host (e.g. Netlify): pages work, but the PHP API cannot run. Deploy pages + <code>api/</code> to a PHP server for the full app.'
+                        : esc(h.message || 'The health check failed.');
+                    document.getElementById('phpStatus').innerHTML = '<span class="bad">' + (h.static_host ? 'Static host' : 'Error') + '</span>';
+                    ['dbStatus', 'tableStatus', 'sessionStatus'].forEach(function (id) { document.getElementById(id).innerHTML = '<span class="warn">N/A</span>'; });
+                    document.getElementById('envStatus').textContent = h.static_host ? 'static' : '—';
+                    tbody.innerHTML = '<tr><td>api/health.php</td><td>' + BAD(h.static_host ? 'PHP not executed' : 'Failed') + '</td><td>' + note + '</td></tr>';
+                    return null;
                 }
 
                 if (!h) {
