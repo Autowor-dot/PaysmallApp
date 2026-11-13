@@ -6,12 +6,13 @@ Installment marketplace: static HTML/JS frontend + PHP/MySQL API in `api/`.
 
 | Area | Files |
 | --- | --- |
-| Public pages | `index.html`, `how-it-works.html`, `marketplace.html`, `for-sellers.html`, `register-store.html`, `security.html`, `terms.html`, `privacy.html` |
+| Public pages | `index.html`, `how-it-works.html`, `about.html`, `faq.html`, `contact.html`, `marketplace.html`, `for-sellers.html`, `register-store.html`, `security.html`, `terms.html`, `privacy.html`, `maintenance.html` |
 | Auth | `login.html`, `register.html`, `forgot-password.html`, `reset-password.html` |
 | Customer app | `dashboard.html`, `agreement.html` (wizard), `agreements.html`, `pay.html`, `transactions.html`, `profile.html`, `settings.html` |
+| Seller hub | `seller.html` (requests, customers & progress, payments, products, store settings), `agreement-document.html` (printable agreement) |
 | Diagnostics | `api-status.html` (checks every endpoint from the browser), `api/health.php` |
 | Shared assets | `assets/css/app.css` (app shell), `assets/css/public.css`, `assets/css/auth.css`, `assets/js/app-shell.js`, `assets/js/public-nav.js` |
-| Backend | `api/*.php`, `api/schema.sql`, `api/.htaccess` |
+| Backend | `api/*.php`, `api/schema.sql`, `api/.htaccess`, `api/mail-lib.php`, `api/tasks-lib.php`, `api/backup-lib.php` |
 
 ## Backend endpoints
 
@@ -34,6 +35,11 @@ Installment marketplace: static HTML/JS frontend + PHP/MySQL API in `api/`.
 | `api/pay.php` | POST | session | Create a pending payment and reference |
 | `api/payments.php` | GET/POST | session | Poll a payment (`?code=`); `simulate` (development only) |
 | `api/payment-webhook.php` | POST | webhook secret | Provider callback: settles a payment (`completed` / `failed`) |
+| `api/seller.php` | GET/POST | session (store owner) | Seller hub: overview; `update_profile`, `save_product`, `set_product_status`, `record_payment` (manual, cash/bank/mobile) |
+| `api/contact.php` | POST | no | Contact form (stored in `contact_messages`, emailed to support, rate limited) |
+| `api/cron.php?key=` | GET | install key | Runs scheduled tasks: installment status roll-over and reminder emails |
+| `api/backup.php?key=` | GET | install key | Writes a full SQL dump to `/backups` |
+| `api/site-status.php` | GET | no | Public site settings (name, maintenance flag, registration switches) |
 
 All responses are JSON `{ success, message?, data? }`. Unauthenticated calls return HTTP 401, which the frontend turns into a redirect to `login.html`.
 
@@ -99,3 +105,60 @@ complaint/dispute cases).
 **Maintenance mode** (Website Settings) blocks the customer API with HTTP 503 and, through
 `maintenance.flag` + the root `.htaccess`, redirects public pages to `maintenance.html`.
 `/admin`, `api/health.php`, `api/site-status.php` and the payment webhook keep working.
+
+## Seller hub, agreements and payment recording
+
+- **Agreements** (`agreement.html` wizard) create an `agreements` row plus an `installment_plans` row with one
+  `installment_payments` row per installment; the initial deposit is installment #0. Registered sellers get the
+  request in their Seller Hub, unregistered sellers are emailed an invitation. Accepting activates the plan;
+  financial terms are never editable after acceptance. `agreement-document.html?id=` prints the agreement.
+- **Seller Hub** (`seller.html`): a store owner (the account whose email matches the store, linked at the next login)
+  sees requests, customer progress, payments, products and store settings, and can record **manual** payments
+  (cash, bank transfer, mobile money received directly). Manual records are stored as `verified_via = 'manual'`
+  with the seller as `recorded_by`; they are visibly distinct from provider-verified (`provider`) and
+  simulator (`simulator`) payments in every report.
+- **Settlement** (`api/payments-lib.php`): any completed amount is applied to the oldest unpaid installment first
+  and rolls forward across installments; partial amounts reduce the next installment. Plans close automatically
+  when the total is reached.
+- **Reminders / status roll-over** (`api/tasks-lib.php`): installments move upcoming → due → overdue daily;
+  reminder emails (3 days before, due today, overdue) are sent once per installment per kind.
+  Tasks run at most hourly from dashboard loads, or on a schedule by calling
+  `https://your-domain/api/cron.php?key=<install_key>` from a free scheduler such as cron-job.org (daily is enough).
+
+## Email delivery
+
+All outgoing mail goes through `send_mail()` → `api/mail-lib.php` and is logged in `email_log`
+(Admin → Notifications shows sent/failed counts per message type).
+
+| `mail_transport` | Needs | Notes |
+| --- | --- | --- |
+| `mail` (default) | nothing | PHP `mail()`. Free InfinityFree accounts cannot deliver mail this way; entries log as `failed`. |
+| `brevo` | `mail_api_key` = Brevo API key, sender verified in Brevo | HTTPS API, free tier ~300 mails/day |
+| `resend` | `mail_api_key` = Resend API key, domain verified in Resend | HTTPS API |
+
+Set `mail_transport`, `mail_api_key`, `mail_from` and `mail_from_name` in `api/config.local.php`. In-app notifications
+(bell icon, dashboard) are created regardless of email delivery.
+
+## Backups
+
+Admin → **Backups** (Super Admin) or `api/backup.php?key=<install_key>` writes a complete SQL dump to `/backups`
+(blocked from the web by `.htaccess`). Download copies regularly; restore by importing in phpMyAdmin.
+Take one before every migration or deploy.
+
+## Documentation
+
+- `DATABASE.md` – every table, column and relationship, plus the migration files.
+- `assets/img/CREDITS.md` – photo sources and licences.
+- Production checklist: set `app_env` to `production` (disables the payment simulator and dev reset links),
+  choose an email transport, point your Mobile Money / bank provider at the webhook, schedule `api/cron.php`,
+  and change the Super Admin password after the first sign-in.
+
+## Known limitations
+
+- No live payment gateway is connected yet; `pay.html` creates the pending transaction and waits for the webhook
+  (or the development simulator). Mobile Money / bank APIs plug into `api/payment-webhook.php`.
+- Email delivery needs a Brevo or Resend API key on InfinityFree (see above).
+- Seller verification is manual (Admin → Sellers); KYC documents are not uploaded through the site.
+- Online catalog search in the marketplace uses a demo product API (dummyjson.com) with live FX conversion,
+  intended as a discovery aid; prices are indicative and the seller sets the real price in the agreement.
+- Shared hosting has no cron; reminders depend on dashboard traffic or an external scheduler hitting `api/cron.php`.
