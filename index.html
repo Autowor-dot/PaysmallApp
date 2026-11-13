@@ -357,7 +357,35 @@
             font-size: 1rem;
         }
 
-        /* Modern Hero App Widget Visual */
+        /* Modern Hero App Widget Visual (photo behind the app card) */
+        .hero-visual {
+            position: relative;
+            padding: 56px 0 0 56px;
+        }
+
+        .hero-photo {
+            position: absolute;
+            inset: 0 0 56px 0;
+            width: 100%;
+            height: calc(100% - 56px);
+            object-fit: cover;
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .hero-photo-caption {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            background: rgba(11, 19, 42, 0.72);
+            color: #ffffff;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: var(--radius-pill);
+            backdrop-filter: blur(6px);
+        }
+
         .app-preview-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -365,6 +393,111 @@
             padding: 24px;
             box-shadow: var(--shadow-lg);
             position: relative;
+            margin-top: 90px;
+            margin-right: -8px;
+        }
+
+        /* Featured products with photos */
+        .product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.35s ease;
+        }
+
+        .product-img.contain img {
+            object-fit: contain;
+            background: #ffffff;
+            padding: 14px;
+        }
+
+        .product-card:hover .product-img img {
+            transform: scale(1.04);
+        }
+
+        /* Photo story strip */
+        .story-section {
+            background: #ffffff;
+            border-top: 1px solid var(--border);
+        }
+
+        .story-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+        }
+
+        .story-card {
+            position: relative;
+            border-radius: 18px;
+            overflow: hidden;
+            min-height: 300px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .story-card img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .story-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .story-card .story-text {
+            position: relative;
+            padding: 22px;
+            width: 100%;
+            background: linear-gradient(180deg, rgba(11, 19, 42, 0) 0%, rgba(11, 19, 42, 0.88) 60%);
+            color: #ffffff;
+        }
+
+        .story-card h4 {
+            color: #ffffff;
+            font-size: 1.05rem;
+            margin-bottom: 4px;
+        }
+
+        .story-card p {
+            color: rgba(255, 255, 255, 0.82);
+            font-size: 0.84rem;
+        }
+
+        .story-card .story-tag {
+            display: inline-block;
+            background: var(--primary);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: var(--radius-pill);
+            margin-bottom: 8px;
+        }
+
+        .photo-credits {
+            font-size: 0.72rem;
+            color: #64748b;
+            margin-top: 8px;
+        }
+
+        .photo-credits a {
+            color: #94a3b8;
+        }
+
+        @media (max-width: 1080px) {
+            .story-grid { grid-template-columns: 1fr; }
+            .story-card { min-height: 220px; }
+        }
+
+        @media (max-width: 640px) {
+            .hero-visual { padding: 0; }
+            .hero-photo { position: static; height: 200px; margin-bottom: -40px; }
+            .app-preview-card { margin: 0 12px; }
         }
 
         .preview-header {
@@ -1155,6 +1288,8 @@
                 </div>
 
                 <div class="hero-visual reveal">
+                    <img class="hero-photo" src="assets/img/market-kariakoo-2.jpg" alt="Traders and shoppers at Kariakoo market, Dar es Salaam" width="1200" height="803">
+                    <span class="hero-photo-caption"><i class="fa-solid fa-location-dot"></i> Kariakoo, Dar es Salaam</span>
                     <div class="app-preview-card">
                         <div class="preview-header">
                             <div class="user-profile">
@@ -1255,90 +1390,104 @@
                 <h2>Featured Marketplace Items</h2>
                 <p>Browse products available right now with flexible LipaLink installment options.</p>
             </div>
-            <div class="products-grid">
-                <!-- Product 1 -->
+            <div class="products-grid" id="featuredGrid">
+                <!-- Fallback cards (replaced by live listings from api/products.php when available) -->
                 <div class="product-card reveal">
-                    <div class="product-img">
-                        <i class="fa-solid fa-mobile-screen-button"></i>
+                    <div class="product-img contain">
+                        <img src="https://cdn.dummyjson.com/product-images/smartphones/samsung-galaxy-s10/thumbnail.webp" alt="Samsung Galaxy S10" loading="lazy">
                         <span class="product-badge">Top Seller</span>
                     </div>
                     <div class="product-details">
                         <div>
-                            <h4>Samsung Galaxy Phone</h4>
-                            <div class="seller-tag"><i class="fa-solid fa-store"></i> Official Samsung Store</div>
+                            <h4>Samsung Galaxy S10</h4>
+                            <div class="seller-tag"><i class="fa-solid fa-store"></i> Verified LipaLink Seller</div>
                         </div>
                         <div>
                             <div class="plan-breakdown">
-                                <div class="plan-row">
-                                    <span>Total Price:</span>
-                                    <strong>TZS 500,000</strong>
-                                </div>
-                                <div class="plan-row">
-                                    <span>Pay Little by Little:</span>
-                                    <strong style="color: var(--primary);">TZS 25,000 / week</strong>
-                                </div>
+                                <div class="plan-row"><span>Total Price:</span><strong>TZS 1,150,000</strong></div>
+                                <div class="plan-row"><span>Pay Little by Little:</span><strong style="color: var(--primary);">TZS 48,000 / week</strong></div>
                             </div>
-                            <a href="register.html" class="btn btn-outline" style="width: 100%; padding: 10px;">View Payment Plan</a>
+                            <a href="marketplace.html?q=samsung" class="btn btn-outline" style="width: 100%; padding: 10px;">View Payment Plan</a>
                         </div>
                     </div>
                 </div>
-
-                <!-- Product 2 -->
                 <div class="product-card reveal">
                     <div class="product-img">
-                        <i class="fa-solid fa-solar-panel"></i>
+                        <img src="assets/img/solar-home-tanzania.jpg" alt="Home solar lighting in Tanzania" loading="lazy">
                         <span class="product-badge">Popular</span>
                     </div>
                     <div class="product-details">
                         <div>
-                            <h4>Home Solar Power Kit</h4>
-                            <div class="seller-tag"><i class="fa-solid fa-store"></i> GreenEnergy Tz</div>
+                            <h4>Home Solar Power System</h4>
+                            <div class="seller-tag"><i class="fa-solid fa-store"></i> Verified LipaLink Seller</div>
                         </div>
                         <div>
                             <div class="plan-breakdown">
-                                <div class="plan-row">
-                                    <span>Total Price:</span>
-                                    <strong>TZS 350,000</strong>
-                                </div>
-                                <div class="plan-row">
-                                    <span>Pay Little by Little:</span>
-                                    <strong style="color: var(--primary);">TZS 15,000 / week</strong>
-                                </div>
+                                <div class="plan-row"><span>Total Price:</span><strong>TZS 350,000</strong></div>
+                                <div class="plan-row"><span>Pay Little by Little:</span><strong style="color: var(--primary);">TZS 15,000 / week</strong></div>
                             </div>
-                            <a href="register.html" class="btn btn-outline" style="width: 100%; padding: 10px;">View Payment Plan</a>
+                            <a href="marketplace.html?q=solar" class="btn btn-outline" style="width: 100%; padding: 10px;">View Payment Plan</a>
                         </div>
                     </div>
                 </div>
-
-                <!-- Product 3 -->
                 <div class="product-card reveal">
-                    <div class="product-img">
-                        <i class="fa-solid fa-laptop"></i>
+                    <div class="product-img contain">
+                        <img src="https://cdn.dummyjson.com/product-images/laptops/new-dell-xps-13-9300-laptop/thumbnail.webp" alt="Dell XPS 13 laptop" loading="lazy">
                         <span class="product-badge">New Arrival</span>
                     </div>
                     <div class="product-details">
                         <div>
-                            <h4>HD Work Laptop</h4>
-                            <div class="seller-tag"><i class="fa-solid fa-store"></i> TechHub Supplies</div>
+                            <h4>Dell XPS 13 Business Laptop</h4>
+                            <div class="seller-tag"><i class="fa-solid fa-store"></i> Verified LipaLink Seller</div>
                         </div>
                         <div>
                             <div class="plan-breakdown">
-                                <div class="plan-row">
-                                    <span>Total Price:</span>
-                                    <strong>TZS 850,000</strong>
-                                </div>
-                                <div class="plan-row">
-                                    <span>Pay Little by Little:</span>
-                                    <strong style="color: var(--primary);">TZS 40,000 / week</strong>
-                                </div>
+                                <div class="plan-row"><span>Total Price:</span><strong>TZS 2,400,000</strong></div>
+                                <div class="plan-row"><span>Pay Little by Little:</span><strong style="color: var(--primary);">TZS 100,000 / week</strong></div>
                             </div>
-                            <a href="register.html" class="btn btn-outline" style="width: 100%; padding: 10px;">View Payment Plan</a>
+                            <a href="marketplace.html?q=laptop" class="btn btn-outline" style="width: 100%; padding: 10px;">View Payment Plan</a>
                         </div>
                     </div>
                 </div>
             </div>
             <div style="text-align: center; margin-top: 32px;">
-                <a href="marketplace.html" class="btn btn-primary">Browse Full Marketplace Catalog →</a>
+                <a href="marketplace.html" class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Search the Marketplace & Online Catalog →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Photo story strip -->
+    <section class="section story-section">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>Built for how Tanzania trades</h2>
+                <p>From Kariakoo stalls to boda boda riders and solar homes, LipaLink turns everyday deals into clear, trackable installment plans.</p>
+            </div>
+            <div class="story-grid">
+                <a href="marketplace.html" class="story-card reveal" style="text-decoration: none;">
+                    <img src="assets/img/hero-kariakoo-market.jpg" alt="Kariakoo market in Dar es Salaam" loading="lazy">
+                    <div class="story-text">
+                        <span class="story-tag">Marketplace</span>
+                        <h4>Buy from local sellers</h4>
+                        <p>Phones, appliances, furniture and more from verified shops, with pay-small plans built in.</p>
+                    </div>
+                </a>
+                <a href="register-store.html" class="story-card reveal" style="text-decoration: none;">
+                    <img src="assets/img/shop-owner-zanzibar.jpg" alt="A shop owner outside Stone Town, Zanzibar" loading="lazy">
+                    <div class="story-text">
+                        <span class="story-tag">For Sellers</span>
+                        <h4>Sell more, get paid on time</h4>
+                        <p>List your products, accept installments and let LipaLink send the reminders.</p>
+                    </div>
+                </a>
+                <a href="how-it-works.html" class="story-card reveal" style="text-decoration: none;">
+                    <img src="assets/img/boda-boda-bagamoyo.jpg" alt="Boda boda riders waiting for customers in Bagamoyo" loading="lazy">
+                    <div class="story-text">
+                        <span class="story-tag">Agreements</span>
+                        <h4>Finance the tools of your trade</h4>
+                        <p>A motorcycle, a fridge, a laptop: agree a schedule with any seller and track every payment.</p>
+                    </div>
+                </a>
             </div>
         </div>
     </section>
@@ -1618,7 +1767,10 @@
             </div>
 
             <div class="footer-bottom">
-                <p>© 2026 LipaLink. Pay at your pace. All rights reserved.</p>
+                <div>
+                    <p>© 2026 LipaLink. Pay at your pace. All rights reserved.</p>
+                    <p class="photo-credits">Photos: Kariakoo market (Moongateclimber, public domain); Zanzibar shop owner (Adam Jones, CC BY-SA 2.0); Boda bodas in Bagamoyo (Sarvesh Lutchmun, CC BY-SA 4.0); Solar home (DFID, CC BY 2.0) via <a href="https://commons.wikimedia.org" target="_blank" rel="noopener">Wikimedia Commons</a>.</p>
+                </div>
                 <div style="display: flex; gap: 16px;">
                     <a href="#" style="color: #64748b; text-decoration: none;"><i class="fa-brands fa-twitter"></i></a>
                     <a href="#" style="color: #64748b; text-decoration: none;"><i class="fa-brands fa-instagram"></i></a>
@@ -1650,6 +1802,40 @@
                     window.location.href = 'register-store.html';
                 });
             }
+
+            // Featured listings: replace the fallback cards with live products (with photos) when the API responds
+            (async function loadFeatured() {
+                const grid = document.getElementById('featuredGrid');
+                if (!grid) return;
+                try {
+                    const res = await fetch('api/products.php', { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' });
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    const products = (data.data && data.data.products) || [];
+                    if (products.length < 3) return;
+                    const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                    const tzs = n => 'TZS ' + Math.round(Number(n) || 0).toLocaleString('en-US');
+                    const freq = f => ({ daily: 'day', weekly: 'week', biweekly: '2 weeks', monthly: 'month' }[f] || f);
+                    const badges = ['Top Seller', 'Popular', 'New Arrival'];
+                    const picks = products.filter(p => p.featured).concat(products.filter(p => !p.featured)).slice(0, 3);
+                    grid.innerHTML = picks.map((p, i) => {
+                        const isCatalogPhoto = /cdn\.dummyjson\.com/.test(p.image_url || '');
+                        const img = p.image_url
+                            ? '<img src="' + esc(p.image_url) + '" alt="' + esc(p.name) + '" loading="lazy">'
+                            : '<i class="' + esc(p.icon || 'fa-solid fa-box') + '"></i>';
+                        return '<div class="product-card reveal active">' +
+                            '<div class="product-img' + (isCatalogPhoto ? ' contain' : '') + '">' + img + '<span class="product-badge">' + badges[i] + '</span></div>' +
+                            '<div class="product-details"><div><h4>' + esc(p.name) + '</h4>' +
+                            '<div class="seller-tag"><i class="fa-solid fa-store"></i> ' + esc(p.seller_name || 'Verified LipaLink Seller') + '</div></div>' +
+                            '<div><div class="plan-breakdown">' +
+                            '<div class="plan-row"><span>Total Price:</span><strong>' + tzs(p.price) + '</strong></div>' +
+                            '<div class="plan-row"><span>Pay Little by Little:</span><strong style="color: var(--primary);">' + tzs(p.installment_amount) + ' / ' + esc(freq(p.installment_frequency)) + '</strong></div>' +
+                            '</div><a href="marketplace.html?q=' + encodeURIComponent(p.name.split(' ')[0]) + '" class="btn btn-outline" style="width: 100%; padding: 10px;">View Payment Plan</a></div></div></div>';
+                    }).join('');
+                } catch (_) {
+                    // API unavailable: keep the fallback cards
+                }
+            })();
 
             const navbar = document.querySelector('.navbar');
             const mobileToggle = document.getElementById('mobileToggle');

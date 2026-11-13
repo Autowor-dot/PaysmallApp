@@ -2640,8 +2640,9 @@
                     unit_price: Math.round(Number(unitPriceEl.value) || 0),
                     total_agreed_price: Math.round(Number(totalAgreedPriceEl.value) || 0),
                     additional_notes: document.getElementById('itemNotes').value.trim(),
-                    has_product_image: Boolean(selectedProductImageFile),
-                    product_image_name: selectedProductImageFile ? selectedProductImageFile.name : null
+                    has_product_image: Boolean(selectedProductImageFile) || Boolean(prefilledImageUrl),
+                    product_image_name: selectedProductImageFile ? selectedProductImageFile.name : null,
+                    image_url: prefilledImageUrl || null
                 };
 
                 const { total, deposit, remaining, count, freq, schedule } = buildInstallmentSchedule();
@@ -2919,9 +2920,47 @@
                 goToStep(1);
             });
 
-            // --- Prefill Step 2 from a marketplace product (agreement.html?product_id=12) ---
+            // Image attached to the item (from the marketplace); stored on the plan for the dashboard thumbnail
+            let prefilledImageUrl = '';
+
+            function applyCategory(categoryText) {
+                const categoryEl = document.getElementById('itemCategory');
+                const wanted = String(categoryText || '').toLowerCase();
+                if (!wanted) return;
+                const match = Array.from(categoryEl.options).find(o =>
+                    o.value.toLowerCase() === wanted ||
+                    o.textContent.toLowerCase().includes(wanted.split(' ')[0] || '\u0000'));
+                if (match) categoryEl.value = match.value;
+            }
+
+            // --- Prefill Step 2 from the marketplace ---
+            //   agreement.html?product_id=12                      (LipaLink seller listing)
+            //   agreement.html?name=...&price=...&category=...&image=...&desc=...   (online catalog item)
             async function prefillFromProduct() {
-                const productId = new URLSearchParams(window.location.search).get('product_id');
+                const params = new URLSearchParams(window.location.search);
+                const productId = params.get('product_id');
+
+                if (!productId && params.get('name')) {
+                    document.getElementById('itemName').value = params.get('name').slice(0, 200);
+                    document.getElementById('itemDescription').value = (params.get('desc') || '').slice(0, 600);
+                    const price = Math.round(Number(params.get('price')) || 0);
+                    if (price > 0) {
+                        unitPriceEl.value = price;
+                        userOverrodeTotal = false;
+                        updateCalculatedTotalPrice();
+                    }
+                    applyCategory(params.get('category'));
+                    const img = params.get('image') || '';
+                    if (/^(https?:\/\/[^\s"<>]+|assets\/[A-Za-z0-9_./-]+)$/.test(img)) {
+                        prefilledImageUrl = img;
+                        document.getElementById('imagePreviewThumb').innerHTML = `<img src="${escapeHtml(img)}" alt="" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">`;
+                        document.getElementById('imageFileName').textContent = 'Catalog photo attached';
+                    }
+                    recalculatePaymentPlan();
+                    showGlobalAlert('Item prefilled from the marketplace', 'Step 1: choose the seller who will supply this item. The price and schedule in Steps 2–3 can be adjusted to what you agree with them.');
+                    return;
+                }
+
                 if (!productId) return;
                 try {
                     const res = await fetch(`api/products.php?id=${encodeURIComponent(productId)}`, {
@@ -2938,12 +2977,12 @@
                     unitPriceEl.value = Math.round(Number(p.price) || 0);
                     userOverrodeTotal = false;
                     updateCalculatedTotalPrice();
-
-                    const categoryEl = document.getElementById('itemCategory');
-                    const match = Array.from(categoryEl.options).find(o =>
-                        o.value.toLowerCase() === String(p.category || '').toLowerCase() ||
-                        o.textContent.toLowerCase().includes(String(p.category || '').toLowerCase().split(' ')[0] || '\u0000'));
-                    if (match) categoryEl.value = match.value;
+                    applyCategory(p.category);
+                    if (p.image_url) {
+                        prefilledImageUrl = p.image_url;
+                        document.getElementById('imagePreviewThumb').innerHTML = `<img src="${escapeHtml(p.image_url)}" alt="" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">`;
+                        document.getElementById('imageFileName').textContent = 'Listing photo attached';
+                    }
 
                     if (p.seller_id) {
                         selectRegisteredSeller({

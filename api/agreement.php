@@ -213,6 +213,12 @@ try {
     $sellerPhone = normalize_phone((string) ($seller['phone'] ?? ''));
 
     $productName = mb_substr(trim((string) ($product['name'] ?? '')), 0, 200);
+    $productImage = trim((string) ($product['image_url'] ?? ''));
+    // Accept only http(s) URLs or site-relative asset paths for the plan thumbnail
+    if ($productImage !== '' && !preg_match('#^(https?://[^\s"<>]+|assets/[A-Za-z0-9_./-]+)$#', $productImage)) {
+        $productImage = '';
+    }
+    $productImage = mb_substr($productImage, 0, 255);
     $totalPrice  = (float) ($payment['total_agreed_price'] ?? $product['total_agreed_price'] ?? 0);
     $deposit     = (float) ($payment['initial_deposit'] ?? 0);
     $count       = (int) ($payment['number_of_installments'] ?? 0);
@@ -288,11 +294,12 @@ try {
 
             db_execute(
                 'INSERT INTO installment_plans
-                    (customer_id, agreement_id, product_name, seller_name, total_price, amount_paid,
+                    (customer_id, agreement_id, product_name, seller_name, product_image, total_price, amount_paid,
                      next_payment_amount, next_payment_due_date, status)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                'iissdddss',
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                'iisssdddss',
                 [$userId, $agreementId, $productName, $sellerName !== '' ? $sellerName : 'Seller',
+                 $productImage !== '' ? $productImage : null,
                  $totalPrice, 0.0, $firstAmount, $firstDue, 'pending']
             );
             $planId = (int) $conn->insert_id;

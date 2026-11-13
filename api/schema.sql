@@ -220,13 +220,28 @@ CREATE TABLE IF NOT EXISTS password_resets (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ---------------------------------------------------------------------
--- Sample marketplace products (matches the three shown on marketplace.html)
+-- Sample marketplace products with photos
+-- (catalog photos from cdn.dummyjson.com; local photos under assets/img)
 -- ---------------------------------------------------------------------
-INSERT IGNORE INTO products (slug, name, description, category, price, installment_amount, installment_frequency, installments_count, icon, featured)
+INSERT IGNORE INTO products (slug, name, description, category, price, installment_amount, installment_frequency, installments_count, icon, image_url, featured)
 VALUES
-    ('samsung-galaxy-smartphone', 'Samsung Galaxy Smartphone', '128GB storage, 6.5-inch display, dual SIM. Brand new with 1-year warranty.', 'Electronics & Phones', 500000, 25000, 'weekly', 20, 'fa-solid fa-mobile-screen', 1),
-    ('home-solar-power-system',   'Home Solar Power System',   'Complete 200W solar kit with battery, inverter, 4 LED bulbs and phone charging.', 'Home Solar & Appliances', 350000, 15000, 'weekly', 24, 'fa-solid fa-solar-panel', 1),
-    ('business-laptop-i5',        'Business Laptop i5',        'Intel Core i5, 8GB RAM, 256GB SSD, Windows 11. Ideal for office and students.', 'Electronics & Phones', 850000, 40000, 'weekly', 22, 'fa-solid fa-laptop', 1),
-    ('double-door-fridge',        'Double Door Refrigerator',  '320L energy-saving fridge-freezer with 2-year compressor warranty.', 'Home Solar & Appliances', 780000, 65000, 'monthly', 12, 'fa-solid fa-temperature-low', 0),
-    ('queen-bed-and-mattress',    'Queen Bed & Mattress Set',  'Solid wood queen bed with 10-inch orthopaedic mattress. Free delivery in Dar es Salaam.', 'Furniture & Decor', 420000, 35000, 'monthly', 12, 'fa-solid fa-bed', 0),
-    ('boda-boda-motorcycle',      'Boda Boda Motorcycle 150cc','Fuel-efficient 150cc motorcycle with registration support. Ideal for riders starting a business.', 'Transport', 2900000, 60000, 'weekly', 48, 'fa-solid fa-motorcycle', 1);
+    ('samsung-galaxy-smartphone', 'Samsung Galaxy S10',          '128GB storage, 6.1-inch AMOLED display, dual SIM. Brand new with 1-year warranty.', 'Electronics & Phones', 1150000, 48000, 'weekly', 24, 'fa-solid fa-mobile-screen', 'https://cdn.dummyjson.com/product-images/smartphones/samsung-galaxy-s10/thumbnail.webp', 1),
+    ('iphone-13-pro',             'iPhone 13 Pro 128GB',         'Apple A15 Bionic, ProMotion display, triple camera. Sealed, with 12-month warranty.', 'Electronics & Phones', 2850000, 120000, 'weekly', 24, 'fa-solid fa-mobile-screen', 'https://cdn.dummyjson.com/product-images/smartphones/iphone-13-pro/thumbnail.webp', 1),
+    ('realme-c35',                'Realme C35 64GB',             'Affordable 6.6-inch smartphone with 5000mAh battery and 50MP camera.', 'Electronics & Phones', 390000, 16500, 'weekly', 24, 'fa-solid fa-mobile-screen', 'https://cdn.dummyjson.com/product-images/smartphones/realme-c35/thumbnail.webp', 0),
+    ('home-solar-power-system',   'Home Solar Power System',     'Complete 200W solar kit with battery, inverter, 4 LED bulbs and phone charging.', 'Home Solar & Appliances', 350000, 15000, 'weekly', 24, 'fa-solid fa-solar-panel', 'assets/img/solar-home-tanzania.jpg', 1),
+    ('business-laptop-i5',        'Dell XPS 13 Business Laptop', 'Intel Core i5, 8GB RAM, 256GB SSD, Windows 11. Ideal for office and students.', 'Electronics & Phones', 2400000, 100000, 'weekly', 24, 'fa-solid fa-laptop', 'https://cdn.dummyjson.com/product-images/laptops/new-dell-xps-13-9300-laptop/thumbnail.webp', 1),
+    ('lenovo-yoga-920',           'Lenovo Yoga 920 2-in-1',      '13.9-inch touchscreen convertible, Core i7, 16GB RAM, 512GB SSD.', 'Electronics & Phones', 2050000, 85000, 'weekly', 24, 'fa-solid fa-laptop', 'https://cdn.dummyjson.com/product-images/laptops/lenovo-yoga-920/thumbnail.webp', 0),
+    ('samsung-galaxy-tab-s8',     'Samsung Galaxy Tab S8 Plus',  '12.4-inch AMOLED tablet with S Pen. Perfect for students and business.', 'Electronics & Phones', 1550000, 65000, 'weekly', 24, 'fa-solid fa-tablet-screen-button', 'https://cdn.dummyjson.com/product-images/tablets/samsung-galaxy-tab-s8-plus-grey/thumbnail.webp', 0),
+    ('double-door-fridge',        'Microwave Oven 25L',          'Digital microwave with grill, 10 power levels and child lock. 2-year warranty.', 'Home Solar & Appliances', 260000, 22000, 'monthly', 12, 'fa-solid fa-temperature-low', 'https://cdn.dummyjson.com/product-images/kitchen-accessories/microwave-oven/thumbnail.webp', 0),
+    ('electric-stove',            'Electric Stove (2 plates)',   'Energy-efficient double hot plate with adjustable heat control.', 'Home Solar & Appliances', 140000, 12000, 'monthly', 12, 'fa-solid fa-fire-burner', 'https://cdn.dummyjson.com/product-images/kitchen-accessories/electric-stove/thumbnail.webp', 0),
+    ('queen-bed-and-mattress',    'Queen Bed & Mattress Set',    'Solid wood queen bed with 10-inch orthopaedic mattress. Free delivery in Dar es Salaam.', 'Furniture & Decor', 1200000, 100000, 'monthly', 12, 'fa-solid fa-bed', 'https://cdn.dummyjson.com/product-images/furniture/annibale-colombo-bed/thumbnail.webp', 1),
+    ('three-seater-sofa',         'Three-Seater Fabric Sofa',    'Comfortable living-room sofa with hardwood frame and washable covers.', 'Furniture & Decor', 950000, 80000, 'monthly', 12, 'fa-solid fa-couch', 'https://cdn.dummyjson.com/product-images/furniture/annibale-colombo-sofa/thumbnail.webp', 0),
+    ('boda-boda-motorcycle',      'Boda Boda Motorcycle 150cc',  'Fuel-efficient 150cc motorcycle with registration support. Ideal for riders starting a business.', 'Transport', 2900000, 60000, 'weekly', 48, 'fa-solid fa-motorcycle', 'assets/img/boda-boda-bagamoyo.jpg', 1);
+
+-- Add photos to products created by an earlier version of this file
+UPDATE products SET image_url = 'https://cdn.dummyjson.com/product-images/smartphones/samsung-galaxy-s10/thumbnail.webp', name = 'Samsung Galaxy S10' WHERE slug = 'samsung-galaxy-smartphone' AND (image_url IS NULL OR image_url = '');
+UPDATE products SET image_url = 'assets/img/solar-home-tanzania.jpg' WHERE slug = 'home-solar-power-system' AND (image_url IS NULL OR image_url = '');
+UPDATE products SET image_url = 'https://cdn.dummyjson.com/product-images/laptops/new-dell-xps-13-9300-laptop/thumbnail.webp', name = 'Dell XPS 13 Business Laptop' WHERE slug = 'business-laptop-i5' AND (image_url IS NULL OR image_url = '');
+UPDATE products SET image_url = 'https://cdn.dummyjson.com/product-images/kitchen-accessories/microwave-oven/thumbnail.webp', name = 'Microwave Oven 25L', description = 'Digital microwave with grill, 10 power levels and child lock. 2-year warranty.', price = 260000, installment_amount = 22000 WHERE slug = 'double-door-fridge' AND (image_url IS NULL OR image_url = '');
+UPDATE products SET image_url = 'https://cdn.dummyjson.com/product-images/furniture/annibale-colombo-bed/thumbnail.webp' WHERE slug = 'queen-bed-and-mattress' AND (image_url IS NULL OR image_url = '');
+UPDATE products SET image_url = 'assets/img/boda-boda-bagamoyo.jpg' WHERE slug = 'boda-boda-motorcycle' AND (image_url IS NULL OR image_url = '');
