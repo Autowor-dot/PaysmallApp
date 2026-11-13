@@ -1,5 +1,9 @@
 # Credentials and server-specific configuration (never commit)
 api/config.local.php
+*.local.md
+
+# Deploy archives
+*.zip
 
 # OS / editor noise
 Thumbs.db
