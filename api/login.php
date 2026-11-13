@@ -32,10 +32,25 @@ try {
         json_error(401, 'Invalid email/phone or password.');
     }
 
+    // Accounts suspended or deactivated by an administrator cannot sign in
+    $blocked = account_block_message((int) $user['id']);
+    if ($blocked !== null) {
+        json_error(403, $blocked);
+    }
+
+    if (column_exists('users', 'last_login_at')) {
+        db_execute('UPDATE users SET last_login_at = NOW() WHERE id = ?', 'i', [(int) $user['id']]);
+    }
+
     // Upgrade the hash transparently if PHP's default algorithm has changed
     if (password_needs_rehash((string) $user['password_hash'], PASSWORD_DEFAULT)) {
         $newHash = password_hash($password, PASSWORD_DEFAULT);
         db_execute('UPDATE users SET password_hash = ? WHERE id = ?', 'si', [$newHash, (int) $user['id']]);
+    }
+
+    // Link stores registered with this email before the account existed
+    if (table_exists('sellers')) {
+        db_execute('UPDATE sellers SET user_id = ? WHERE user_id IS NULL AND LOWER(email) = ?', 'is', [(int) $user['id'], strtolower((string) $user['email'])]);
     }
 
     sign_in_user((int) $user['id']);

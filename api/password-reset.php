@@ -58,7 +58,8 @@ try {
                 (string) $user['email'],
                 cfg('app_name') . ': reset your password',
                 sprintf("Hello %s,\n\nWe received a request to reset your %s password. Open the link below within %d minutes to choose a new one:\n\n%s\n\nIf you did not request this, you can ignore this email.\n\n— %s",
-                    $user['full_name'], cfg('app_name'), RESET_TOKEN_TTL_MINUTES, $resetUrl, cfg('app_name'))
+                    $user['full_name'], cfg('app_name'), RESET_TOKEN_TTL_MINUTES, $resetUrl, cfg('app_name')),
+                'password_reset', 'user', (string) $user['id']
             );
 
             $payload = ['success' => true, 'message' => $generic, 'email_sent' => $sent];

@@ -47,7 +47,7 @@ try {
     }
 
     $result = input_string($input, 'result', 20) === 'failed' ? 'failed' : 'completed';
-    $updated = apply_payment_result($tx, $result, 'SIMULATED-' . strtoupper(bin2hex(random_bytes(3))));
+    $updated = apply_payment_result($tx, $result, 'SIMULATED-' . strtoupper(bin2hex(random_bytes(3))), 'simulator');
 
     json_response(200, [
         'success' => true,

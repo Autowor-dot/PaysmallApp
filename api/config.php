@@ -39,9 +39,16 @@ $LIPALINK_CONFIG = [
     // Key required to run api/install.php (creates the database tables). Empty disables the installer.
     'install_key' => 'change-me-before-running-install',
 
-    // Outgoing email
-    'mail_from' => 'no-reply@lipalink.co.tz',
-    'mail_enabled' => true,
+    // Outgoing email. InfinityFree's free plan cannot deliver PHP mail(), so set
+    // mail_transport to 'brevo' or 'resend' with an API key in config.local.php (see api/mail-lib.php).
+    'mail_from'      => 'no-reply@lipalink.co.tz',
+    'mail_from_name' => 'LipaLink',
+    'mail_enabled'   => true,
+    'mail_transport' => 'mail',
+    'mail_api_key'   => '',
+
+    // Key for api/cron.php (scheduled reminders). Empty = falls back to install_key.
+    'cron_key' => '',
 ];
 
 $localConfig = __DIR__ . '/config.local.php';
@@ -143,7 +150,35 @@ function require_auth(): int
     if ($id === null) {
         json_error(401, 'Please log in to continue.');
     }
+    // Accounts suspended/deactivated by an administrator lose access immediately
+    $blocked = account_block_message($id);
+    if ($blocked !== null) {
+        sign_out_user();
+        json_error(403, $blocked);
+    }
     return $id;
+}
+
+/** Null when the account may use the site, otherwise the message to show. */
+function account_block_message(int $userId): ?string
+{
+    try {
+        if (!column_exists('users', 'status')) {
+            return null;
+        }
+        $rows = db_select('SELECT status FROM users WHERE id = ? LIMIT 1', 'i', [$userId]);
+        $status = (string) ($rows[0]['status'] ?? 'active');
+    } catch (Throwable $e) {
+        error_log('LipaLink account status error: ' . $e->getMessage());
+        return null;
+    }
+    if ($status === 'suspended') {
+        return 'Your account has been suspended. Please contact support for assistance.';
+    }
+    if ($status === 'deactivated') {
+        return 'This account has been deactivated. Please contact support if you believe this is a mistake.';
+    }
+    return null;
 }
 
 function sign_in_user(int $userId): void
@@ -312,22 +347,75 @@ function app_base_url(): string
     return $scheme . '://' . $host . $dir;
 }
 
-/** Best-effort plain-text email. Returns true when PHP accepted the message. */
-function send_mail(string $to, string $subject, string $body): bool
+/**
+ * Best-effort plain-text email. Returns true when PHP accepted the message.
+ * Every attempt is recorded in email_log (when the admin migration has run)
+ * so the admin panel can show delivery status. $context names the message
+ * kind, e.g. 'agreement_request'; $relatedType/$relatedId point at the record.
+ */
+function send_mail(string $to, string $subject, string $body, string $context = 'general', ?string $relatedType = null, ?string $relatedId = null): bool
 {
-    if (!cfg('mail_enabled', true) || !is_valid_email($to)) {
+    if (!is_valid_email($to)) {
         return false;
     }
-    $from    = (string) cfg('mail_from');
-    $headers = 'From: ' . cfg('app_name') . ' <' . $from . '>' . "\r\n"
-        . 'Reply-To: ' . $from . "\r\n"
-        . 'Content-Type: text/plain; charset=UTF-8' . "\r\n";
+    if (!cfg('mail_enabled', true)) {
+        log_email($to, $subject, $context, $relatedType, $relatedId, 'disabled', 'mail_enabled is off');
+        return false;
+    }
+    $from     = (string) cfg('mail_from');
+    $siteName = (string) cfg('mail_from_name', site_setting('site_name', (string) cfg('app_name')));
+    require_once __DIR__ . '/mail-lib.php';
+    $result = deliver_email($to, $subject, $body, $from, $siteName);
+    if (!$result['ok']) {
+        error_log('LipaLink mail error (' . $result['transport'] . '): ' . ($result['error'] ?? 'unknown'));
+    }
+    log_email($to, $subject, $context, $relatedType, $relatedId, $result['ok'] ? 'sent' : 'failed', $result['error']);
+    return $result['ok'];
+}
+
+/** Record an email attempt; never throws. */
+function log_email(string $to, string $subject, string $context, ?string $relatedType, ?string $relatedId, string $status, ?string $error): void
+{
     try {
-        return @mail($to, $subject, $body, $headers);
+        if (!table_exists('email_log')) {
+            return;
+        }
+        db_execute(
+            'INSERT INTO email_log (recipient, subject, context, related_type, related_id, status, error) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            'sssssss',
+            [mb_substr($to, 0, 190), mb_substr($subject, 0, 255), mb_substr($context, 0, 60), $relatedType, $relatedId, $status,
+             $error !== null ? mb_substr($error, 0, 255) : null]
+        );
     } catch (Throwable $e) {
-        error_log('LipaLink mail error: ' . $e->getMessage());
-        return false;
+        error_log('LipaLink email_log error: ' . $e->getMessage());
     }
+}
+
+// ---------------------------------------------------------------------
+// Website settings (managed in the admin panel; table site_settings)
+// ---------------------------------------------------------------------
+/** Read a website setting; returns $default when unset or before the admin migration. */
+function site_setting(string $key, ?string $default = null): ?string
+{
+    static $settings = null;
+    if ($settings === null) {
+        $settings = [];
+        try {
+            if (table_exists('site_settings')) {
+                foreach (db_select('SELECT setting_key, setting_value FROM site_settings') as $row) {
+                    $settings[$row['setting_key']] = $row['setting_value'];
+                }
+            }
+        } catch (Throwable $e) {
+            error_log('LipaLink settings error: ' . $e->getMessage());
+        }
+    }
+    return array_key_exists($key, $settings) && $settings[$key] !== null ? (string) $settings[$key] : $default;
+}
+
+function site_flag(string $key, bool $default): bool
+{
+    return site_setting($key, $default ? '1' : '0') === '1';
 }
 
 // ---------------------------------------------------------------------
@@ -397,4 +485,24 @@ function is_valid_email(string $email): bool
 function generate_code(string $prefix): string
 {
     return sprintf('%s-%s-%s', $prefix, date('Ymd'), strtoupper(bin2hex(random_bytes(3))));
+}
+
+// ---------------------------------------------------------------------
+// Maintenance mode (switched on in admin/settings.php)
+// The admin panel defines LIPALINK_ADMIN and is never blocked. Health,
+// installer, public site status and payment-provider webhooks keep working
+// so payments in flight are still settled.
+// ---------------------------------------------------------------------
+if (!defined('LIPALINK_ADMIN')) {
+    $script = basename((string) ($_SERVER['SCRIPT_NAME'] ?? ''));
+    if (!in_array($script, ['health.php', 'install.php', 'site-status.php', 'payment-webhook.php', 'cron.php', 'backup.php'], true)
+        && site_flag('maintenance_mode', false)) {
+        header('Retry-After: 1800');
+        json_response(503, [
+            'success'     => false,
+            'maintenance' => true,
+            'message'     => (string) site_setting('maintenance_message', 'The site is undergoing maintenance. Please try again shortly.'),
+        ]);
+    }
+    unset($script);
 }

@@ -65,3 +65,37 @@ Settling a payment marks the installment paid, updates the plan balance and next
 ## Local preview without PHP
 
 The HTML pages degrade gracefully when the API is unreachable (cached session, sample products, empty states). Any static file server works for layout checks; the full flow needs a PHP host.
+
+## Admin console (`/admin`)
+
+A separate, session-based administration panel for the site owner and staff. It reuses the
+site database (`api/config.php`) but has its own accounts (`admin_users`) and its own
+session cookie, so customer/seller logins never grant admin access.
+
+**First-time setup**
+1. Deploy, then open `/admin/setup.php`.
+2. Enter the `install_key` from `api/config.local.php`, your name, email and a password
+   (12+ characters, letters and numbers). This applies
+   `admin/migrations/001_admin_panel.sql` and creates the first **Super Admin**.
+   The page stops creating accounts once an administrator exists; there are no default credentials.
+3. Sign in at `/admin/login.php`. Add further Admin / Support Admin accounts under **Administrators**.
+
+**Migration 001 is additive only.** It creates `admin_users`, `admin_login_attempts`,
+`admin_audit_log`, `site_settings`, `email_log`, `admin_cases`, `admin_case_notes`, and adds
+`users.status/status_reason/status_changed_at/last_login_at`, `sellers.status_reason` and
+`transactions.verified_via`. No existing column is renamed and no data is deleted.
+Re-running it (from `setup.php`) is safe.
+
+**Roles**: Super Admin (everything, incl. admins and settings), Admin (manage users, sellers,
+agreements, payment investigations, reports, view logs), Support Admin (read-only views plus
+complaint/dispute cases).
+
+**Money terminology used everywhere in the panel**
+- *Expected* – total agreed value of accepted agreements / scheduled installments.
+- *Recorded* – transactions with status `completed`.
+- *Verified* – recorded **and** confirmed by the payment provider webhook (`verified_via = 'provider'`).
+  Simulator confirmations are labelled *Simulated (test)*. Admins can never mark a payment successful.
+
+**Maintenance mode** (Website Settings) blocks the customer API with HTTP 503 and, through
+`maintenance.flag` + the root `.htaccess`, redirects public pages to `maintenance.html`.
+`/admin`, `api/health.php`, `api/site-status.php` and the payment webhook keep working.

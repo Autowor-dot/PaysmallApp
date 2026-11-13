@@ -2,6 +2,9 @@
 api/config.local.php
 *.local.md
 
+# Runtime maintenance switch written by admin/settings.php
+maintenance.flag
+
 # Deploy archives
 *.zip
 

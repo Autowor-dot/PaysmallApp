@@ -10,6 +10,10 @@ require_once __DIR__ . '/config.php';
 require_method('POST');
 
 try {
+    if (!site_flag('allow_user_registration', true)) {
+        json_error(403, 'New account registration is temporarily closed. Please try again later.');
+    }
+
     $input            = request_input();
     $fullName         = input_string($input, 'full_name', 120);
     $phone            = normalize_phone(input_string($input, 'phone', 30));

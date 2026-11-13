@@ -16,7 +16,7 @@ Options -Indexes
 </IfModule>
 
 # Keep repository housekeeping files private
-<FilesMatch "^(README\.md|netlify\.toml|\.gitignore|DEPLOYMENT\.local\.md|CREDITS\.md)$">
+<FilesMatch "^(README\.md|netlify\.toml|\.gitignore|DEPLOYMENT\.local\.md|CREDITS\.md|maintenance\.flag)$">
     <IfModule mod_authz_core.c>
         Require all denied
     </IfModule>
@@ -25,3 +25,13 @@ Options -Indexes
         Deny from all
     </IfModule>
 </FilesMatch>
+
+# Maintenance mode (toggled in admin/settings.php, which creates/removes maintenance.flag).
+# Public pages redirect to maintenance.html; /admin, /api and /assets keep working.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{DOCUMENT_ROOT}/maintenance.flag -f
+    RewriteCond %{REQUEST_URI} !^/(admin|api|assets)/
+    RewriteCond %{REQUEST_URI} !maintenance\.html$
+    RewriteRule ^(.*\.html)?$ maintenance.html [R=302,L]
+</IfModule>

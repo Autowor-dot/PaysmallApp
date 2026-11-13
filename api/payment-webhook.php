@@ -47,7 +47,7 @@ try {
         json_error(404, 'Unknown transaction code.');
     }
 
-    $updated = apply_payment_result($tx, $status, $ref !== '' ? $ref : null);
+    $updated = apply_payment_result($tx, $status, $ref !== '' ? $ref : null, 'provider');
 
     json_response(200, [
         'success'     => true,

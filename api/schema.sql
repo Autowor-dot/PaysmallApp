@@ -245,3 +245,57 @@ UPDATE products SET image_url = 'https://cdn.dummyjson.com/product-images/laptop
 UPDATE products SET image_url = 'https://cdn.dummyjson.com/product-images/kitchen-accessories/microwave-oven/thumbnail.webp', name = 'Microwave Oven 25L', description = 'Digital microwave with grill, 10 power levels and child lock. 2-year warranty.', price = 260000, installment_amount = 22000 WHERE slug = 'double-door-fridge' AND (image_url IS NULL OR image_url = '');
 UPDATE products SET image_url = 'https://cdn.dummyjson.com/product-images/furniture/annibale-colombo-bed/thumbnail.webp' WHERE slug = 'queen-bed-and-mattress' AND (image_url IS NULL OR image_url = '');
 UPDATE products SET image_url = 'assets/img/boda-boda-bagamoyo.jpg' WHERE slug = 'boda-boda-motorcycle' AND (image_url IS NULL OR image_url = '');
+
+-- =====================================================================
+-- Migration 002 — seller hub, contact messages, reminders, backups
+-- (additive and idempotent, like everything above)
+-- =====================================================================
+
+-- Seller storefront defaults used when a buyer starts an agreement with this seller
+ALTER TABLE sellers ADD COLUMN IF NOT EXISTS description TEXT NULL;
+ALTER TABLE sellers ADD COLUMN IF NOT EXISTS default_deposit_percent DECIMAL(5,2) NOT NULL DEFAULT 20.00;
+ALTER TABLE sellers ADD COLUMN IF NOT EXISTS default_frequency ENUM('daily','weekly','biweekly','monthly') NOT NULL DEFAULT 'weekly';
+ALTER TABLE sellers ADD COLUMN IF NOT EXISTS default_installments INT UNSIGNED NOT NULL DEFAULT 12;
+ALTER TABLE sellers ADD COLUMN IF NOT EXISTS delivery_policy ENUM('after_full_payment','after_initial_deposit','after_specified_threshold') NOT NULL DEFAULT 'after_full_payment';
+ALTER TABLE sellers ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+-- Who recorded a transaction (manual seller/admin entries vs. customer-initiated)
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS verified_via VARCHAR(20) NULL;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS recorded_by_type ENUM('customer','seller','admin','system') NOT NULL DEFAULT 'customer';
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS recorded_by_id INT UNSIGNED NULL;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS note VARCHAR(255) NULL;
+
+-- Contact form messages (shown in the admin console)
+CREATE TABLE IF NOT EXISTS contact_messages (
+    id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_id    INT UNSIGNED NULL,
+    name       VARCHAR(120) NOT NULL,
+    email      VARCHAR(190) NOT NULL,
+    phone      VARCHAR(20)  NULL,
+    subject    VARCHAR(160) NOT NULL,
+    message    TEXT NOT NULL,
+    status     ENUM('new','read','replied','archived') NOT NULL DEFAULT 'new',
+    ip_address VARCHAR(45) NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_contact_status (status, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Reminder bookkeeping so each installment gets one "upcoming" and one "overdue" reminder
+CREATE TABLE IF NOT EXISTS installment_reminders (
+    id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    payment_id INT UNSIGNED NOT NULL,
+    kind       ENUM('upcoming','due_today','overdue') NOT NULL,
+    sent_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_reminder (payment_id, kind),
+    CONSTRAINT fk_reminders_payment FOREIGN KEY (payment_id) REFERENCES installment_payments (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Scheduled-task bookkeeping (no cron on free hosting: tasks run opportunistically or via api/cron.php)
+CREATE TABLE IF NOT EXISTS scheduled_runs (
+    task       VARCHAR(40) NOT NULL,
+    last_run   DATETIME NULL,
+    last_result VARCHAR(255) NULL,
+    PRIMARY KEY (task)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ — LipaLink</title>
+    <meta name="description" content="Answers to common questions about buying and selling on installments with LipaLink.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/public.css">
+    <style>
+        .faq-wrap { max-width: 860px; margin: 0 auto; padding-bottom: 60px; }
+        .faq-search { position: relative; margin-bottom: 22px; }
+        .faq-search i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+        .faq-search input { width: 100%; padding: 14px 14px 14px 44px; border-radius: 12px; border: 1px solid var(--border); font: inherit; font-size: 0.95rem; background: #fff; outline: none; }
+        .faq-search input:focus { border-color: var(--primary); }
+        .group h2 { font-size: 1.05rem; margin: 26px 0 10px; color: var(--primary); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.8rem; }
+        details { background: #fff; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; }
+        summary { list-style: none; cursor: pointer; padding: 16px 18px; font-weight: 700; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+        summary::-webkit-details-marker { display: none; }
+        summary::after { content: '+'; color: var(--primary); font-size: 1.2rem; font-weight: 800; }
+        details[open] summary::after { content: '–'; }
+        details p { padding: 0 18px 16px; font-size: 0.9rem; color: var(--dark-subtle); }
+        details p a { color: var(--primary); }
+        .none { display: none; text-align: center; color: var(--slate-muted); padding: 30px; }
+        .help-box { background: var(--primary-light); border: 1px solid rgba(23, 105, 170, 0.22); border-radius: 14px; padding: 20px; margin-top: 30px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo"><div class="logo-box"><i class="fa-solid fa-link"></i></div> LipaLink</a>
+            <button class="mobile-toggle" aria-label="Toggle Menu" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
+            <div class="nav-panel">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="how-it-works.html">How It Works</a></li>
+                    <li><a href="marketplace.html">Marketplace</a></li>
+                    <li><a href="for-sellers.html">For Sellers</a></li>
+                    <li><a href="faq.html" class="active">FAQ</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="login.html" class="btn btn-outline">Log In</a>
+                    <a href="register.html" class="btn btn-primary">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-hero">
+        <div class="container">
+            <h1><i class="fa-solid fa-circle-question" style="color: var(--primary);"></i> Frequently asked questions</h1>
+            <p>Everything buyers and sellers ask us most, in one place.</p>
+        </div>
+    </section>
+
+    <section>
+        <div class="container faq-wrap">
+            <div class="faq-search"><i class="fa-solid fa-magnifying-glass"></i><input type="search" id="faqSearch" placeholder="Search questions, e.g. deposit, receipt, overdue"></div>
+
+            <div class="group"><h2>Getting started</h2>
+                <details><summary>What is LipaLink (PaySmallApp)?</summary><p>LipaLink is an installment-payment platform for Tanzania. Buyers agree a deposit and a payment schedule with a seller, pay small by small through Mobile Money or bank transfer, and both sides track every payment and receipt online.</p></details>
+                <details><summary>Does it cost anything to join?</summary><p>No. Customer accounts and store registration are free. Mobile Money operators and banks charge their normal transfer fees, which are shown before you confirm a payment.</p></details>
+                <details><summary>Which phone number can I register with?</summary><p>Any Tanzanian mobile number (07XX or 06XX). You can log in with either your phone number or your email address.</p></details>
+                <details><summary>I forgot my password. What do I do?</summary><p>Open <a href="forgot-password.html">Forgot password</a>, enter your email or phone, and follow the reset link sent to your email address. The link is valid for one hour.</p></details>
+            </div>
+
+            <div class="group"><h2>Agreements</h2>
+                <details><summary>What is an installment agreement?</summary><p>A digital record of what you are buying, the total price, the initial deposit, the installment amount and frequency, when the goods are released, and the policies for late payment, cancellation and refunds. It becomes binding once the seller accepts it.</p></details>
+                <details><summary>Can I make an agreement with a seller who is not on LipaLink?</summary><p>Yes. Choose "unregistered seller" in the agreement wizard and enter the seller's name, phone and email. They receive the proposal by email and can register with that email to accept it and track payments.</p></details>
+                <details><summary>Can the terms change after the seller accepts?</summary><p>No. Once accepted, the price, schedule and conditions are locked. Any change needs a new agreement that both parties confirm.</p></details>
+                <details><summary>Where can I see or print my agreement?</summary><p>Open <strong>My Agreements</strong> in your dashboard, choose the agreement and click <strong>Document</strong>. The document view can be printed or saved as a PDF.</p></details>
+                <details><summary>When do I receive the product?</summary><p>The seller sets a release condition in the agreement: after full payment, after the deposit, or after a specified threshold. It is shown on the agreement document.</p></details>
+            </div>
+
+            <div class="group"><h2>Payments and receipts</h2>
+                <details><summary>How do I pay an installment?</summary><p>From your dashboard, open <strong>Upcoming Payments</strong> and click <strong>Pay Now</strong>. Choose M-Pesa, Tigo Pesa, Airtel Money or bank transfer and follow the instructions. Your receipt appears under Transactions once the payment is confirmed.</p></details>
+                <details><summary>What if I paid the seller directly in cash?</summary><p>Ask the seller to record it in their Seller Hub. It appears in your dashboard as a manually recorded payment, clearly marked as such, and your balance updates immediately.</p></details>
+                <details><summary>Can I pay more than one installment at once?</summary><p>Yes. You can pay any amount up to your remaining balance; it is applied to the earliest unpaid installments first.</p></details>
+                <details><summary>What happens if I miss a due date?</summary><p>The installment is marked overdue, you receive a reminder, and the agreement's grace period and late-payment policy apply. Persistent non-payment may lead to the seller withholding the goods and to account restrictions.</p></details>
+                <details><summary>Where are my receipts?</summary><p>Under <strong>Transactions &amp; Receipts</strong> in your dashboard. Each receipt can be viewed, printed or exported with the CSV download.</p></details>
+            </div>
+
+            <div class="group"><h2>For sellers</h2>
+                <details><summary>How do I open a store?</summary><p>Register a customer account, then open <a href="register-store.html">Register Store</a> with your business details and payout wallet. Your Seller Hub appears in the dashboard menu straight away; verification by the LipaLink team unlocks the verified badge.</p></details>
+                <details><summary>How do I accept or decline a request?</summary><p>In the Seller Hub, the <strong>Requests</strong> tab lists proposals waiting for you. Accepting activates the plan and emails the final agreement to both parties.</p></details>
+                <details><summary>How do I get paid?</summary><p>Payments made through LipaLink are routed to the Mobile Money number or bank account in your store settings. Cash or direct payments you receive yourself can be recorded in the Seller Hub so the customer's plan stays accurate.</p></details>
+                <details><summary>Can I list products with my own installment plan?</summary><p>Yes. Add products in the Seller Hub with the total price, installment amount, frequency and number of installments. They appear in the marketplace, and buyers can start an agreement from the listing.</p></details>
+            </div>
+
+            <div class="group"><h2>Safety and privacy</h2>
+                <details><summary>Will LipaLink ever ask for my Mobile Money PIN?</summary><p>Never. Only approve payment prompts on your phone that show the LipaLink reference, and keep your PIN private.</p></details>
+                <details><summary>How is my data protected?</summary><p>Passwords are hashed, connections are encrypted, and only the other party to your agreement sees your contact details. Read the full <a href="privacy.html">Privacy Policy</a>.</p></details>
+                <details><summary>How do I raise a dispute?</summary><p>Use the <a href="contact.html">contact form</a> with your agreement reference. Our support team reviews the recorded agreement, schedule and receipts with both parties.</p></details>
+            </div>
+
+            <div class="none" id="noResults">No questions match your search.</div>
+
+            <div class="help-box">
+                <strong>Still need help?</strong> <a href="contact.html" style="color: var(--primary);">Send us a message</a> and we will get back to you by email.
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 LipaLink. Pay at your pace.</p>
+            <div class="footer-links">
+                <a href="about.html">About</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="security.html">Security</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/public-nav.js"></script>
+    <script>
+        (function () {
+            const input = document.getElementById('faqSearch');
+            const items = Array.from(document.querySelectorAll('details'));
+            const groups = Array.from(document.querySelectorAll('.group'));
+            input.addEventListener('input', () => {
+                const q = input.value.trim().toLowerCase();
+                let any = false;
+                items.forEach(d => { const hit = !q || d.textContent.toLowerCase().includes(q); d.style.display = hit ? '' : 'none'; if (hit) any = true; if (q && hit) d.open = true; });
+                groups.forEach(g => { g.style.display = Array.from(g.querySelectorAll('details')).some(d => d.style.display !== 'none') ? '' : 'none'; });
+                document.getElementById('noResults').style.display = any ? 'none' : 'block';
+            });
+        })();
+    </script>
+</body>
+</html>

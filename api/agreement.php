@@ -169,6 +169,30 @@ try {
                 $a['seller_name'] ?: 'The seller', $newStatus, $a['agreement_code'], $a['product_name'],
                 $note !== '' ? ' Note: ' . $note : ''));
 
+        // Once accepted, email the finalised agreement to the seller and the customer
+        if ($decision === 'accept' && site_flag('notify_email_agreement_accepted', true)) {
+            $summary = sprintf(
+                "Agreement: %s\nProduct/service: %s\nCustomer: %s (%s)\nSeller: %s (%s, %s)\nTotal agreed price: TZS %s\nInitial deposit: TZS %s\nInstallments: %d (%s)\nAccepted on: %s\n\nView it any time: %s",
+                $a['agreement_code'], $a['product_name'], $a['customer_name'], $a['customer_phone'],
+                $a['seller_name'] ?: 'Seller', $a['seller_email'] ?: '-', $a['seller_phone'] ?: '-',
+                number_format((float) $a['total_price']), number_format((float) $a['initial_deposit']),
+                (int) $a['number_of_installments'], $a['payment_frequency'], date('j M Y H:i'),
+                app_base_url() . '/agreements.html'
+            );
+            $subject = cfg('app_name') . ': agreement ' . $a['agreement_code'] . ' accepted';
+            if (!empty($a['seller_email'])) {
+                send_mail((string) $a['seller_email'], $subject,
+                    "Hello " . ($a['seller_name'] ?: 'there') . ",\n\nYou accepted the following installment agreement. Keep this email for your records.\n\n" . $summary . "\n\n— " . cfg('app_name'),
+                    'agreement_accepted_seller', 'agreement', (string) $agreementId);
+            }
+            $customer = fetch_user((int) $a['customer_id']);
+            if ($customer !== null && !empty($customer['email'])) {
+                send_mail((string) $customer['email'], $subject,
+                    "Hello " . $customer['full_name'] . ",\n\nYour installment agreement has been accepted by the seller.\n\n" . $summary . "\n\n— " . cfg('app_name'),
+                    'agreement_accepted_customer', 'agreement', (string) $agreementId);
+            }
+        }
+
         json_response(200, ['success' => true, 'message' => 'Agreement ' . $newStatus . '.', 'agreement_status' => $newStatus]);
     }
 
@@ -338,13 +362,14 @@ try {
                 $userRow['full_name'], $code, $productName, number_format($totalPrice)));
     }
 
-    if ($sellerEmail !== '') {
+    if ($sellerEmail !== '' && site_flag('notify_email_agreement_request', true)) {
         $reviewUrl = app_base_url() . '/agreements.html';
         send_mail(
             $sellerEmail,
             cfg('app_name') . ': installment agreement request ' . $code,
             sprintf("Hello %s,\n\n%s has proposed a pay-small installment agreement for \"%s\" (total TZS %s, %d installments, %s).\n\nReview and respond here: %s\n\nIf you do not have a LipaLink account yet, register with this email address to see the proposal.\n\n— %s",
-                $displaySeller, $userRow['full_name'], $productName, number_format($totalPrice), $count, $frequency, $reviewUrl, cfg('app_name'))
+                $displaySeller, $userRow['full_name'], $productName, number_format($totalPrice), $count, $frequency, $reviewUrl, cfg('app_name')),
+            'agreement_request', 'agreement', (string) $agreementId
         );
     }
 

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us — LipaLink</title>
+    <meta name="description" content="Get in touch with the LipaLink team for support, seller onboarding or partnerships.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/public.css">
+    <style>
+        .contact-layout { display: grid; grid-template-columns: 1fr 1.3fr; gap: 28px; align-items: start; padding-bottom: 60px; }
+        .card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-card); padding: 28px; }
+        .info-row { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--border); }
+        .info-row:last-child { border-bottom: none; }
+        .info-row i { width: 40px; height: 40px; border-radius: 12px; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .info-row h4 { font-size: 0.92rem; margin-bottom: 2px; }
+        .info-row p, .info-row a { font-size: 0.86rem; color: var(--slate-muted); text-decoration: none; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-group label { font-size: 0.82rem; font-weight: 700; color: var(--dark-subtle); }
+        .form-control { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border); font: inherit; font-size: 0.9rem; background: var(--bg-page); outline: none; }
+        .form-control:focus { border-color: var(--primary); background: #fff; }
+        .form-control.is-invalid { border-color: #ef4444; }
+        .btn-submit { width: 100%; padding: 13px; border: none; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-weight: 700; cursor: pointer; margin-top: 6px; }
+        .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; }
+        .msg { display: none; padding: 12px 14px; border-radius: 10px; font-size: 0.86rem; margin-bottom: 14px; }
+        .msg.error { display: block; background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+        .msg.success { display: block; background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+        .hp { position: absolute; left: -9999px; }
+        @media (max-width: 900px) { .contact-layout { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo"><div class="logo-box"><i class="fa-solid fa-link"></i></div> LipaLink</a>
+            <button class="mobile-toggle" aria-label="Toggle Menu" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
+            <div class="nav-panel">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="how-it-works.html">How It Works</a></li>
+                    <li><a href="marketplace.html">Marketplace</a></li>
+                    <li><a href="for-sellers.html">For Sellers</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="contact.html" class="active">Contact</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="login.html" class="btn btn-outline">Log In</a>
+                    <a href="register.html" class="btn btn-primary">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-hero">
+        <div class="container">
+            <h1><i class="fa-solid fa-envelope-open-text" style="color: var(--primary);"></i> Contact us</h1>
+            <p>Questions about an agreement, a payment, or opening a store? Send us a message and we will reply by email.</p>
+        </div>
+    </section>
+
+    <section>
+        <div class="container contact-layout">
+            <div class="card">
+                <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Get in touch</h3>
+                <div class="info-row"><i class="fa-solid fa-envelope"></i><div><h4>Email</h4><p id="infoEmail">Loading…</p></div></div>
+                <div class="info-row"><i class="fa-solid fa-phone"></i><div><h4>Phone / WhatsApp</h4><p id="infoPhone">—</p></div></div>
+                <div class="info-row"><i class="fa-solid fa-location-dot"></i><div><h4>Office</h4><p id="infoAddress">Dar es Salaam, Tanzania</p></div></div>
+                <div class="info-row"><i class="fa-regular fa-clock"></i><div><h4>Support hours</h4><p>Monday – Saturday, 08:00 – 18:00 EAT</p></div></div>
+                <div class="info-row"><i class="fa-solid fa-circle-question"></i><div><h4>Quick answers</h4><p>Many questions are answered on the <a href="faq.html">FAQ page</a>.</p></div></div>
+            </div>
+
+            <div class="card">
+                <h3 style="font-size: 1.1rem; margin-bottom: 14px;">Send a message</h3>
+                <div id="formMsg" class="msg" role="alert"></div>
+                <form id="contactForm" novalidate>
+                    <div class="form-grid">
+                        <div class="form-group"><label for="name">Your name</label><input id="name" name="name" class="form-control" required autocomplete="name"></div>
+                        <div class="form-group"><label for="email">Email address</label><input id="email" name="email" type="email" class="form-control" required autocomplete="email"></div>
+                        <div class="form-group"><label for="phone">Phone (optional)</label><input id="phone" name="phone" type="tel" class="form-control" placeholder="07XX XXX XXX" autocomplete="tel"></div>
+                        <div class="form-group"><label for="subject">Subject</label>
+                            <select id="subject" name="subject" class="form-control">
+                                <option>Help with an agreement</option><option>Help with a payment or receipt</option><option>Opening a seller store</option><option>Report a problem</option><option>Partnership enquiry</option><option>Something else</option>
+                            </select>
+                        </div>
+                        <div class="form-group full"><label for="message">Message</label><textarea id="message" name="message" class="form-control" rows="6" required maxlength="4000" placeholder="Include your agreement reference (PSA-…) or payment reference (TX-…) if you have one."></textarea></div>
+                        <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off">
+                    </div>
+                    <button type="submit" class="btn-submit" id="sendBtn"><i class="fa-solid fa-paper-plane"></i> Send message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 LipaLink. Pay at your pace.</p>
+            <div class="footer-links">
+                <a href="about.html">About</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="security.html">Security</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/public-nav.js"></script>
+    <script>
+        (function () {
+            // Contact details come from Website Settings (admin console)
+            fetch('api/site-status.php', { headers: { 'Accept': 'application/json' } }).then(r => r.json()).then(s => {
+                const c = s.contact || {};
+                const email = c.support_email || c.email;
+                document.getElementById('infoEmail').innerHTML = email ? '<a href="mailto:' + email + '">' + email + '</a>' : 'Use the form on this page';
+                document.getElementById('infoPhone').textContent = c.phone || 'Not published yet';
+                if (c.address) document.getElementById('infoAddress').textContent = c.address;
+            }).catch(() => { document.getElementById('infoEmail').textContent = 'Use the form on this page'; });
+
+            // Prefill from a signed-in session
+            try {
+                const u = JSON.parse(sessionStorage.getItem('lipalink_user') || 'null');
+                if (u) { document.getElementById('name').value = u.full_name || ''; document.getElementById('email').value = u.email || ''; document.getElementById('phone').value = u.phone || ''; }
+            } catch (_) { /* ignore */ }
+
+            const form = document.getElementById('contactForm');
+            const msg = document.getElementById('formMsg');
+            const show = (t, text) => { msg.className = 'msg ' + t; msg.textContent = text; };
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                msg.className = 'msg';
+                const fields = ['name', 'email', 'message'];
+                let bad = null;
+                fields.forEach(id => { const el = document.getElementById(id); const ok = id === 'email' ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim()) : el.value.trim().length >= (id === 'message' ? 10 : 2); el.classList.toggle('is-invalid', !ok); if (!ok && !bad) bad = el; });
+                if (bad) { show('error', bad.id === 'email' ? 'Please enter a valid email address.' : (bad.id === 'message' ? 'Please write at least 10 characters.' : 'Please enter your name.')); bad.focus(); return; }
+                const btn = document.getElementById('sendBtn'); btn.disabled = true;
+                try {
+                    const res = await fetch('api/contact.php', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, credentials: 'same-origin', body: JSON.stringify(Object.fromEntries(new FormData(form))) });
+                    let data; try { data = await res.json(); } catch (_) { throw new Error('The contact service is not responding. Please email us directly.'); }
+                    if (!res.ok || !data.success) throw new Error(data.message || 'Could not send your message.');
+                    show('success', data.message); form.reset();
+                } catch (err) { show('error', err.message); }
+                finally { btn.disabled = false; }
+            });
+        })();
+    </script>
+</body>
+</html>

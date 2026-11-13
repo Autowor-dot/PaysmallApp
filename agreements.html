@@ -54,6 +54,11 @@
                 <a href="dashboard.html#notifications-section" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-bell"></i> Notifications</span></a>
                 <a href="transactions.html" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-receipt"></i> Transactions &amp; Receipts</span></a>
 
+                <span class="nav-section-label">Seller</span>
+
+                <a href="seller.html" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-store"></i> Seller Hub</span></a>
+
+
                 <span class="nav-section-label">Account</span>
                 <a href="profile.html" class="nav-item"><span class="nav-item-left"><i class="fa-regular fa-user"></i> My Profile</span></a>
                 <a href="settings.html" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-gear"></i> Settings</span></a>
@@ -266,7 +271,7 @@
                             }).join('') + '</tbody></table>';
                     }
 
-                    const foot = ['<button type="button" class="btn btn-outline btn-sm" data-modal-close>Close</button>'];
+                    const foot = ['<a class="btn btn-outline btn-sm" href="agreement-document.html?id=' + a.id + '" target="_blank" rel="noopener"><i class="fa-solid fa-file-pdf"></i> Document</a>', '<button type="button" class="btn btn-outline btn-sm" data-modal-close>Close</button>'];
                     if (a.status === 'pending_seller_approval' && a.role === 'seller') {
                         foot.push('<button type="button" class="btn btn-outline btn-sm" data-respond="decline" data-id="' + a.id + '">Decline</button>');
                         foot.push('<button type="button" class="btn btn-primary btn-sm" data-respond="accept" data-id="' + a.id + '"><i class="fa-solid fa-check"></i> Accept</button>');

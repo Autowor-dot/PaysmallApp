@@ -9,10 +9,18 @@
  */
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/tasks-lib.php';
 
 require_method('GET');
 
 $userId = require_auth();
+
+// No cron on shared hosting: roll installment statuses and send reminders at most once an hour
+try {
+    run_scheduled_tasks(3600);
+} catch (Throwable $taskError) {
+    error_log('LipaLink tasks error: ' . $taskError->getMessage());
+}
 
 try {
     $userRow = fetch_user($userId);
@@ -52,6 +60,23 @@ try {
                 'status'                => ucfirst((string) ($r['status'] ?? 'active')),
             ];
         }
+    }
+
+    // Full installment schedule for each active plan
+    if ( !== [] && table_exists('installment_payments')) {
+         = array_column(, 'id');
+          = implode(',', array_fill(0, count(), '?'));
+         = [];
+        foreach (db_select("SELECT id, plan_id, installment_number, amount_due, due_date, status, paid_at FROM installment_payments WHERE plan_id IN ({}) ORDER BY plan_id, installment_number", str_repeat('i', count()), ) as ) {
+            [(int) ['plan_id']][] = [
+                'id' => (int) ['id'], 'installment_number' => (int) ['installment_number'], 'amount_due' => (float) ['amount_due'],
+                'due_date' => ['due_date'], 'status' => ['status'], 'paid_at' => ['paid_at'],
+            ];
+        }
+        foreach ( as &) {
+            ['schedule'] = [['id']] ?? [];
+        }
+        unset();
     }
 
     // ---------------- Upcoming payments ----------------

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agreement Document — LipaLink</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --primary: #1769AA; --dark: #0f172a; --muted: #64748b; --border: #e2e8f0; --bg: #f8fafc; }
+        body { font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; background: var(--bg); color: var(--dark); line-height: 1.5; }
+        .toolbar { position: sticky; top: 0; background: #fff; border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; gap: 10px; align-items: center; justify-content: space-between; z-index: 10; }
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 999px; font: inherit; font-weight: 700; font-size: 0.85rem; cursor: pointer; text-decoration: none; border: 1px solid var(--border); background: #fff; color: var(--dark); }
+        .btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .doc { max-width: 860px; margin: 24px auto; background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 44px 48px; }
+        .doc-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; border-bottom: 2px solid var(--primary); padding-bottom: 18px; margin-bottom: 22px; }
+        .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.3rem; }
+        .brand .mark { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--primary), #0f4c7d); color: #fff; display: flex; align-items: center; justify-content: center; }
+        .doc-head h1 { font-size: 1.3rem; letter-spacing: -0.02em; }
+        .doc-head .ref { text-align: right; font-size: 0.85rem; color: var(--muted); }
+        .doc-head .ref strong { display: block; font-family: monospace; font-size: 1rem; color: var(--primary); }
+        .status { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; background: #fffbeb; color: #b45309; }
+        .status.accepted, .status.completed { background: #ecfdf5; color: #10b981; }
+        .status.declined, .status.cancelled { background: #fef2f2; color: #ef4444; }
+        h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--primary); margin: 24px 0 10px; }
+        .parties { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .party { border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; font-size: 0.9rem; }
+        .party h3 { font-size: 0.95rem; margin-bottom: 6px; }
+        .party div { color: var(--muted); font-size: 0.85rem; }
+        .kv { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; font-size: 0.9rem; }
+        .kv div { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--border); padding: 6px 0; }
+        .kv span { color: var(--muted); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+        th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+        th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); background: var(--bg); }
+        td:nth-child(3), td:nth-child(4), th:nth-child(3), th:nth-child(4) { text-align: right; }
+        .terms p { font-size: 0.88rem; margin-bottom: 8px; }
+        .terms strong { color: var(--dark); }
+        .sign { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 34px; }
+        .sign div { border-top: 1px solid var(--dark); padding-top: 8px; font-size: 0.82rem; color: var(--muted); }
+        .foot { margin-top: 30px; font-size: 0.74rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: 12px; }
+        .loading, .error { max-width: 860px; margin: 40px auto; text-align: center; color: var(--muted); }
+        .error { color: #b91c1c; }
+        @media print { .toolbar { display: none; } body { background: #fff; } .doc { border: none; margin: 0; padding: 0; max-width: none; } }
+        @media (max-width: 640px) { .doc { padding: 24px 18px; } .parties, .kv, .sign { grid-template-columns: 1fr; } .doc-head { flex-direction: column; } .doc-head .ref { text-align: left; } }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <a href="agreements.html" class="btn"><i class="fa-solid fa-arrow-left"></i> Back to agreements</a>
+        <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-primary" onclick="window.print()"><i class="fa-solid fa-print"></i> Print / Save as PDF</button>
+        </div>
+    </div>
+
+    <div class="loading" id="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading agreement…</div>
+    <div class="error" id="error" style="display: none;"></div>
+    <article class="doc" id="doc" style="display: none;"></article>
+
+    <script src="assets/js/app-shell.js"></script>
+    <script>
+        (async function () {
+            'use strict';
+            const L = window.LipaLink;
+            const id = L.getQueryParam('id');
+            const loading = document.getElementById('loading');
+            const errorEl = document.getElementById('error');
+            if (!id) { loading.style.display = 'none'; errorEl.style.display = 'block'; errorEl.textContent = 'No agreement selected.'; return; }
+
+            const session = await L.requireSession();
+            if (!session) return;
+
+            const freqLabel = (f) => ({ daily: 'daily', weekly: 'weekly', biweekly: 'every two weeks', monthly: 'monthly' }[f] || f);
+            const releaseLabel = (c, t) => ({ after_full_payment: 'after full payment of the total agreed price', after_initial_deposit: 'after verification of the initial deposit', after_specified_threshold: 'after reaching the agreed threshold' + (t ? ' (' + t + ')' : '') }[c] || c || '—');
+            const statusLabel = (s) => ({ pending_seller_approval: 'Pending seller approval', accepted: 'Accepted', declined: 'Declined', cancelled: 'Cancelled', completed: 'Completed' }[s] || s);
+
+            try {
+                const res = await L.apiFetch('api/agreement.php?id=' + encodeURIComponent(id));
+                const a = res.data.agreement;
+                const p = a.payload || {};
+                const pay = p.payment || {}, del = p.delivery || {}, terms = p.terms || {}, prod = p.product || {};
+                const schedule = Array.isArray(pay.schedule) ? pay.schedule : [];
+                const esc = L.escapeHtml;
+
+                document.title = 'Agreement ' + a.agreement_id + ' — LipaLink';
+                document.getElementById('doc').innerHTML =
+                    '<div class="doc-head"><div><div class="brand"><span class="mark"><i class="fa-solid fa-link"></i></span> LipaLink</div><h1 style="margin-top: 10px;">Installment Payment Agreement</h1><span class="status ' + esc(a.status) + '">' + esc(statusLabel(a.status)) + '</span></div>' +
+                    '<div class="ref">Agreement reference<strong>' + esc(a.agreement_id) + '</strong>Created ' + L.formatDate(a.created_at) + (a.responded_at ? '<br>Responded ' + L.formatDate(a.responded_at) : '') + '</div></div>' +
+
+                    '<h2>Parties</h2><div class="parties">' +
+                    '<div class="party"><h3>Customer (buyer)</h3><div>' + esc(a.customer_name || '—') + '</div><div>' + esc(a.customer_phone || '') + '</div></div>' +
+                    '<div class="party"><h3>Seller</h3><div>' + esc(a.seller_name || '—') + '</div><div>' + esc(a.seller_email || '') + (a.seller_phone ? ' • ' + esc(a.seller_phone) : '') + '</div>' + ((p.seller && p.seller.location) ? '<div>' + esc(p.seller.location) + '</div>' : '') + '<div>' + (a.seller_type === 'registered' ? 'Registered LipaLink seller' : 'Seller invited by email') + '</div></div></div>' +
+
+                    '<h2>Product or service</h2><div class="kv">' +
+                    '<div><span>Description</span><strong>' + esc(a.product_name) + '</strong></div>' +
+                    '<div><span>Type / category</span><strong>' + esc((prod.type === 'service' ? 'Service' : 'Product') + (prod.category ? ' • ' + prod.category : '')) + '</strong></div>' +
+                    (prod.quantity ? '<div><span>Quantity</span><strong>' + esc(prod.quantity) + (prod.condition && prod.condition !== 'N/A' ? ' • ' + esc(prod.condition) : '') + '</strong></div>' : '') +
+                    (prod.unit_price ? '<div><span>Unit price</span><strong>' + L.formatTZS(prod.unit_price) + '</strong></div>' : '') +
+                    '</div>' + (prod.description ? '<p style="font-size: 0.86rem; color: var(--muted); margin-top: 8px;">' + esc(prod.description) + '</p>' : '') +
+
+                    '<h2>Payment terms</h2><div class="kv">' +
+                    '<div><span>Total agreed price</span><strong>' + L.formatTZS(a.total_price) + '</strong></div>' +
+                    '<div><span>Initial deposit</span><strong>' + L.formatTZS(a.initial_deposit) + '</strong></div>' +
+                    '<div><span>Number of installments</span><strong>' + esc(a.number_of_installments) + '</strong></div>' +
+                    '<div><span>Payment frequency</span><strong>' + esc(freqLabel(a.payment_frequency)) + '</strong></div>' +
+                    (pay.installment_amount ? '<div><span>Installment amount</span><strong>' + L.formatTZS(pay.installment_amount) + '</strong></div>' : '') +
+                    (pay.preferred_payment_method ? '<div><span>Payment method</span><strong>' + esc(pay.preferred_payment_method) + '</strong></div>' : '') +
+                    (pay.first_payment_date ? '<div><span>First payment</span><strong>' + L.formatDate(pay.first_payment_date) + '</strong></div>' : '') +
+                    (pay.expected_final_payment_date ? '<div><span>Expected completion</span><strong>' + L.formatDate(pay.expected_final_payment_date) + '</strong></div>' : '') +
+                    '</div>' +
+
+                    (schedule.length ? '<h2>Installment schedule</h2><table><thead><tr><th>#</th><th>Due date</th><th>Amount</th><th>Remaining after</th></tr></thead><tbody>' +
+                        schedule.map(r => '<tr><td>' + esc(r.installment_number) + '</td><td>' + L.formatDate(r.due_date) + '</td><td>' + L.formatTZS(r.amount) + '</td><td>' + L.formatTZS(r.remaining_after) + '</td></tr>').join('') + '</tbody></table>' : '') +
+
+                    '<h2>Delivery</h2><div class="terms">' +
+                    '<p>The seller releases the product or service <strong>' + esc(releaseLabel(del.release_condition, del.required_threshold)) + '</strong>.</p>' +
+                    (del.expected_delivery_date ? '<p>Expected delivery date: <strong>' + L.formatDate(del.expected_delivery_date) + '</strong></p>' : '') +
+                    (del.service_commencement_date ? '<p>Service window: <strong>' + L.formatDate(del.service_commencement_date) + ' – ' + L.formatDate(del.service_completion_date) + '</strong></p>' : '') +
+                    (del.location ? '<p>Location: <strong>' + esc(del.location) + '</strong></p>' : '') +
+                    (del.charges !== undefined ? '<p>Delivery / service charges: <strong>' + L.formatTZS(del.charges) + '</strong>' + (del.charges_paid_by ? ' (paid by ' + esc(del.charges_paid_by) + ')' : '') + '</p>' : '') +
+                    (del.instructions ? '<p>' + esc(del.instructions) + '</p>' : '') + '</div>' +
+
+                    '<h2>Terms &amp; conditions</h2><div class="terms">' +
+                    (terms.grace_period_days !== undefined ? '<p><strong>Grace period:</strong> ' + esc(terms.grace_period_days) + ' day(s) after each due date.</p>' : '') +
+                    (terms.additional_charges_or_interest ? '<p><strong>Additional charges or interest:</strong> ' + esc(terms.additional_charges_or_interest) + '</p>' : '') +
+                    (terms.late_payment_policy ? '<p><strong>Late payment:</strong> ' + esc(terms.late_payment_policy) + '</p>' : '') +
+                    (terms.early_payment_conditions ? '<p><strong>Early payment:</strong> ' + esc(terms.early_payment_conditions) + '</p>' : '') +
+                    (terms.cancellation_policy ? '<p><strong>Cancellation:</strong> ' + esc(terms.cancellation_policy) + '</p>' : '') +
+                    (terms.refund_policy ? '<p><strong>Refunds:</strong> ' + esc(terms.refund_policy) + '</p>' : '') +
+                    (terms.dispute_resolution_conditions ? '<p><strong>Disputes:</strong> ' + esc(terms.dispute_resolution_conditions) + '</p>' : '') +
+                    '<p>Both parties agree to the payment schedule above. LipaLink records every payment and issues digital receipts; it is not a party to this agreement. The agreed terms cannot be changed without both parties\' consent through the platform.</p></div>' +
+
+                    '<div class="sign"><div>Customer: ' + esc(a.customer_name || '') + '<br>Confirmed on LipaLink ' + L.formatDate(a.created_at) + '</div><div>Seller: ' + esc(a.seller_name || '') + '<br>' + (a.status === 'accepted' || a.status === 'completed' ? 'Accepted on LipaLink ' + L.formatDate(a.responded_at || a.created_at) : 'Awaiting seller acceptance') + '</div></div>' +
+                    '<div class="foot">Generated by LipaLink on ' + new Date().toLocaleString('en-GB') + ' for agreement ' + esc(a.agreement_id) + '. Verify the latest status at any time in the LipaLink app.</div>';
+
+                loading.style.display = 'none';
+                document.getElementById('doc').style.display = 'block';
+            } catch (err) {
+                loading.style.display = 'none';
+                errorEl.style.display = 'block';
+                errorEl.textContent = err.message;
+            }
+        })();
+    </script>
+</body>
+</html>

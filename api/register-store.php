@@ -14,6 +14,10 @@ try {
         json_error(503, 'Store registration is not set up yet. Please run api/schema.sql on the database.');
     }
 
+    if (!site_flag('allow_seller_registration', true)) {
+        json_error(403, 'New store registration is temporarily closed. Please try again later.');
+    }
+
     $input        = request_input();
     $businessName = input_string($input, 'business_name', 160);
     $fullName     = input_string($input, 'full_name', 120);

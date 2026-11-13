@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Down for maintenance · LipaLink</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap">
+    <style>
+        :root { --primary: #1769AA; --dark: #0f172a; --muted: #64748b; --bg: #f8fafc; --card: #fff; --border: #e2e8f0; }
+        @media (prefers-color-scheme: dark) { :root { --dark: #e2e8f0; --muted: #94a3b8; --bg: #0b1220; --card: #111a2e; --border: #1e293b; } }
+        * { box-sizing: border-box; }
+        body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 16px; background: var(--bg); color: var(--dark); font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+        .card { max-width: 480px; width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 40px 32px; text-align: center; box-shadow: 0 20px 40px -20px rgba(23,105,170,.25); }
+        .icon { width: 64px; height: 64px; border-radius: 18px; margin: 0 auto 20px; display: grid; place-items: center; background: rgba(23,105,170,.12); color: var(--primary); font-size: 30px; }
+        h1 { margin: 0 0 10px; font-size: 1.6rem; letter-spacing: -.02em; }
+        p { color: var(--muted); line-height: 1.6; margin: 0 0 8px; }
+        .small { font-size: .85rem; }
+        a { color: var(--primary); }
+    </style>
+</head>
+<body>
+<main class="card">
+    <div class="icon" aria-hidden="true">&#9881;</div>
+    <h1 id="title">We'll be right back</h1>
+    <p id="message">We're carrying out scheduled maintenance to improve the service. Please check back shortly.</p>
+    <p class="small" id="contact"></p>
+    <p class="small"><a href="index.html" id="retry">Try again</a></p>
+</main>
+<script>
+    // Show the message set in the admin panel; return to the site once maintenance is over
+    fetch('api/site-status.php', { cache: 'no-store' })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+            if (!d || !d.success) return;
+            if (d.site_name) document.title = 'Down for maintenance · ' + d.site_name;
+            if (d.maintenance && d.maintenance.message) document.getElementById('message').textContent = d.maintenance.message;
+            var mail = d.contact && (d.contact.support_email || d.contact.email);
+            if (mail) document.getElementById('contact').textContent = 'Need urgent help? Email ' + mail;
+        })
+        .catch(function () {});
+</script>
+</body>
+</html>

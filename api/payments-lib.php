@@ -36,11 +36,12 @@ function public_transaction(array $r): array
 /**
  * Settle a pending transaction.
  *
- * @param array  $tx         transactions row
- * @param string $newStatus  'completed' | 'failed'
- * @return array             updated transactions row
+ * @param array   $tx          transactions row
+ * @param string  $newStatus   'completed' | 'failed'
+ * @param ?string $verifiedVia how the result was confirmed: 'provider' (gateway webhook) or 'simulator'
+ * @return array               updated transactions row
  */
-function apply_payment_result(array $tx, string $newStatus, ?string $providerReference = null): array
+function apply_payment_result(array $tx, string $newStatus, ?string $providerReference = null, ?string $verifiedVia = null): array
 {
     if (!in_array($newStatus, ['completed', 'failed'], true)) {
         throw new InvalidArgumentException('Unsupported payment status.');
@@ -72,6 +73,9 @@ function apply_payment_result(array $tx, string $newStatus, ?string $providerRef
                 'si', [$providerReference, $txId]);
         } else {
             db_execute("UPDATE transactions SET status = 'completed', confirmed_at = NOW() WHERE id = ?", 'i', [$txId]);
+        }
+        if ($verifiedVia !== null && column_exists('transactions', 'verified_via')) {
+            db_execute('UPDATE transactions SET verified_via = ? WHERE id = ?', 'si', [$verifiedVia, $txId]);
         }
 
         // Mark the scheduled installment paid (or reduce it for a partial payment)
@@ -137,5 +141,54 @@ function apply_payment_result(array $tx, string $newStatus, ?string $providerRef
         sprintf('Your payment %s of TZS %s for %s has been confirmed. A digital receipt is now available.',
             $tx['transaction_code'], number_format($amount), $tx['product_name']));
 
+    notify_seller_of_payment($tx, $verifiedVia);
+
     return fetch_transaction_by_code((string) $tx['transaction_code']) ?? $tx;
+}
+
+/** Payment receipt to the seller of the agreement behind a confirmed transaction. Never throws. */
+function notify_seller_of_payment(array $tx, ?string $verifiedVia): void
+{
+    try {
+        $planId = isset($tx['plan_id']) ? (int) $tx['plan_id'] : 0;
+        if ($planId <= 0 || !table_exists('installment_plans') || !table_exists('agreements')) {
+            return;
+        }
+        $rows = db_select(
+            'SELECT a.id, a.agreement_code, a.seller_name, a.seller_email, a.seller_id, u.full_name AS customer_name, s.user_id AS seller_user_id
+             FROM installment_plans pl
+             JOIN agreements a ON a.id = pl.agreement_id
+             JOIN users u ON u.id = a.customer_id
+             LEFT JOIN sellers s ON s.id = a.seller_id
+             WHERE pl.id = ? LIMIT 1',
+            'i', [$planId]
+        );
+        if (empty($rows)) {
+            return;
+        }
+        $a = $rows[0];
+        $amount = number_format((float) $tx['amount']);
+        $note = $verifiedVia === 'provider'
+            ? 'This payment was confirmed by the payment provider.'
+            : ($verifiedVia === 'simulator'
+                ? 'NOTE: this is a TEST payment confirmed by the development simulator; no money moved.'
+                : 'This payment has been recorded but not independently verified by a payment provider.');
+
+        if (!empty($a['seller_user_id'])) {
+            add_notification((int) $a['seller_user_id'], 'payment', 'Installment payment received',
+                sprintf('%s paid TZS %s on agreement %s (ref %s).', $a['customer_name'], $amount, $a['agreement_code'], $tx['transaction_code']));
+        }
+        if (!empty($a['seller_email']) && site_flag('notify_email_payment_receipt', true)) {
+            send_mail(
+                (string) $a['seller_email'],
+                cfg('app_name') . ': payment receipt ' . $tx['transaction_code'],
+                sprintf("Hello %s,\n\nAn installment payment has been recorded on agreement %s.\n\nCustomer: %s\nProduct/service: %s\nAmount: TZS %s\nMethod: %s\nReference: %s\nProvider reference: %s\nDate: %s\n\n%s\n\n— %s",
+                    $a['seller_name'] ?: 'there', $a['agreement_code'], $a['customer_name'], $tx['product_name'], $amount,
+                    $tx['payment_method'], $tx['transaction_code'], $tx['provider_reference'] ?? '-', date('j M Y H:i'), $note, cfg('app_name')),
+                'payment_receipt_seller', 'transaction', (string) $tx['id']
+            );
+        }
+    } catch (Throwable $e) {
+        error_log('LipaLink seller receipt error: ' . $e->getMessage());
+    }
 }

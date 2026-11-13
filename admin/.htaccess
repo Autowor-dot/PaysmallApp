@@ -1,0 +1,10 @@
+# Admin console
+Options -Indexes
+DirectoryIndex index.php
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.php$">
+        Header set Cache-Control "no-store, private"
+        Header set X-Robots-Tag "noindex, nofollow"
+    </FilesMatch>
+</IfModule>
