@@ -1,0 +1,13 @@
+# Credentials and server-specific configuration (never commit)
+api/config.local.php
+
+# OS / editor noise
+Thumbs.db
+.DS_Store
+desktop.ini
+*.log
+.vscode/
+.idea/
+
+# Claude Code local settings
+.claude/settings.local.json

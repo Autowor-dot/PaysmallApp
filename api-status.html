@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Status — LipaLink</title>
+    <meta name="robots" content="noindex">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/public.css">
+    <style>
+        .status-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .status-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-card); padding: 18px 20px; }
+        .status-card small { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--slate-muted); font-weight: 700; margin-bottom: 6px; }
+        .status-card strong { font-size: 1.05rem; }
+        .ok { color: #10b981; } .warn { color: #d97706; } .bad { color: #ef4444; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; }
+        th, td { padding: 11px 14px; border-bottom: 1px solid var(--border); font-size: 0.86rem; text-align: left; vertical-align: top; }
+        th { background: var(--bg-page); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--slate-muted); }
+        tr:last-child td { border-bottom: none; }
+        code { font-family: monospace; font-size: 0.82rem; background: var(--bg-page); padding: 2px 6px; border-radius: 6px; }
+        .pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
+        .pill.ok { background: #ecfdf5; } .pill.warn { background: #fffbeb; } .pill.bad { background: #fef2f2; } .pill.wait { background: var(--bg-page); color: var(--slate-muted); }
+        .section-title { font-size: 1.1rem; margin: 28px 0 12px; }
+        .steps { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-card); padding: 20px 24px; }
+        .steps ol { padding-left: 20px; font-size: 0.9rem; color: var(--dark-subtle); display: grid; gap: 8px; }
+        .table-wrap { overflow-x: auto; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <div class="logo-box"><i class="fa-solid fa-link"></i></div>
+                LipaLink
+            </a>
+            <button class="mobile-toggle" aria-label="Toggle Menu" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
+            <div class="nav-panel">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <button type="button" class="btn btn-primary" id="rerunBtn"><i class="fa-solid fa-rotate-right"></i>&nbsp; Re-run checks</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-hero">
+        <div class="container">
+            <h1><i class="fa-solid fa-heart-pulse" style="color: var(--primary);"></i> Backend Connection Status</h1>
+            <p>Checks that the PHP API, database and every endpoint the frontend uses are reachable from this page.</p>
+        </div>
+    </section>
+
+    <section class="legal-section">
+        <div class="container">
+            <div class="status-grid">
+                <div class="status-card"><small>Overall</small><strong id="overall"><i class="fa-solid fa-spinner fa-spin"></i> Checking...</strong></div>
+                <div class="status-card"><small>PHP backend</small><strong id="phpStatus">—</strong></div>
+                <div class="status-card"><small>Database</small><strong id="dbStatus">—</strong></div>
+                <div class="status-card"><small>Tables</small><strong id="tableStatus">—</strong></div>
+                <div class="status-card"><small>Session</small><strong id="sessionStatus">—</strong></div>
+                <div class="status-card"><small>Environment</small><strong id="envStatus">—</strong></div>
+            </div>
+
+            <h3 class="section-title">Health report</h3>
+            <div class="table-wrap"><table id="healthTable"><thead><tr><th>Check</th><th>Result</th><th>Notes</th></tr></thead><tbody><tr><td colspan="3">Waiting for api/health.php...</td></tr></tbody></table></div>
+
+            <h3 class="section-title">Endpoint reachability</h3>
+            <p style="font-size: 0.84rem; color: var(--slate-muted); margin-bottom: 10px;">Each endpoint is called the way the frontend calls it. A JSON reply, even "401 Please log in", proves the connection works. A non-JSON reply means PHP is not executing (static hosting, wrong path, or a fatal error).</p>
+            <div class="table-wrap"><table id="endpointTable"><thead><tr><th>Endpoint</th><th>Used by</th><th>Expected</th><th>Result</th></tr></thead><tbody></tbody></table></div>
+
+            <h3 class="section-title">Go-live checklist</h3>
+            <div class="steps">
+                <ol>
+                    <li>Upload the whole project to the web root so pages and <code>api/</code> share the same origin (needed for session cookies).</li>
+                    <li>Set the database credentials, a unique <code>install_key</code> and <code>webhook_secret</code> in <code>api/config.php</code> (or <code>api/config.local.php</code>).</li>
+                    <li>Open <code>api/install.php?key=YOUR_INSTALL_KEY</code> once to create the tables, then re-run these checks: every table should show as present.</li>
+                    <li>Register at <a href="register.html">register.html</a>, log in, and confirm the Session card above turns green.</li>
+                    <li>Point your Mobile Money / bank provider's callback at <code>api/payment-webhook.php</code> with the <code>X-LipaLink-Signature</code> header set to your webhook secret.</li>
+                    <li>Set <code>app_env</code> to <code>production</code> before launch so the payment simulator and reset-link preview are disabled.</li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 LipaLink. Pay at your pace.</p>
+            <div class="footer-links"><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a></div>
+        </div>
+    </footer>
+
+    <script src="assets/js/public-nav.js"></script>
+    <script>
+        (function () {
+            const ENDPOINTS = [
+                { url: 'api/health.php', method: 'GET', used: 'this page', expect: '200 JSON' },
+                { url: 'api/products.php', method: 'GET', used: 'marketplace.html', expect: '200 JSON' },
+                { url: 'api/login.php', method: 'POST', used: 'login.html', expect: '400 JSON (empty form)' },
+                { url: 'api/register.php', method: 'POST', used: 'register.html', expect: '400 JSON (empty form)' },
+                { url: 'api/register-store.php', method: 'POST', used: 'register-store.html', expect: '400/503 JSON' },
+                { url: 'api/password-reset.php', method: 'POST', used: 'forgot-password.html', expect: '400/503 JSON' },
+                { url: 'api/profile.php', method: 'GET', used: 'all app pages (session check)', expect: '200 or 401 JSON' },
+                { url: 'api/dashboard.php', method: 'GET', used: 'dashboard.html, pay.html', expect: '200 or 401 JSON' },
+                { url: 'api/transactions.php', method: 'GET', used: 'transactions.html', expect: '200 or 401 JSON' },
+                { url: 'api/notifications.php', method: 'GET', used: 'dashboard.html', expect: '200 or 401 JSON' },
+                { url: 'api/agreement.php', method: 'GET', used: 'agreements.html, agreement.html', expect: '200 or 401 JSON' },
+                { url: 'api/sellers.php?q=test', method: 'GET', used: 'agreement.html', expect: '200 or 401 JSON' },
+                { url: 'api/payments.php?code=TEST', method: 'GET', used: 'pay.html', expect: '401/404 JSON' },
+                { url: 'api/pay.php', method: 'POST', used: 'pay.html', expect: '400/401 JSON' },
+                { url: 'api/payment-webhook.php', method: 'POST', used: 'payment provider', expect: '401/503 JSON' },
+                { url: 'api/logout.php', method: 'GET', used: 'all app pages', expect: '405 JSON (GET not allowed)' }
+            ];
+
+            function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+            function pill(cls, text, icon) { return '<span class="pill ' + cls + '"><i class="' + icon + '"></i> ' + esc(text) + '</span>'; }
+            const OK = (t) => pill('ok', t, 'fa-solid fa-circle-check');
+            const WARN = (t) => pill('warn', t, 'fa-solid fa-triangle-exclamation');
+            const BAD = (t) => pill('bad', t, 'fa-solid fa-circle-xmark');
+
+            async function probe(ep) {
+                const started = performance.now();
+                try {
+                    const res = await fetch(ep.url, { method: ep.method, credentials: 'same-origin', headers: { 'Accept': 'application/json' }, body: ep.method === 'POST' ? new FormData() : undefined });
+                    const text = await res.text();
+                    let json = null;
+                    try { json = JSON.parse(text); } catch (_) { /* not JSON */ }
+                    const ms = Math.round(performance.now() - started);
+                    if (json && typeof json === 'object') {
+                        return { ok: true, status: res.status, message: json.message || (json.success ? 'OK' : ''), ms: ms };
+                    }
+                    const looksLikePhpSource = /<\?php/.test(text);
+                    return { ok: false, status: res.status, message: looksLikePhpSource ? 'PHP source returned: the server is not executing PHP.' : (res.status === 404 ? 'Not found (wrong path or file missing).' : 'Non-JSON response.'), ms: ms };
+                } catch (err) {
+                    return { ok: false, status: 0, message: 'Network error: ' + err.message, ms: Math.round(performance.now() - started) };
+                }
+            }
+
+            async function runEndpointChecks() {
+                const tbody = document.querySelector('#endpointTable tbody');
+                tbody.innerHTML = ENDPOINTS.map((ep, i) => '<tr><td><code>' + esc(ep.method) + ' ' + esc(ep.url) + '</code></td><td>' + esc(ep.used) + '</td><td>' + esc(ep.expect) + '</td><td id="ep' + i + '">' + pill('wait', 'Checking...', 'fa-solid fa-spinner fa-spin') + '</td></tr>').join('');
+                let reachable = 0;
+                await Promise.all(ENDPOINTS.map(async (ep, i) => {
+                    const r = await probe(ep);
+                    if (r.ok) reachable++;
+                    document.getElementById('ep' + i).innerHTML = (r.ok ? OK('HTTP ' + r.status + ' JSON') : BAD(r.status ? 'HTTP ' + r.status : 'Unreachable')) + '<div style="font-size: 0.78rem; color: var(--slate-muted); margin-top: 4px;">' + esc(r.message) + ' (' + r.ms + ' ms)</div>';
+                }));
+                return { reachable: reachable, total: ENDPOINTS.length };
+            }
+
+            async function runHealth() {
+                const tbody = document.querySelector('#healthTable tbody');
+                let h = null;
+                try {
+                    const res = await fetch('api/health.php', { credentials: 'same-origin', headers: { 'Accept': 'application/json' } });
+                    h = await res.json();
+                } catch (_) {
+                    h = null;
+                }
+
+                if (!h) {
+                    document.getElementById('phpStatus').innerHTML = '<span class="bad">Not responding</span>';
+                    document.getElementById('dbStatus').innerHTML = '<span class="bad">Unknown</span>';
+                    document.getElementById('tableStatus').innerHTML = '<span class="bad">Unknown</span>';
+                    document.getElementById('sessionStatus').innerHTML = '<span class="bad">Unknown</span>';
+                    document.getElementById('envStatus').textContent = '—';
+                    tbody.innerHTML = '<tr><td>api/health.php</td><td>' + BAD('No JSON reply') + '</td><td>The API is not executing. Confirm the files are on a PHP host and that <code>api/</code> sits next to the HTML pages.</td></tr>';
+                    return null;
+                }
+
+                const missing = h.missing_tables || [];
+                document.getElementById('phpStatus').innerHTML = '<span class="ok">PHP ' + esc(h.php_version) + '</span>';
+                document.getElementById('dbStatus').innerHTML = h.database.connected ? '<span class="ok">Connected</span>' : '<span class="bad">Failed</span>';
+                document.getElementById('tableStatus').innerHTML = missing.length === 0 ? '<span class="ok">All present</span>' : '<span class="warn">' + missing.length + ' missing</span>';
+                document.getElementById('sessionStatus').innerHTML = h.session.active ? '<span class="ok">Signed in (user #' + esc(h.session.user_id) + ')</span>' : '<span class="warn">Not signed in</span>';
+                document.getElementById('envStatus').innerHTML = esc(h.environment) + (h.environment === 'development' ? ' <span class="warn">(simulator on)</span>' : '');
+
+                const rows = [];
+                rows.push(['PHP backend', OK('Running'), 'PHP ' + esc(h.php_version) + ' • server time ' + esc(h.server_time) + ' • base URL <code>' + esc(h.base_url) + '</code>']);
+                rows.push(['Database connection', h.database.connected ? OK('Connected') : BAD('Failed'), h.database.connected ? esc(h.database.server || '') + (h.database.user_count !== undefined ? ' • ' + h.database.user_count + ' registered user(s)' : '') : esc(h.database.error || 'Check db_host / db_user / db_pass / db_name in api/config.php')]);
+                Object.keys(h.tables || {}).forEach(function (t) {
+                    rows.push(['Table <code>' + esc(t) + '</code>', h.tables[t] ? OK('Present') : WARN('Missing'), h.tables[t] ? '' : 'Run <code>api/install.php?key=...</code> or apply api/schema.sql']);
+                });
+                if (h.database.users_settings_column !== undefined) {
+                    rows.push(['Column <code>users.settings_json</code>', h.database.users_settings_column ? OK('Present') : WARN('Missing'), h.database.users_settings_column ? '' : 'Settings sync falls back to the browser until the column is added']);
+                }
+                rows.push(['Webhook secret', h.config.webhook_secret_configured ? OK('Configured') : WARN('Default value'), h.config.webhook_secret_configured ? '' : 'Set webhook_secret before connecting a payment provider']);
+                rows.push(['Install key', h.config.install_key_configured ? OK('Configured') : WARN('Default value'), h.config.install_key_configured ? '' : 'Set install_key to enable api/install.php']);
+                rows.push(['Email (mail function)', h.config.mail_function_available && h.config.mail_enabled ? OK('Available') : WARN('Unavailable'), 'Used for password resets and seller notifications; some free hosts disable mail()']);
+                rows.push(['Local config override', h.config.local_config_present ? OK('config.local.php found') : WARN('Not used'), 'Optional: keep credentials out of config.php']);
+                ['mysqli', 'mbstring', 'json'].forEach(function (ext) { rows.push(['PHP extension <code>' + ext + '</code>', h.extensions[ext] ? OK('Loaded') : BAD('Missing'), '']); });
+                tbody.innerHTML = rows.map(function (r) { return '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td></tr>'; }).join('');
+                return h;
+            }
+
+            async function runAll() {
+                document.getElementById('overall').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking...';
+                const [h, ep] = await Promise.all([runHealth(), runEndpointChecks()]);
+                const overall = document.getElementById('overall');
+                if (!h) {
+                    overall.innerHTML = '<span class="bad"><i class="fa-solid fa-circle-xmark"></i> Backend not reachable</span>';
+                } else if (h.ready && ep.reachable === ep.total) {
+                    overall.innerHTML = '<span class="ok"><i class="fa-solid fa-circle-check"></i> Ready — ' + ep.reachable + '/' + ep.total + ' endpoints OK</span>';
+                } else {
+                    overall.innerHTML = '<span class="warn"><i class="fa-solid fa-triangle-exclamation"></i> Needs attention — ' + ep.reachable + '/' + ep.total + ' endpoints OK' + (h.ready ? '' : ', ' + esc(h.message)) + '</span>';
+                }
+            }
+
+            document.getElementById('rerunBtn').addEventListener('click', runAll);
+            runAll();
+        })();
+    </script>
+</body>
+</html>

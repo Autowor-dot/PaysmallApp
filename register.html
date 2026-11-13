@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Free Account — LipaLink</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary: #1769AA;
+            --primary-hover: #12558c;
+            --primary-light: #f0f7fc;
+            --dark: #0f172a;
+            --dark-subtle: #334155;
+            --slate-muted: #64748b;
+            --bg-page: #f8fafc;
+            --border: #e2e8f0;
+            --border-hover: #cbd5e1;
+            --shadow-lg: 0 20px 40px -15px rgba(23, 105, 170, 0.16);
+            --radius-pill: 9999px;
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: radial-gradient(circle at 85% 15%, #eaf4fd 0%, #f8fafc 60%);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar Header */
+        .auth-nav {
+            height: 72px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--dark);
+            text-decoration: none;
+        }
+
+        .logo-box {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), #0f4c7d);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 1.05rem;
+        }
+
+        .btn-link {
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        /* Card Container */
+        .auth-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+        }
+
+        .auth-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 480px;
+            border-radius: 20px;
+            padding: 36px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .auth-header h2 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-top: 10px;
+            margin-bottom: 6px;
+        }
+
+        .auth-header p {
+            font-size: 0.875rem;
+            color: var(--slate-muted);
+        }
+
+        .suggest-password-btn {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: var(--primary);
+            font-size: 0.775rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .suggest-password-btn:hover {
+            background: #dbeafe;
+        }
+
+        .password-strength-meter {
+            height: 4px;
+            width: 100%;
+            background: var(--border);
+            border-radius: 2px;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        .btn-google {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            background: #ffffff;
+            border-radius: var(--radius-pill);
+            color: var(--dark-subtle);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 20px;
+        }
+
+        .btn-google:hover {
+            background: var(--bg-page);
+            border-color: var(--border-hover);
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            font-size: 0.775rem;
+            color: var(--slate-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .auth-divider::before, .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-group label {
+            font-size: 0.825rem;
+            font-weight: 700;
+            color: var(--dark-subtle);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+            outline: none;
+            background: var(--bg-page);
+            transition: border-color 0.2s ease;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+            background: #ffffff;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-pill);
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            margin-top: 8px;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-seller-link {
+            display: block;
+            text-align: center;
+            padding: 12px;
+            border: 1px solid var(--primary);
+            background: #f0f7fc;
+            color: var(--primary);
+            border-radius: var(--radius-pill);
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-seller-link:hover {
+            background: var(--primary-light);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .input-group input.is-invalid {
+            border-color: #ef4444;
+        }
+
+        .register-message {
+            display: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .register-message.error {
+            display: block;
+            color: #b91c1c;
+            background: #fef2f2;
+        }
+
+        .register-message.success {
+            display: block;
+            color: #166534;
+            background: #f0fdf4;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation Bar -->
+    <header class="auth-nav">
+        <a href="index.html" class="logo">
+            <div class="logo-box"><i class="fa-solid fa-link"></i></div>
+            LipaLink
+        </a>
+        <a href="index.html" class="btn-link">← Back to Home</a>
+    </header>
+
+    <!-- Center Registration Card -->
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <!-- Top Merchant Shortcut Banner -->
+            <div style="background: var(--primary-light); border: 1px dashed var(--primary); padding: 10px 14px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 0.8rem; font-weight: 600; color: var(--primary);"><i class="fa-solid fa-store" style="margin-right: 4px;"></i> Selling products or running a store?</span>
+                <a href="index.html#business-registration" style="font-size: 0.775rem; font-weight: 700; color: var(--primary); text-decoration: underline; white-space: nowrap;">Seller Hub →</a>
+            </div>
+
+            <div class="auth-header">
+                <div class="logo-box" style="margin: 0 auto 10px auto; width: 42px; height: 42px; font-size: 1.1rem;"><i class="fa-solid fa-link"></i></div>
+                <h2>Create Your LipaLink Account</h2>
+                <p>Pay at your pace or list items for installment buyers</p>
+            </div>
+
+            <!-- Social Google Register -->
+            <button class="btn-google" type="button" onclick="alert('Google Sign-up is not yet connected. Please register with your details.');">
+                <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.74-.06-1.28-.19-1.84H9v3.34h4.96c-.1.83-.64 2.08-1.84 2.92l2.84 2.2c1.7-1.57 2.68-3.88 2.68-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.84-2.2c-.76.53-1.78.9-3.12.9-2.38 0-4.41-1.57-5.13-3.74L.97 13.04C2.45 15.98 5.48 18 9 18z"/><path fill="#FBBC05" d="M3.87 10.78c-.19-.58-.3-1.18-.3-1.78s.11-1.2.3-1.78L.97 4.96C.35 6.18 0 7.55 0 9s.35 2.82.97 4.04l2.9-2.26z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0 5.48 0 2.45 2.02.97 4.96l2.9 2.26C4.59 5.05 6.62 3.58 9 3.58z"/></svg>
+                Sign up with Google
+            </button>
+
+            <div class="auth-divider">or register with details</div>
+
+            <!-- Full Registration Form -->
+            <form class="auth-form" id="registerForm" novalidate>
+                <div class="input-group">
+                    <label for="regFullName">Full Name</label>
+                    <input type="text" id="regFullName" name="full_name" placeholder="e.g. Juma Rashid" autocomplete="name" required>
+                </div>
+                <div class="input-group">
+                    <label for="regPhone">Phone Number</label>
+                    <input type="tel" id="regPhone" name="phone" placeholder="07XX XXX XXX or +255 7XX XXX XXX" autocomplete="tel" inputmode="tel" required>
+                </div>
+                <div class="input-group">
+                    <label for="regEmail">Email Address</label>
+                    <input type="email" id="regEmail" name="email" placeholder="name@example.com" autocomplete="email" required>
+                </div>
+
+                <div class="input-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label for="regPassword">Password</label>
+                        <button type="button" class="suggest-password-btn" id="suggestPasswordBtn">
+                            <i class="fa-solid fa-key"></i> Suggest Strong Password
+                        </button>
+                    </div>
+                    <input type="password" id="regPassword" name="password" placeholder="At least 8 characters" autocomplete="new-password" minlength="8" required>
+                    <div class="password-strength-meter">
+                        <div class="password-strength-bar" id="regStrengthBar"></div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="regConfirmPassword">Confirm Password</label>
+                    <input type="password" id="regConfirmPassword" name="confirm_password" placeholder="Re-enter password" autocomplete="new-password" required>
+                </div>
+
+                <div style="font-size: 0.775rem; color: var(--slate-muted); display: flex; align-items: flex-start; gap: 6px;">
+                    <input type="checkbox" id="regTerms" name="terms" required style="margin-top: 2px;">
+                    <label for="regTerms" style="font-size: inherit; font-weight: 500; color: inherit; cursor: pointer;">I agree to the <a href="terms.html" target="_blank" rel="noopener" style="color: var(--primary);">Terms of Service</a> and <a href="privacy.html" target="_blank" rel="noopener" style="color: var(--primary);">Privacy Policy</a>.</label>
+                </div>
+
+                <div id="registerMessage" class="register-message" role="alert"></div>
+
+                <button type="submit" class="btn-submit" id="registerButton">
+                    Complete Registration
+                </button>
+            </form>
+
+            <!-- Bottom Business / Seller Registration Shortcut -->
+            <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); text-align: center;">
+                <p style="font-size: 0.825rem; color: var(--slate-muted); margin-bottom: 10px;">Are you a merchant or store owner?</p>
+                <a href="index.html#business-registration" class="btn-seller-link">
+                    <i class="fa-solid fa-briefcase"></i> Register as Seller / Business Store
+                </a>
+            </div>
+
+            <div style="margin-top: 20px; text-align: center; font-size: 0.875rem; color: var(--slate-muted);">
+                Already have an account? 
+                <!-- LINK TO LOGIN PAGE -->
+                <a href="login.html" style="color: var(--primary); font-weight: 700; text-decoration: none;">Log In Here</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const suggestBtn = document.getElementById('suggestPasswordBtn');
+        const passInput = document.getElementById('regPassword');
+        const confirmPassInput = document.getElementById('regConfirmPassword');
+        const strengthBar = document.getElementById('regStrengthBar');
+
+        const generateStrongPassword = () => {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+            let password = "";
+            for (let i = 0; i < 16; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return password;
+        };
+
+        if (suggestBtn) {
+            suggestBtn.addEventListener('click', () => {
+                const newPass = generateStrongPassword();
+                passInput.type = "text";
+                confirmPassInput.type = "text";
+                passInput.value = newPass;
+                confirmPassInput.value = newPass;
+                
+                strengthBar.style.width = '100%';
+                strengthBar.style.backgroundColor = '#10b981';
+
+                passInput.classList.remove('is-invalid');
+                confirmPassInput.classList.remove('is-invalid');
+                showMessage('success', 'A strong password was generated and filled into both fields. Save it somewhere safe before continuing.');
+            });
+        }
+
+        if (passInput) {
+            passInput.addEventListener('input', () => {
+                const val = passInput.value;
+                if (val.length === 0) {
+                    strengthBar.style.width = '0%';
+                } else if (val.length < 8) {
+                    strengthBar.style.width = '33%';
+                    strengthBar.style.backgroundColor = '#ef4444';
+                } else if (val.length < 12 || !/[^A-Za-z0-9]/.test(val)) {
+                    strengthBar.style.width = '66%';
+                    strengthBar.style.backgroundColor = '#f59e0b';
+                } else {
+                    strengthBar.style.width = '100%';
+                    strengthBar.style.backgroundColor = '#10b981';
+                }
+            });
+        }
+
+        const registerForm = document.getElementById('registerForm');
+        const messageBox = document.getElementById('registerMessage');
+
+        function showMessage(type, text) {
+            messageBox.textContent = text;
+            messageBox.className = 'register-message ' + type;
+        }
+
+        function clearMessage() {
+            messageBox.textContent = '';
+            messageBox.className = 'register-message';
+        }
+
+        // Accepts 07XXXXXXXX, 7XXXXXXXX, +255 7XX..., 255 7XX... and returns 2557XXXXXXXX
+        function normalizeTanzanianPhone(raw) {
+            let digits = String(raw || '').replace(/\D+/g, '');
+            if (digits.length === 9 && /^[67]/.test(digits)) digits = '255' + digits;
+            else if (digits.length === 10 && digits.startsWith('0')) digits = '255' + digits.slice(1);
+            return digits;
+        }
+
+        function markInvalid(input, invalid) {
+            input.classList.toggle('is-invalid', invalid);
+        }
+
+        registerForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            clearMessage();
+
+            const fullNameInput = document.getElementById('regFullName');
+            const phoneInput = document.getElementById('regPhone');
+            const emailInput = document.getElementById('regEmail');
+            const termsInput = document.getElementById('regTerms');
+
+            const fullName = fullNameInput.value.trim();
+            const phone = normalizeTanzanianPhone(phoneInput.value);
+            const email = emailInput.value.trim();
+            const password = passInput.value;
+            const confirmPassword = confirmPassInput.value;
+
+            // --- Client-side validation ---
+            let firstInvalid = null;
+            const checks = [
+                [fullNameInput, fullName.length >= 2, 'Please enter your full name.'],
+                [phoneInput, /^255[67]\d{8}$/.test(phone), 'Please enter a valid Tanzanian phone number (e.g. 0712 345 678).'],
+                [emailInput, /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email), 'Please enter a valid email address.'],
+                [passInput, password.length >= 8, 'Your password must be at least 8 characters long.'],
+                [confirmPassInput, password === confirmPassword, 'Passwords do not match. Please verify both fields.']
+            ];
+
+            for (const [input, ok, msg] of checks) {
+                markInvalid(input, !ok);
+                if (!ok && !firstInvalid) firstInvalid = { input, msg };
+            }
+
+            if (firstInvalid) {
+                showMessage('error', firstInvalid.msg);
+                firstInvalid.input.focus();
+                return;
+            }
+
+            if (!termsInput.checked) {
+                showMessage('error', 'Please accept the Terms of Service and Privacy Policy to continue.');
+                termsInput.focus();
+                return;
+            }
+
+            // Prepare FormData matching register.php expected $_POST keys
+            const formData = new FormData();
+            formData.append('full_name', fullName);
+            formData.append('phone', phone);
+            formData.append('email', email);
+            formData.append('password', password);
+            formData.append('confirm_password', confirmPassword);
+
+            const submitBtn = document.getElementById('registerButton');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating account...';
+
+            try {
+                const response = await fetch('api/register.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                let data;
+                try {
+                    data = await response.json();
+                } catch (_) {
+                    throw new Error('The registration service is not responding correctly. Please try again later.');
+                }
+
+                if (response.ok && data.success) {
+                    showMessage('success', (data.message || 'Your LipaLink account has been created!') + ' Redirecting to login...');
+                    setTimeout(function () {
+                        window.location.href = 'login.html?registered=1';
+                    }, 1200);
+                    return;
+                }
+
+                showMessage('error', data.message || 'Registration failed. Please check your details.');
+            } catch (error) {
+                console.error('Registration error:', error);
+                showMessage('error', error.message || 'A network error occurred. Please check your connection and try again.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
+        });
+
+        // Clear the invalid state as the user types
+        registerForm.querySelectorAll('input').forEach(function (input) {
+            input.addEventListener('input', function () { markInvalid(input, false); });
+        });
+    </script>
+</body>
+</html>

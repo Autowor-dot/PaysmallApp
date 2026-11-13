@@ -1,0 +1,1002 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard — LipaLink</title>
+    <!-- Reuse Existing Project Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        <!-- Mobile Sidebar Backdrop -->
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- H. Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar" aria-label="Primary Navigation">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="logo">
+                    <div class="logo-box"><i class="fa-solid fa-link"></i></div>
+                    <span>LipaLink</span>
+                </a>
+                <button class="sidebar-close" id="sidebarClose" aria-label="Close Menu">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <span class="nav-section-label">Menu</span>
+                <a href="dashboard.html" class="nav-item active">
+                    <span class="nav-item-left"><i class="fa-solid fa-house"></i> Dashboard</span>
+                </a>
+                <a href="marketplace.html" class="nav-item">
+                    <span class="nav-item-left"><i class="fa-solid fa-compass"></i> Discover Products</span>
+                </a>
+                <a href="#active-installments-section" class="nav-item">
+                    <span class="nav-item-left"><i class="fa-solid fa-layer-group"></i> My Installments</span>
+                </a>
+                <a href="#upcoming-payments-section" class="nav-item">
+                    <span class="nav-item-left"><i class="fa-solid fa-credit-card"></i> My Payments</span>
+                </a>
+                <a href="agreements.html" class="nav-item">
+                    <span class="nav-item-left"><i class="fa-solid fa-handshake"></i> My Agreements</span>
+                </a>
+
+                <span class="nav-section-label">Activity & Records</span>
+                <a href="#notifications-section" class="nav-item">
+                    <span class="nav-item-left"><i class="fa-solid fa-bell"></i> Notifications</span>
+                    <span class="nav-badge" id="sidebarNotifBadge">0</span>
+                </a>
+                <a href="transactions.html" class="nav-item">
+                    <span class="nav-item-left"><i class="fa-solid fa-receipt"></i> Transactions &amp; Receipts</span>
+                </a>
+
+                <span class="nav-section-label">Account</span>
+                <a href="profile.html" class="nav-item">
+                    <span class="nav-item-left"><i class="fa-regular fa-user"></i> My Profile</span>
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <span class="nav-item-left"><i class="fa-solid fa-gear"></i> Settings</span>
+                </a>
+                <a href="login.html" class="nav-item logout-item" id="sidebarLogoutBtn">
+                    <span class="nav-item-left"><i class="fa-solid fa-right-from-bracket"></i> Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Workspace -->
+        <div class="main-content">
+            <!-- A. Header -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open Navigation">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="welcome-block">
+                        <h1 id="welcomeHeading">Welcome</h1>
+                        <p>Here's what's happening with your purchases.</p>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <!-- Notification Bell Dropdown -->
+                    <div class="dropdown-wrapper">
+                        <button class="icon-btn" id="notifTrigger" aria-label="Notifications" aria-expanded="false">
+                            <i class="fa-regular fa-bell"></i>
+                            <span class="unread-dot" id="headerUnreadDot"></span>
+                        </button>
+                        <div class="dropdown-menu notif-dropdown" id="notifDropdown">
+                            <div class="dropdown-header">
+                                <strong>Notifications</strong>
+                                <a href="#notifications-section" class="panel-link" style="font-size: 0.78rem;" id="viewAllNotifDropdown">View All</a>
+                            </div>
+                            <div id="dropdownNotifList" style="max-height: 290px; overflow-y: auto; padding: 8px;">
+                                <p style="font-size: 0.82rem; padding: 14px; text-align: center;">Loading notifications...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer Profile Avatar & Dropdown -->
+                    <div class="dropdown-wrapper">
+                        <button class="profile-trigger" id="profileTrigger" aria-expanded="false">
+                            <div class="avatar" id="headerAvatar">CU</div>
+                            <span class="profile-trigger-name" id="headerProfileName">Customer</span>
+                            <i class="fa-solid fa-chevron-down" style="font-size: 0.72rem; color: var(--slate-muted);"></i>
+                        </button>
+                        <div class="dropdown-menu" id="profileDropdown">
+                            <div style="padding: 8px 12px 10px 12px; border-bottom: 1px solid var(--border); margin-bottom: 6px;">
+                                <div style="font-size: 0.85rem; font-weight: 700; color: var(--dark);" id="dropdownUserName">Customer Account</div>
+                                <div style="font-size: 0.75rem; color: var(--slate-muted);" id="dropdownUserEmail">—</div>
+                            </div>
+                            <a href="profile.html" class="dropdown-link">
+                                <i class="fa-regular fa-user"></i> Profile
+                            </a>
+                            <a href="settings.html" class="dropdown-link">
+                                <i class="fa-solid fa-sliders"></i> Settings
+                            </a>
+                            <a href="login.html" class="dropdown-link danger" id="dropdownLogoutBtn">
+                                <i class="fa-solid fa-right-from-bracket"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Dashboard Content -->
+            <main class="dashboard-container">
+
+                <!-- API Loading State Banner -->
+                <div class="state-banner" id="loadingBanner">
+                    <div class="state-banner-info">
+                        <div class="spinner" aria-hidden="true"></div>
+                        <div>
+                            <strong style="font-size: 0.92rem; display: block;">Loading your LipaLink account...</strong>
+                            <span style="font-size: 0.82rem; color: var(--slate-muted);">Fetching your installment plans, balances, and recent activity.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API Error State Banner -->
+                <div class="state-banner error" id="errorBanner" style="display: none;" role="alert">
+                    <div class="state-banner-info">
+                        <i class="fa-solid fa-circle-exclamation" style="font-size: 1.3rem;"></i>
+                        <div>
+                            <strong style="font-size: 0.92rem; display: block;" id="errorTitle">Unable to load dashboard data</strong>
+                            <span style="font-size: 0.82rem;" id="errorMessage">Please verify your connection or sign in again.</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline btn-sm" id="retryBtn">
+                        <i class="fa-solid fa-rotate-right"></i> Retry
+                    </button>
+                </div>
+
+                <!-- C. Quick Actions -->
+                <section class="quick-actions-bar" aria-label="Quick Actions">
+                    <div class="quick-actions-copy">
+                        <h2>Ready for your next purchase?</h2>
+                        <p>Browse verified shops or set up a custom pay-small plan with any seller.</p>
+                    </div>
+                    <div class="quick-actions-btns">
+                        <a href="marketplace.html" class="btn btn-white">
+                            <i class="fa-solid fa-magnifying-glass"></i> Find Products
+                        </a>
+                        <a href="agreement.html" class="btn btn-glass">
+                            <i class="fa-solid fa-file-signature"></i> New Agreement
+                        </a>
+                    </div>
+                </section>
+
+                <!-- B. Financial Summary Cards -->
+                <section class="summary-grid" aria-label="Financial Summary">
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-label">Total Remaining Balance</span>
+                            <div class="stat-icon blue"><i class="fa-solid fa-wallet"></i></div>
+                        </div>
+                        <div class="stat-value" id="statRemainingBalance">—</div>
+                        <div class="stat-sub">Across all active plans</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-label">Active Installment Plans</span>
+                            <div class="stat-icon indigo"><i class="fa-solid fa-layer-group"></i></div>
+                        </div>
+                        <div class="stat-value" id="statActivePlans">—</div>
+                        <div class="stat-sub">Ongoing product &amp; seller plans</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-label">Upcoming Payments</span>
+                            <div class="stat-icon amber"><i class="fa-solid fa-calendar-day"></i></div>
+                        </div>
+                        <div class="stat-value" id="statUpcomingPayments">—</div>
+                        <div class="stat-sub" id="statUpcomingSub">Scheduled installments</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-label">Total Amount Paid</span>
+                            <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
+                        </div>
+                        <div class="stat-value" id="statTotalPaid">—</div>
+                        <div class="stat-sub">Verified completed payments</div>
+                    </div>
+                </section>
+
+                <!-- D. My Active Installment Plans -->
+                <section class="card-panel" id="active-installments-section">
+                    <div class="panel-header">
+                        <div class="panel-title-group">
+                            <h3>My Active Installment Plans</h3>
+                            <p>Track how much you have paid and your next scheduled installment.</p>
+                        </div>
+                        <a href="marketplace.html" class="panel-link">
+                            Add New Plan <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <div id="activePlansContainer">
+                        <div class="empty-state">
+                            <i class="fa-solid fa-box-open"></i>
+                            <h4>No active installment plans</h4>
+                            <p>Once you start paying for a product or seller agreement, your progress will appear here.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- E. Upcoming Payments & G. Notifications -->
+                <div class="two-col-grid">
+                    <!-- E. Upcoming Payments -->
+                    <section class="card-panel" id="upcoming-payments-section" style="margin-bottom: 0;">
+                        <div class="panel-header">
+                            <div class="panel-title-group">
+                                <h3>Upcoming Payments</h3>
+                                <p>Stay ahead of your due dates to keep plans on track.</p>
+                            </div>
+                        </div>
+
+                        <div id="upcomingPaymentsContainer">
+                            <div class="empty-state">
+                                <i class="fa-regular fa-calendar-check"></i>
+                                <h4>No upcoming payments</h4>
+                                <p>You have no scheduled installment dues at the moment.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- G. Notifications -->
+                    <section class="card-panel" id="notifications-section" style="margin-bottom: 0;">
+                        <div class="panel-header">
+                            <div class="panel-title-group">
+                                <h3>Notifications</h3>
+                                <p>Reminders, payment confirmations, and seller updates.</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <span class="badge badge-primary" id="notifCountBadge">0 Unread</span>
+                                <button type="button" class="panel-link" id="markAllReadBtn" style="background: none; border: none; cursor: pointer; font-family: inherit; display: none;">
+                                    <i class="fa-solid fa-check-double"></i> Mark all read
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="notificationsContainer">
+                            <div class="empty-state">
+                                <i class="fa-regular fa-bell-slash"></i>
+                                <h4>No notifications yet</h4>
+                                <p>Payment reminders and seller responses will appear here.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- F. Recent Transactions -->
+                <section class="card-panel" id="recent-transactions-section">
+                    <div class="panel-header">
+                        <div class="panel-title-group">
+                            <h3>Recent Transactions</h3>
+                            <p>Every payment generates an official digital receipt.</p>
+                        </div>
+                        <a href="transactions.html" class="panel-link">
+                            View All <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <div id="recentTransactionsContainer">
+                        <div class="empty-state">
+                            <i class="fa-solid fa-receipt"></i>
+                            <h4>No transactions recorded</h4>
+                            <p>Your completed installment payments and receipts will appear in this table.</p>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Interactive Modal for Plan Details, Pay Now Notice & Digital Receipts -->
+    <div class="modal-overlay" id="actionModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h4 id="modalTitle">Details</h4>
+                <button class="modal-close" id="modalCloseBtn" aria-label="Close Modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-foot" id="modalFoot">
+                <button class="btn btn-outline btn-sm" id="modalDismissBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            'use strict';
+
+            // Cache state from api/dashboard.php for interactive modals
+            let dashboardState = {
+                customer: null,
+                summary: null,
+                installments: [],
+                upcoming_payments: [],
+                transactions: [],
+                notifications: []
+            };
+
+            // --- Formatting Helpers ---
+            function formatTZS(amount) {
+                const numeric = Number(amount);
+                if (!Number.isFinite(numeric)) {
+                    return 'TZS 0';
+                }
+                return 'TZS ' + Math.round(numeric).toLocaleString('en-US');
+            }
+
+            function formatDate(dateString) {
+                if (!dateString) return '—';
+                const parsed = new Date(dateString);
+                if (Number.isNaN(parsed.getTime())) {
+                    return escapeHtml(String(dateString));
+                }
+                return parsed.toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+            }
+
+            function escapeHtml(str) {
+                if (str === null || str === undefined) return '';
+                return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+
+            function getInitials(name) {
+                if (!name) return 'CU';
+                const parts = String(name).trim().split(/\s+/);
+                if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+                return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+            }
+
+            function getGreetingPrefix() {
+                const hour = new Date().getHours();
+                if (hour < 12) return 'Good morning';
+                if (hour < 18) return 'Good afternoon';
+                return 'Good evening';
+            }
+
+            // --- Render A: Header & Customer Info ---
+            function renderHeader(customer) {
+                const fullName = customer?.full_name || customer?.name || '';
+                const firstName = fullName ? fullName.trim().split(/\s+/)[0] : '';
+                const greeting = getGreetingPrefix();
+
+                document.getElementById('welcomeHeading').textContent = firstName
+                    ? `${greeting}, ${firstName}!`
+                    : `${greeting}!`;
+
+                document.getElementById('headerProfileName').textContent = fullName || 'Customer';
+                document.getElementById('dropdownUserName').textContent = fullName || 'Customer Account';
+                document.getElementById('dropdownUserEmail').textContent = customer?.email || customer?.phone || '';
+
+                const avatarEl = document.getElementById('headerAvatar');
+                if (customer?.avatar_url) {
+                    avatarEl.innerHTML = `<img src="${escapeHtml(customer.avatar_url)}" alt="${escapeHtml(fullName)}">`;
+                } else {
+                    avatarEl.textContent = getInitials(fullName);
+                }
+            }
+
+            // --- Render B: Financial Summary Cards ---
+            function renderSummary(summary, installments, upcoming) {
+                const s = summary || {};
+                const remaining = s.total_remaining_balance ?? s.remaining_balance ?? 0;
+                const activeCount = s.active_installment_plans ?? s.active_plans_count ?? installments.length;
+                const upcomingTotal = s.upcoming_payments_amount ?? s.upcoming_payments ?? null;
+                const upcomingCount = s.upcoming_payments_count ?? upcoming.length;
+                const totalPaid = s.total_amount_paid ?? s.total_paid ?? 0;
+
+                document.getElementById('statRemainingBalance').textContent = formatTZS(remaining);
+                document.getElementById('statActivePlans').textContent = Number(activeCount).toLocaleString('en-US');
+                document.getElementById('statUpcomingPayments').textContent = upcomingTotal !== null
+                    ? formatTZS(upcomingTotal)
+                    : `${Number(upcomingCount).toLocaleString('en-US')} Due`;
+                document.getElementById('statUpcomingSub').textContent = upcomingCount === 1
+                    ? '1 installment scheduled'
+                    : `${upcomingCount} installments scheduled`;
+                document.getElementById('statTotalPaid').textContent = formatTZS(totalPaid);
+            }
+
+            // --- Render D: My Active Installment Plans ---
+            function renderInstallmentPlans(plans) {
+                const container = document.getElementById('activePlansContainer');
+
+                if (!Array.isArray(plans) || plans.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fa-solid fa-box-open"></i>
+                            <h4>No active installment plans</h4>
+                            <p>You do not have any ongoing installment plans yet. Browse products or create an agreement to get started.</p>
+                            <a href="marketplace.html" class="btn btn-primary btn-sm">Find Products</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const cardsHtml = plans.map((plan, index) => {
+                    const total = Number(plan.total_price ?? plan.total_amount ?? 0);
+                    const paid = Number(plan.amount_paid ?? plan.paid_amount ?? 0);
+                    const remaining = plan.remaining_balance !== undefined
+                        ? Number(plan.remaining_balance)
+                        : Math.max(0, total - paid);
+
+                    let pct = plan.completion_percentage !== undefined
+                        ? Number(plan.completion_percentage)
+                        : (total > 0 ? Math.round((paid / total) * 100) : 0);
+                    pct = Math.max(0, Math.min(100, pct));
+
+                    const statusRaw = String(plan.status || 'Active');
+                    const statusLower = statusRaw.toLowerCase();
+                    let badgeClass = 'badge-primary';
+                    if (statusLower.includes('complete') || statusLower.includes('paid')) badgeClass = 'badge-success';
+                    else if (statusLower.includes('overdue') || statusLower.includes('late')) badgeClass = 'badge-danger';
+                    else if (statusLower.includes('due') || statusLower.includes('pending')) badgeClass = 'badge-warning';
+
+                    const thumbHtml = plan.product_image
+                        ? `<img src="${escapeHtml(plan.product_image)}" alt="${escapeHtml(plan.product_name || 'Product')}">`
+                        : `<i class="fa-solid fa-bag-shopping"></i>`;
+
+                    return `
+                        <article class="plan-card">
+                            <div>
+                                <div class="plan-card-top">
+                                    <div class="plan-thumb">${thumbHtml}</div>
+                                    <div class="plan-meta">
+                                        <div class="plan-meta-row">
+                                            <h4 title="${escapeHtml(plan.product_name || 'Installment Plan')}">${escapeHtml(plan.product_name || 'Installment Plan')}</h4>
+                                            <span class="badge ${badgeClass}">${escapeHtml(statusRaw)}</span>
+                                        </div>
+                                        <div class="plan-seller">
+                                            <i class="fa-solid fa-store" style="color: var(--primary);"></i>
+                                            <span>${escapeHtml(plan.seller_name || 'Verified Seller')}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="plan-financials">
+                                    <div class="plan-fin-item">
+                                        <small>Total Price</small>
+                                        <strong>${formatTZS(total)}</strong>
+                                    </div>
+                                    <div class="plan-fin-item">
+                                        <small>Amount Paid</small>
+                                        <strong style="color: var(--success);">${formatTZS(paid)}</strong>
+                                    </div>
+                                    <div class="plan-fin-item">
+                                        <small>Remaining</small>
+                                        <strong>${formatTZS(remaining)}</strong>
+                                    </div>
+                                </div>
+
+                                <div class="plan-progress-wrap">
+                                    <div class="plan-progress-labels">
+                                        <span style="color: var(--slate-muted);">Payment Progress</span>
+                                        <span style="color: var(--primary);">${pct}%</span>
+                                    </div>
+                                    <div class="progress-track">
+                                        <div class="progress-fill" style="width: ${pct}%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="plan-card-footer">
+                                <div class="next-pay-info">
+                                    <small>Next: ${formatDate(plan.next_payment_due_date || plan.due_date)}</small>
+                                    <strong>${formatTZS(plan.next_payment_amount || 0)}</strong>
+                                </div>
+                                <button type="button" class="btn btn-outline btn-sm" data-action="view-plan" data-index="${index}">
+                                    View Details
+                                </button>
+                            </div>
+                        </article>
+                    `;
+                }).join('');
+
+                container.innerHTML = `<div class="plans-grid">${cardsHtml}</div>`;
+            }
+
+            // --- Render E: Upcoming Payments ---
+            function renderUpcomingPayments(payments) {
+                const container = document.getElementById('upcomingPaymentsContainer');
+
+                if (!Array.isArray(payments) || payments.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fa-regular fa-calendar-check"></i>
+                            <h4>No upcoming payments</h4>
+                            <p>You're all caught up! Scheduled installments will show here before their due date.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const itemsHtml = payments.map((item, index) => {
+                    const statusRaw = String(item.status || 'Upcoming');
+                    const statusLower = statusRaw.toLowerCase();
+
+                    let rowClass = '';
+                    let badgeClass = 'badge-primary';
+                    let statusIcon = 'fa-regular fa-clock';
+
+                    if (statusLower.includes('overdue') || statusLower.includes('late')) {
+                        rowClass = 'overdue';
+                        badgeClass = 'badge-danger';
+                        statusIcon = 'fa-solid fa-circle-exclamation';
+                    } else if (statusLower.includes('due')) {
+                        rowClass = 'due-today';
+                        badgeClass = 'badge-warning';
+                        statusIcon = 'fa-solid fa-hourglass-half';
+                    }
+
+                    const title = item.product_name || item.agreement_name || 'Installment Payment';
+
+                    return `
+                        <div class="payment-row ${rowClass}">
+                            <div class="payment-row-main">
+                                <h4>${escapeHtml(title)}</h4>
+                                <div class="payment-row-meta">
+                                    <span><i class="fa-solid fa-store"></i> ${escapeHtml(item.seller_name || 'Seller')}</span>
+                                    <span><i class="fa-regular fa-calendar"></i> Due: ${formatDate(item.due_date)}</span>
+                                    <span class="badge ${badgeClass}"><i class="${statusIcon}"></i> ${escapeHtml(statusRaw)}</span>
+                                </div>
+                            </div>
+                            <div class="payment-row-actions">
+                                <div class="payment-amount">
+                                    <strong>${formatTZS(item.amount_due ?? item.amount ?? 0)}</strong>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-sm" data-action="pay-now" data-index="${index}">
+                                    Pay Now
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                container.innerHTML = `<div class="payment-list">${itemsHtml}</div>`;
+            }
+
+            // --- Render G: Notifications (Panel & Header Dropdown) ---
+            function renderNotifications(notifications) {
+                const container = document.getElementById('notificationsContainer');
+                const dropdownList = document.getElementById('dropdownNotifList');
+                const unreadDot = document.getElementById('headerUnreadDot');
+                const countBadge = document.getElementById('notifCountBadge');
+                const sidebarBadge = document.getElementById('sidebarNotifBadge');
+
+                const list = Array.isArray(notifications) ? notifications : [];
+                const unreadCount = list.filter(n => !n.is_read && n.status !== 'read').length;
+
+                countBadge.textContent = `${unreadCount} Unread`;
+                document.getElementById('markAllReadBtn').style.display = unreadCount > 0 ? 'inline-flex' : 'none';
+                if (unreadCount > 0) {
+                    unreadDot.style.display = 'block';
+                    sidebarBadge.style.display = 'inline-block';
+                    sidebarBadge.textContent = unreadCount;
+                } else {
+                    unreadDot.style.display = 'none';
+                    sidebarBadge.style.display = 'none';
+                }
+
+                if (list.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fa-regular fa-bell-slash"></i>
+                            <h4>No notifications yet</h4>
+                            <p>Payment reminders, confirmations, and seller updates will appear here.</p>
+                        </div>
+                    `;
+                    dropdownList.innerHTML = `<p style="font-size: 0.82rem; padding: 16px; text-align: center;">No notifications yet.</p>`;
+                    return;
+                }
+
+                const buildNotifItem = (notif) => {
+                    const isUnread = !notif.is_read && notif.status !== 'read';
+                    const typeLower = String(notif.type || '').toLowerCase();
+                    let iconClass = 'fa-solid fa-bell';
+                    if (typeLower.includes('payment') || typeLower.includes('success')) iconClass = 'fa-solid fa-circle-check';
+                    else if (typeLower.includes('reminder')) iconClass = 'fa-solid fa-clock';
+                    else if (typeLower.includes('agreement')) iconClass = 'fa-solid fa-handshake';
+                    else if (typeLower.includes('seller')) iconClass = 'fa-solid fa-store';
+
+                    return `
+                        <div class="notif-item ${isUnread ? 'unread' : ''}" data-notif-id="${escapeHtml(String(notif.id ?? ''))}" ${isUnread ? 'style="cursor: pointer;" title="Click to mark as read"' : ''}>
+                            <div class="notif-icon"><i class="${iconClass}"></i></div>
+                            <div class="notif-body">
+                                <div class="notif-body-top">
+                                    <h5>${escapeHtml(notif.title || 'Account Update')}</h5>
+                                    ${isUnread ? '<span class="notif-unread-pill" title="Unread"></span>' : ''}
+                                </div>
+                                <p>${escapeHtml(notif.message || '')}</p>
+                                <span class="notif-time">${escapeHtml(notif.created_at || '')}</span>
+                            </div>
+                        </div>
+                    `;
+                };
+
+                container.innerHTML = `<div class="notif-list">${list.slice(0, 5).map(buildNotifItem).join('')}</div>`;
+                dropdownList.innerHTML = `<div class="notif-list">${list.slice(0, 4).map(buildNotifItem).join('')}</div>`;
+            }
+
+            // --- Render F: Recent Transactions ---
+            function renderTransactions(transactions) {
+                const container = document.getElementById('recentTransactionsContainer');
+
+                if (!Array.isArray(transactions) || transactions.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fa-solid fa-receipt"></i>
+                            <h4>No transactions recorded</h4>
+                            <p>Once you make an installment payment, your transaction history and digital receipts will appear here.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const rowsHtml = transactions.map((tx, index) => {
+                    const statusRaw = String(tx.status || 'Completed');
+                    const statusLower = statusRaw.toLowerCase();
+                    let badgeClass = 'badge-success';
+                    if (statusLower.includes('fail') || statusLower.includes('cancel')) badgeClass = 'badge-danger';
+                    else if (statusLower.includes('pend')) badgeClass = 'badge-warning';
+
+                    const txCode = tx.transaction_id || tx.reference || `#TX-${tx.id || index + 1}`;
+                    const itemName = tx.product_name || tx.agreement_name || 'Installment Payment';
+
+                    return `
+                        <tr>
+                            <td><span class="tx-id">${escapeHtml(txCode)}</span></td>
+                            <td><strong style="color: var(--dark);">${escapeHtml(itemName)}</strong></td>
+                            <td><strong style="color: var(--dark);">${formatTZS(tx.amount_paid ?? tx.amount ?? 0)}</strong></td>
+                            <td>${formatDate(tx.transaction_date || tx.created_at)}</td>
+                            <td>${escapeHtml(tx.payment_method || 'Mobile Money')}</td>
+                            <td><span class="badge ${badgeClass}">${escapeHtml(statusRaw)}</span></td>
+                            <td>
+                                <button type="button" class="btn btn-outline btn-sm" data-action="view-receipt" data-index="${index}">
+                                    <i class="fa-solid fa-file-invoice"></i> View Receipt
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+                container.innerHTML = `
+                    <div class="table-responsive">
+                        <table class="tx-table">
+                            <thead>
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>Product / Agreement</th>
+                                    <th>Amount Paid</th>
+                                    <th>Date</th>
+                                    <th>Method</th>
+                                    <th>Status</th>
+                                    <th>Receipt</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rowsHtml}</tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            // --- Modal Controller ---
+            const modalOverlay = document.getElementById('actionModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            const modalFoot = document.getElementById('modalFoot');
+
+            function openModal(title, bodyHtml, footerHtml) {
+                modalTitle.textContent = title;
+                modalBody.innerHTML = bodyHtml;
+                modalFoot.innerHTML = footerHtml || `<button type="button" class="btn btn-outline btn-sm" id="modalCloseInner">Close</button>`;
+                modalOverlay.classList.add('open');
+
+                const innerClose = document.getElementById('modalCloseInner');
+                if (innerClose) innerClose.addEventListener('click', closeModal);
+            }
+
+            function closeModal() {
+                modalOverlay.classList.remove('open');
+            }
+
+            document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+            document.getElementById('modalDismissBtn').addEventListener('click', closeModal);
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) closeModal();
+            });
+
+            // --- Interactive Delegated Actions (View Details, Pay Now, View Receipt) ---
+            document.addEventListener('click', (e) => {
+                const actionBtn = e.target.closest('[data-action]');
+                if (actionBtn) {
+                    const action = actionBtn.getAttribute('data-action');
+                    const idx = Number(actionBtn.getAttribute('data-index'));
+
+                    if (action === 'view-plan' && dashboardState.installments[idx]) {
+                        const plan = dashboardState.installments[idx];
+                        const total = Number(plan.total_price ?? plan.total_amount ?? 0);
+                        const paid = Number(plan.amount_paid ?? plan.paid_amount ?? 0);
+                        const rem = plan.remaining_balance !== undefined ? Number(plan.remaining_balance) : Math.max(0, total - paid);
+
+                        openModal(
+                            'Installment Plan Details',
+                            `
+                                <div class="modal-row"><span style="color: var(--slate-muted);">Product / Agreement</span><strong>${escapeHtml(plan.product_name || 'Installment Plan')}</strong></div>
+                                <div class="modal-row"><span style="color: var(--slate-muted);">Seller</span><strong>${escapeHtml(plan.seller_name || 'Verified Seller')}</strong></div>
+                                <div class="modal-row"><span style="color: var(--slate-muted);">Total Price</span><strong>${formatTZS(total)}</strong></div>
+                                <div class="modal-row"><span style="color: var(--slate-muted);">Amount Paid</span><strong style="color: var(--success);">${formatTZS(paid)}</strong></div>
+                                <div class="modal-row"><span style="color: var(--slate-muted);">Remaining Balance</span><strong>${formatTZS(rem)}</strong></div>
+                                <div class="modal-row"><span style="color: var(--slate-muted);">Next Installment</span><strong>${formatTZS(plan.next_payment_amount || 0)}</strong></div>
+                                <div class="modal-row"><span style="color: var(--slate-muted);">Next Due Date</span><strong>${formatDate(plan.next_payment_due_date || plan.due_date)}</strong></div>
+                                <div class="modal-row"><span style="color: var(--slate-muted);">Status</span><strong>${escapeHtml(plan.status || 'Active')}</strong></div>
+                            `
+                        );
+                    }
+
+                    if (action === 'pay-now' && dashboardState.upcoming_payments[idx]) {
+                        const pay = dashboardState.upcoming_payments[idx];
+                        const targetUrl = pay.payment_url || `pay.html?payment_id=${encodeURIComponent(pay.id || pay.payment_id || '')}`;
+                        openModal(
+                            'Proceed to Installment Payment',
+                            `
+                                <p style="margin-bottom: 14px;">You are about to make an installment payment via PaySmallApp's payment gateway.</p>
+                                <div class="modal-row"><span style="color: var(--slate-muted);">Item</span><strong>${escapeHtml(pay.product_name || pay.agreement_name || 'Installment')}</strong></div>
+                                <div class="modal-row"><span style="color: var(--slate-muted);">Seller</span><strong>${escapeHtml(pay.seller_name || 'Seller')}</strong></div>
+                                <div class="modal-row"><span style="color: var(--slate-muted);">Amount Due</span><strong style="color: var(--primary);">${formatTZS(pay.amount_due ?? pay.amount ?? 0)}</strong></div>
+                                <div class="modal-row"><span style="color: var(--slate-muted);">Due Date</span><strong>${formatDate(pay.due_date)}</strong></div>
+                                <p style="font-size: 0.8rem; margin-top: 12px; background: var(--primary-light); color: var(--primary); padding: 10px 12px; border-radius: 10px;">
+                                    <i class="fa-solid fa-circle-info"></i> Online checkout integration will complete this Mobile Money or Bank transfer.
+                                </p>
+                            `,
+                            `
+                                <button type="button" class="btn btn-outline btn-sm" id="modalCloseInner">Cancel</button>
+                                <a href="${escapeHtml(targetUrl)}" class="btn btn-primary btn-sm">Continue to Payment</a>
+                            `
+                        );
+                    }
+
+                    if (action === 'view-receipt' && dashboardState.transactions[idx]) {
+                        const tx = dashboardState.transactions[idx];
+                        const txCode = tx.transaction_id || tx.reference || `#TX-${tx.id || idx + 1}`;
+                        openModal(
+                            'Official Digital Receipt',
+                            `
+                                <div style="text-align: center; padding-bottom: 14px; border-bottom: 1px dashed var(--border); margin-bottom: 10px;">
+                                    <span class="badge badge-success"><i class="fa-solid fa-check"></i> Verified Payment Receipt</span>
+                                    <div style="font-size: 1.35rem; font-weight: 800; margin-top: 8px;">${formatTZS(tx.amount_paid ?? tx.amount ?? 0)}</div>
+                                </div>
+                                <div class="modal-row"><span style="color: var(--slate-muted);">Receipt / TX ID</span><strong class="tx-id">${escapeHtml(txCode)}</strong></div>
+                                <div class="modal-row"><span style="color: var(--slate-muted);">Product / Agreement</span><strong>${escapeHtml(tx.product_name || tx.agreement_name || 'Installment')}</strong></div>
+                                <div class="modal-row"><span style="color: var(--slate-muted);">Payment Date</span><strong>${formatDate(tx.transaction_date || tx.created_at)}</strong></div>
+                                <div class="modal-row"><span style="color: var(--slate-muted);">Payment Method</span><strong>${escapeHtml(tx.payment_method || 'Mobile Money')}</strong></div>
+                                <div class="modal-row"><span style="color: var(--slate-muted);">Status</span><strong>${escapeHtml(tx.status || 'Completed')}</strong></div>
+                            `
+                        );
+                    }
+                }
+            });
+
+            // Close the modal with the Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modalOverlay.classList.contains('open')) closeModal();
+            });
+
+            // --- Notifications: mark as read (api/notifications.php) ---
+            async function postNotificationAction(body) {
+                const res = await fetch('api/notifications.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify(body)
+                });
+                if (!res.ok) throw new Error('Could not update notifications.');
+                return res.json();
+            }
+
+            document.getElementById('markAllReadBtn').addEventListener('click', async () => {
+                try {
+                    await postNotificationAction({ action: 'mark_all_read' });
+                } catch (err) {
+                    console.warn(err.message);
+                }
+                dashboardState.notifications = dashboardState.notifications.map(n => Object.assign({}, n, { is_read: true }));
+                renderNotifications(dashboardState.notifications);
+            });
+
+            document.addEventListener('click', async (e) => {
+                const item = e.target.closest('.notif-item.unread[data-notif-id]');
+                if (!item) return;
+                const id = item.getAttribute('data-notif-id');
+                try {
+                    if (id) await postNotificationAction({ action: 'mark_read', id: Number(id) });
+                } catch (err) {
+                    console.warn(err.message);
+                }
+                dashboardState.notifications = dashboardState.notifications.map(n => String(n.id) === id ? Object.assign({}, n, { is_read: true }) : n);
+                renderNotifications(dashboardState.notifications);
+            });
+
+            // --- Sidebar & Dropdown Interactions ---
+            const sidebar = document.getElementById('sidebar');
+            const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+            function toggleSidebar(open) {
+                sidebar.classList.toggle('open', open);
+                sidebarBackdrop.classList.toggle('open', open);
+            }
+
+            document.getElementById('mobileMenuBtn').addEventListener('click', () => toggleSidebar(true));
+            document.getElementById('sidebarClose').addEventListener('click', () => toggleSidebar(false));
+            sidebarBackdrop.addEventListener('click', () => toggleSidebar(false));
+
+            const notifTrigger = document.getElementById('notifTrigger');
+            const notifDropdown = document.getElementById('notifDropdown');
+            const profileTrigger = document.getElementById('profileTrigger');
+            const profileDropdown = document.getElementById('profileDropdown');
+
+            notifTrigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const willOpen = !notifDropdown.classList.contains('open');
+                profileDropdown.classList.remove('open');
+                notifDropdown.classList.toggle('open', willOpen);
+                notifTrigger.setAttribute('aria-expanded', String(willOpen));
+            });
+
+            profileTrigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const willOpen = !profileDropdown.classList.contains('open');
+                notifDropdown.classList.remove('open');
+                profileDropdown.classList.toggle('open', willOpen);
+                profileTrigger.setAttribute('aria-expanded', String(willOpen));
+            });
+
+            document.addEventListener('click', () => {
+                notifDropdown.classList.remove('open');
+                profileDropdown.classList.remove('open');
+            });
+
+            document.getElementById('viewAllNotifDropdown').addEventListener('click', () => {
+                notifDropdown.classList.remove('open');
+            });
+
+            async function logout(event) {
+                event.preventDefault();
+                try {
+                    // End the server-side PHP session as well as the local cache
+                    await fetch('api/logout.php', { method: 'POST', credentials: 'same-origin' });
+                } catch (_) {
+                    // Backend unavailable; local sign-out still proceeds
+                }
+                sessionStorage.removeItem('lipalink_user');
+                window.location.href = 'login.html';
+            }
+
+            document.getElementById('sidebarLogoutBtn').addEventListener('click', logout);
+            document.getElementById('dropdownLogoutBtn').addEventListener('click', logout);
+
+            function readStoredUser() {
+                try {
+                    return JSON.parse(sessionStorage.getItem('lipalink_user') || 'null');
+                } catch (err) {
+                    return null;
+                }
+            }
+
+            function renderSignedInShell(user) {
+                renderHeader(user || {});
+                renderSummary({}, [], []);
+                renderInstallmentPlans([]);
+                renderUpcomingPayments([]);
+                renderNotifications([]);
+                renderTransactions([]);
+            }
+
+            // --- 3. API DATA INTEGRATION (api/dashboard.php) ---
+            async function loadDashboard() {
+                const loadingBanner = document.getElementById('loadingBanner');
+                const errorBanner = document.getElementById('errorBanner');
+                const errorTitle = document.getElementById('errorTitle');
+                const errorMessage = document.getElementById('errorMessage');
+
+                loadingBanner.style.display = 'flex';
+                errorBanner.style.display = 'none';
+
+                try {
+                    const response = await fetch('api/dashboard.php', {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json'
+                        },
+                        credentials: 'same-origin'
+                    });
+
+                    // Handle unauthenticated session redirects or HTTP 401
+                    if (response.status === 401) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+
+                    let result;
+                    try {
+                        result = await response.json();
+                    } catch (parseErr) {
+                        throw new Error('Dashboard service is not returning valid JSON yet.');
+                    }
+
+                    if (!response.ok || !result.success) {
+                        throw new Error(result.message || 'Unable to load dashboard data.');
+                    }
+
+                    // Support both nested `result.data` and top-level payload keys
+                    const payload = result.data || result;
+
+                    dashboardState = {
+                        customer: payload.customer || payload.user || {},
+                        summary: payload.summary || payload.stats || {},
+                        installments: Array.isArray(payload.active_installments)
+                            ? payload.active_installments
+                            : (Array.isArray(payload.installments) ? payload.installments : []),
+                        upcoming_payments: Array.isArray(payload.upcoming_payments) ? payload.upcoming_payments : [],
+                        transactions: Array.isArray(payload.recent_transactions)
+                            ? payload.recent_transactions
+                            : (Array.isArray(payload.transactions) ? payload.transactions : []),
+                        notifications: Array.isArray(payload.notifications) ? payload.notifications : []
+                    };
+
+                    renderHeader(dashboardState.customer);
+                    renderSummary(
+                        dashboardState.summary,
+                        dashboardState.installments,
+                        dashboardState.upcoming_payments
+                    );
+                    renderInstallmentPlans(dashboardState.installments);
+                    renderUpcomingPayments(dashboardState.upcoming_payments);
+                    renderNotifications(dashboardState.notifications);
+                    renderTransactions(dashboardState.transactions);
+
+                } catch (error) {
+                    console.error('Dashboard error:', error);
+                    const storedUser = readStoredUser();
+                    if (storedUser) {
+                        renderSignedInShell(storedUser);
+                        errorTitle.textContent = 'Activity could not be loaded';
+                        errorMessage.textContent = 'You are signed in. Installment plans will appear here when the dashboard service is available.';
+                    } else {
+                        errorTitle.textContent = 'Unable to load dashboard data';
+                        errorMessage.textContent = error.message || 'Could not connect to api/dashboard.php.';
+                    }
+                    errorBanner.style.display = 'flex';
+                } finally {
+                    loadingBanner.style.display = 'none';
+                }
+            }
+
+            document.getElementById('retryBtn').addEventListener('click', loadDashboard);
+            document.addEventListener('DOMContentLoaded', loadDashboard);
+        })();
+    </script>
+</body>
+</html>

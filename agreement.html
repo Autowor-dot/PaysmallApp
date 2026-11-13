@@ -1,0 +1,2973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Installment Agreement — LipaLink</title>
+    <!-- Existing PaySmallApp / LipaLink Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- Existing PaySmallApp / LipaLink Design Tokens --- */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary: #1769AA;
+            --primary-hover: #12558c;
+            --primary-light: #f0f7fc;
+            --primary-accent: #2563eb;
+            --dark: #0f172a;
+            --dark-subtle: #334155;
+            --slate-muted: #64748b;
+            --slate-light: #94a3b8;
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --border-hover: #cbd5e1;
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-bg: #fffbeb;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+            --shadow-md: 0 10px 25px -5px rgba(23, 105, 170, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+            --shadow-lg: 0 20px 40px -15px rgba(23, 105, 170, 0.16);
+            --radius-card: 16px;
+            --radius-pill: 9999px;
+            --topbar-height: 74px;
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: radial-gradient(circle at 85% 5%, #eaf4fd 0%, #f8fafc 45%);
+            color: var(--dark);
+            line-height: 1.5;
+            letter-spacing: -0.011em;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5 {
+            color: var(--dark);
+            letter-spacing: -0.025em;
+            font-weight: 800;
+        }
+
+        p {
+            color: var(--slate-muted);
+        }
+
+        /* --- Top Navigation Header --- */
+        .topbar {
+            height: var(--topbar-height);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .topbar-inner {
+            max-width: 1120px;
+            height: 100%;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--dark);
+            text-decoration: none;
+        }
+
+        .logo-box {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), #0f4c7d);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(23, 105, 170, 0.25);
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* --- Reusable Buttons & Badges --- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            font-size: 0.925rem;
+            font-weight: 600;
+            border-radius: var(--radius-pill);
+            text-decoration: none;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+            border: 1px solid transparent;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+
+        .btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-sm {
+            padding: 9px 18px;
+            font-size: 0.85rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(23, 105, 170, 0.28);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(23, 105, 170, 0.38);
+        }
+
+        .btn-outline {
+            background-color: #ffffff;
+            color: var(--dark-subtle);
+            border-color: var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-outline:hover:not(:disabled) {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: var(--radius-pill);
+            font-size: 0.76rem;
+            font-weight: 700;
+        }
+
+        .badge-primary { background: var(--primary-light); color: var(--primary); border: 1px solid rgba(23, 105, 170, 0.16); }
+        .badge-warning { background: var(--warning-bg); color: #b45309; border: 1px solid #fde68a; }
+        .badge-success { background: var(--success-bg); color: var(--success); border: 1px solid #a7f3d0; }
+
+        /* --- Main Wizard Workspace --- */
+        .wizard-container {
+            max-width: 960px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 36px 24px 72px 24px;
+            flex: 1;
+        }
+
+        .page-intro {
+            text-align: center;
+            max-width: 640px;
+            margin: 0 auto 30px auto;
+        }
+
+        .page-intro h1 {
+            font-size: 2rem;
+            margin-top: 10px;
+            margin-bottom: 8px;
+        }
+
+        .page-intro p {
+            font-size: 0.96rem;
+        }
+
+        /* --- 5-Step Progress Indicator --- */
+        .stepper-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stepper-track {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            position: relative;
+        }
+
+        .step-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg-page);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-family: inherit;
+        }
+
+        .step-pill:hover {
+            border-color: var(--primary);
+        }
+
+        .step-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 1.5px solid var(--border-hover);
+            color: var(--slate-muted);
+            font-size: 0.8rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .step-label {
+            min-width: 0;
+        }
+
+        .step-label small {
+            display: block;
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--slate-light);
+            font-weight: 700;
+        }
+
+        .step-label strong {
+            display: block;
+            font-size: 0.82rem;
+            color: var(--dark-subtle);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .step-pill.active {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(23, 105, 170, 0.1);
+        }
+
+        .step-pill.active .step-num {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+        }
+
+        .step-pill.active .step-label strong {
+            color: var(--primary);
+        }
+
+        .step-pill.completed {
+            background: #ffffff;
+            border-color: #a7f3d0;
+        }
+
+        .step-pill.completed .step-num {
+            background: var(--success);
+            border-color: var(--success);
+            color: #ffffff;
+        }
+
+        .progress-bar-wrap {
+            margin-top: 14px;
+            height: 6px;
+            background: var(--border);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 20%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-accent));
+            border-radius: 99px;
+            transition: width 0.35s ease;
+        }
+
+        /* --- Main Form Card --- */
+        .wizard-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .step-panel {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .step-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-header {
+            padding-bottom: 18px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .step-header h2 {
+            font-size: 1.35rem;
+            margin-bottom: 4px;
+        }
+
+        .step-header p {
+            font-size: 0.88rem;
+        }
+
+        /* --- Form Grid & Inputs --- */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full-span {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 0.84rem;
+            font-weight: 700;
+            color: var(--dark-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+        }
+
+        .req-star {
+            color: var(--danger);
+            margin-left: 2px;
+        }
+
+        .field-hint {
+            font-size: 0.76rem;
+            color: var(--slate-muted);
+            font-weight: 500;
+        }
+
+        .input-control {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 11px;
+            border: 1px solid var(--border);
+            font-size: 0.92rem;
+            font-family: inherit;
+            color: var(--dark);
+            background: var(--bg-page);
+            outline: none;
+            transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .input-control:focus {
+            border-color: var(--primary);
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.1);
+        }
+
+        .input-control[readonly] {
+            background: #f1f5f9;
+            color: var(--dark);
+            font-weight: 700;
+            cursor: default;
+        }
+
+        .input-control.is-invalid {
+            border-color: var(--danger);
+            background: #fffafa;
+        }
+
+        textarea.input-control {
+            resize: vertical;
+            min-height: 88px;
+        }
+
+        .field-error {
+            font-size: 0.77rem;
+            color: var(--danger);
+            font-weight: 600;
+            display: none;
+        }
+
+        .field-error.visible {
+            display: block;
+        }
+
+        /* --- Choice Cards (Seller Type, Delivery Timing, Payment Methods) --- */
+        .choice-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .choice-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .choice-card {
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            background: var(--bg-page);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            position: relative;
+        }
+
+        .choice-card:hover {
+            border-color: var(--primary);
+            background: #ffffff;
+        }
+
+        .choice-card.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            box-shadow: 0 4px 12px rgba(23, 105, 170, 0.1);
+        }
+
+        .choice-card input[type="radio"] {
+            accent-color: var(--primary);
+            margin-top: 3px;
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .choice-card-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: #ffffff;
+            color: var(--primary);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .choice-card.selected .choice-card-icon {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        .choice-card-body h4 {
+            font-size: 0.94rem;
+            margin-bottom: 3px;
+        }
+
+        .choice-card-body p {
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        /* --- Registered Seller Search Box --- */
+        .seller-search-box {
+            background: var(--bg-page);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 18px;
+        }
+
+        .search-bar-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .seller-results-list {
+            margin-top: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .seller-result-item {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 13px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .seller-result-item.picked {
+            border-color: var(--success);
+            background: var(--success-bg);
+        }
+
+        .selected-seller-card {
+            background: var(--primary-light);
+            border: 1px solid rgba(23, 105, 170, 0.28);
+            border-radius: 14px;
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        /* --- Image Upload Dropzone --- */
+        .upload-zone {
+            border: 1.5px dashed var(--border-hover);
+            border-radius: 14px;
+            padding: 18px;
+            background: var(--bg-page);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .upload-preview {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .upload-thumb {
+            width: 54px;
+            height: 54px;
+            border-radius: 10px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.25rem;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .upload-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* --- Live Financial Calculation Summary & Schedule --- */
+        .calc-summary-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, #0d4b7a 100%);
+            color: #ffffff;
+            border-radius: 14px;
+            padding: 18px;
+            margin: 20px 0;
+        }
+
+        .calc-metric small {
+            display: block;
+            font-size: 0.72rem;
+            color: rgba(255, 255, 255, 0.82);
+            margin-bottom: 2px;
+        }
+
+        .calc-metric strong {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .schedule-box {
+            background: var(--bg-page);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+            margin-top: 18px;
+        }
+
+        .schedule-box-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .schedule-table-wrap {
+            max-height: 260px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #ffffff;
+        }
+
+        table.mini-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.84rem;
+        }
+
+        .mini-table th {
+            background: var(--bg-page);
+            padding: 10px 14px;
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--slate-muted);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+        }
+
+        .mini-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--dark-subtle);
+        }
+
+        .mini-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .mini-table input.custom-inst-input {
+            width: 140px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-family: inherit;
+            font-size: 0.84rem;
+            font-weight: 700;
+        }
+
+        /* --- Sub-Section Divider --- */
+        .sub-section {
+            margin-top: 26px;
+            padding-top: 22px;
+            border-top: 1px solid var(--border);
+        }
+
+        .sub-section-title {
+            font-size: 1.02rem;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sub-section-desc {
+            font-size: 0.83rem;
+            margin-bottom: 16px;
+        }
+
+        /* --- Notice Callout --- */
+        .info-callout {
+            background: var(--primary-light);
+            border: 1px solid rgba(23, 105, 170, 0.22);
+            border-radius: 12px;
+            padding: 13px 16px;
+            font-size: 0.83rem;
+            color: var(--primary);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .warning-callout {
+            background: var(--warning-bg);
+            border: 1px solid #fde68a;
+            border-radius: 12px;
+            padding: 13px 16px;
+            font-size: 0.83rem;
+            color: #92400e;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .danger-callout {
+            background: var(--danger-bg);
+            border: 1px solid #fecaca;
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 0.86rem;
+            color: #991b1b;
+            display: none;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        /* --- Step 5: Official Agreement Preview Document --- */
+        .agreement-doc {
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: #ffffff;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .doc-banner {
+            background: linear-gradient(135deg, #0b132a 0%, #1769AA 100%);
+            color: #ffffff;
+            padding: 24px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .doc-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .doc-brand h3 {
+            color: #ffffff;
+            font-size: 1.2rem;
+        }
+
+        .doc-brand span {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.8);
+            display: block;
+        }
+
+        .doc-meta-box {
+            text-align: right;
+            font-size: 0.8rem;
+        }
+
+        .doc-meta-box strong {
+            display: block;
+            font-family: monospace;
+            font-size: 0.95rem;
+            color: #ffffff;
+        }
+
+        .doc-body {
+            padding: 26px 28px;
+        }
+
+        .doc-parties-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .doc-box {
+            background: var(--bg-page);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .doc-box-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .doc-box-head h4 {
+            font-size: 0.88rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--primary);
+        }
+
+        .edit-step-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .edit-step-btn:hover {
+            text-decoration: underline;
+        }
+
+        .kv-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 0.84rem;
+            padding: 5px 0;
+        }
+
+        .kv-row span {
+            color: var(--slate-muted);
+        }
+
+        .kv-row strong {
+            color: var(--dark);
+            text-align: right;
+        }
+
+        .acceptance-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .acceptance-box {
+            border: 1px dashed var(--border-hover);
+            border-radius: 12px;
+            padding: 16px;
+            background: var(--bg-page);
+        }
+
+        .acceptance-box h5 {
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+
+        .confirm-checkbox-wrap {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            background: var(--primary-light);
+            border: 1px solid rgba(23, 105, 170, 0.25);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .confirm-checkbox-wrap input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            accent-color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .confirm-checkbox-wrap span {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* --- Wizard Navigation Footer --- */
+        .wizard-footer {
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        /* --- Submission Success Screen --- */
+        .success-screen {
+            display: none;
+            text-align: center;
+            padding: 20px 10px;
+        }
+
+        .success-screen.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .success-icon-circle {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            background: var(--success-bg);
+            color: var(--success);
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px auto;
+        }
+
+        .ref-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: var(--bg-page);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-pill);
+            font-family: monospace;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 14px 0;
+        }
+
+        .spinner-sm {
+            width: 16px;
+            height: 16px;
+            border: 2.5px solid rgba(255, 255, 255, 0.35);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.75s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- Responsive Breakpoints --- */
+        @media (max-width: 860px) {
+            .stepper-track {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .calc-summary-strip {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .choice-grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .wizard-container {
+                padding: 22px 16px 54px 16px;
+            }
+            .wizard-card {
+                padding: 22px 18px;
+            }
+            .page-intro h1 {
+                font-size: 1.55rem;
+            }
+            .stepper-track,
+            .form-grid,
+            .choice-grid-2,
+            .doc-parties-grid,
+            .acceptance-grid {
+                grid-template-columns: 1fr;
+            }
+            .calc-summary-strip {
+                grid-template-columns: 1fr;
+            }
+            .doc-meta-box {
+                text-align: left;
+            }
+            .wizard-footer {
+                flex-direction: column-reverse;
+                align-items: stretch;
+            }
+            .wizard-footer .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation Header -->
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a href="dashboard.html" class="logo">
+                <div class="logo-box"><i class="fa-solid fa-link"></i></div>
+                <span>LipaLink</span>
+            </a>
+
+            <div class="topbar-actions">
+                <span class="badge badge-primary" id="customerSessionBadge" style="display: none;">
+                    <i class="fa-solid fa-user-check"></i> <span id="customerSessionName">Customer</span>
+                </span>
+                <a href="dashboard.html" class="btn btn-outline btn-sm">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Agreement Creation Workspace -->
+    <main class="wizard-container">
+        <div class="page-intro">
+            <span class="badge badge-primary"><i class="fa-solid fa-file-signature"></i> Pay-Small Agreement Builder</span>
+            <h1>Create Installment Agreement</h1>
+            <p>Set up a clear, mutually approved installment payment plan with any registered or unregistered seller.</p>
+        </div>
+
+        <!-- 5-Step Progress Indicator -->
+        <div class="stepper-card" id="stepperCard">
+            <div class="stepper-track" role="tablist" aria-label="Agreement Creation Steps">
+                <button type="button" class="step-pill active" data-step-target="1">
+                    <span class="step-num">1</span>
+                    <span class="step-label">
+                        <small>Step 1</small>
+                        <strong>Seller Info</strong>
+                    </span>
+                </button>
+                <button type="button" class="step-pill" data-step-target="2">
+                    <span class="step-num">2</span>
+                    <span class="step-label">
+                        <small>Step 2</small>
+                        <strong>Item / Service</strong>
+                    </span>
+                </button>
+                <button type="button" class="step-pill" data-step-target="3">
+                    <span class="step-num">3</span>
+                    <span class="step-label">
+                        <small>Step 3</small>
+                        <strong>Payment Plan</strong>
+                    </span>
+                </button>
+                <button type="button" class="step-pill" data-step-target="4">
+                    <span class="step-num">4</span>
+                    <span class="step-label">
+                        <small>Step 4</small>
+                        <strong>Delivery &amp; Terms</strong>
+                    </span>
+                </button>
+                <button type="button" class="step-pill" data-step-target="5">
+                    <span class="step-num">5</span>
+                    <span class="step-label">
+                        <small>Step 5</small>
+                        <strong>Review &amp; Submit</strong>
+                    </span>
+                </button>
+            </div>
+            <div class="progress-bar-wrap" aria-hidden="true">
+                <div class="progress-bar-fill" id="wizardProgressFill"></div>
+            </div>
+        </div>
+
+        <!-- Wizard Form Card -->
+        <div class="wizard-card">
+            <!-- Global Validation / API Error Alert -->
+            <div class="danger-callout" id="globalAlertBox" role="alert">
+                <i class="fa-solid fa-circle-exclamation" style="margin-top: 2px;"></i>
+                <div>
+                    <strong id="globalAlertTitle" style="display: block;">Please review the required details</strong>
+                    <span id="globalAlertMessage">Complete all highlighted fields before proceeding.</span>
+                </div>
+            </div>
+
+            <form id="agreementWizardForm" novalidate>
+
+                <!-- =========================================================
+                     STEP 1: SELLER INFORMATION
+                     ========================================================= -->
+                <section class="step-panel active" id="stepPanel1" data-step="1">
+                    <div class="step-header">
+                        <div>
+                            <h2>Step 1: Seller Information</h2>
+                            <p>Choose whether your seller is already on PaySmallApp or invite an unregistered seller via email.</p>
+                        </div>
+                        <span class="badge badge-primary">1 of 5</span>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label>Seller Type <span class="req-star">*</span></label>
+                    </div>
+
+                    <div class="choice-grid-2" id="sellerTypeSelector">
+                        <label class="choice-card selected" data-choice="registered">
+                            <input type="radio" name="seller_type" value="registered" checked>
+                            <div class="choice-card-icon"><i class="fa-solid fa-store"></i></div>
+                            <div class="choice-card-body">
+                                <h4>Registered PaySmallApp Seller</h4>
+                                <p>Search by seller name, business name, or phone number to load verified shop details.</p>
+                            </div>
+                        </label>
+
+                        <label class="choice-card" data-choice="unregistered">
+                            <input type="radio" name="seller_type" value="unregistered">
+                            <div class="choice-card-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+                            <div class="choice-card-body">
+                                <h4>Unregistered Seller</h4>
+                                <p>Enter seller contact &amp; email details so PaySmallApp can send the agreement proposal.</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Registered Seller Search & Selection UI -->
+                    <div id="registeredSellerSection">
+                        <div class="seller-search-box">
+                            <label for="sellerSearchInput" style="display: block; font-size: 0.84rem; font-weight: 700; color: var(--dark-subtle); margin-bottom: 8px;">
+                                Search Registered PaySmallApp Seller <span class="req-star">*</span>
+                            </label>
+                            <div class="search-bar-row">
+                                <input type="text" id="sellerSearchInput" class="input-control" placeholder="Search by seller name, business name, or phone (e.g. Sam Electronics, +255...)">
+                                <button type="button" class="btn btn-primary btn-sm" id="searchSellerBtn">
+                                    <i class="fa-solid fa-magnifying-glass"></i> Search
+                                </button>
+                            </div>
+                            <p class="field-hint" style="margin-top: 8px;">
+                                <i class="fa-solid fa-circle-info"></i> Seller directory lookup connects to PaySmallApp's seller registry. You can also enter a seller manually if not yet listed.
+                            </p>
+
+                            <div class="seller-results-list" id="sellerResultsList"></div>
+                        </div>
+
+                        <!-- Selected Registered Seller Card -->
+                        <div id="selectedRegisteredSellerWrap" style="display: none; margin-bottom: 16px;">
+                            <div class="selected-seller-card">
+                                <div>
+                                    <span class="badge badge-success" style="margin-bottom: 6px;"><i class="fa-solid fa-check-circle"></i> Selected PaySmallApp Seller</span>
+                                    <h4 id="selRegName" style="font-size: 1.05rem;">—</h4>
+                                    <p id="selRegMeta" style="font-size: 0.83rem;">—</p>
+                                </div>
+                                <button type="button" class="btn btn-outline btn-sm" id="clearRegSellerBtn">Change Seller</button>
+                            </div>
+                        </div>
+
+                        <!-- Optional override/confirmation email for registered seller if not returned by directory -->
+                        <div class="form-grid" id="regSellerEmailFallback" style="display: none;">
+                            <div class="form-group full-span">
+                                <label for="regSellerEmailInput">Seller Notification Email <span class="req-star">*</span></label>
+                                <input type="email" id="regSellerEmailInput" class="input-control" placeholder="seller@business.co.tz">
+                                <span class="field-hint">Used to deliver the agreement proposal and payment alerts.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Unregistered Seller Fields -->
+                    <div id="unregisteredSellerSection" style="display: none;">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="unregSellerName">Seller's Full Name or Business Name <span class="req-star">*</span></label>
+                                <input type="text" id="unregSellerName" class="input-control" placeholder="e.g. Kibo Electronics Ltd">
+                                <span class="field-error" id="err_unregSellerName">Please enter the seller's full or business name.</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="unregSellerPhone">Seller's Phone Number <span class="req-star">*</span></label>
+                                <input type="tel" id="unregSellerPhone" class="input-control" placeholder="e.g. +255 712 345 678">
+                                <span class="field-error" id="err_unregSellerPhone">Please enter a valid seller phone number.</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="unregSellerEmail">Seller's Email Address <span class="req-star">*</span></label>
+                                <input type="email" id="unregSellerEmail" class="input-control" placeholder="e.g. sales@kiboelectronics.co.tz">
+                                <span class="field-hint">PaySmallApp sends the agreement proposal &amp; payment confirmations here.</span>
+                                <span class="field-error" id="err_unregSellerEmail">Please enter a valid seller email address.</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="unregSellerLocation">Seller's Location <span class="req-star">*</span></label>
+                                <input type="text" id="unregSellerLocation" class="input-control" placeholder="e.g. Kariakoo, Dar es Salaam">
+                                <span class="field-error" id="err_unregSellerLocation">Please enter the seller's shop or physical location.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-callout">
+                        <i class="fa-solid fa-envelope-circle-check" style="margin-top: 2px;"></i>
+                        <span><strong>Email Verification &amp; Notifications:</strong> Once submitted, PaySmallApp sends the agreement proposal to the seller's email for approval and notifies both parties on every installment payment.</span>
+                    </div>
+                </section>
+
+                <!-- =========================================================
+                     STEP 2: PRODUCT OR SERVICE INFORMATION
+                     ========================================================= -->
+                <section class="step-panel" id="stepPanel2" data-step="2">
+                    <div class="step-header">
+                        <div>
+                            <h2>Step 2: Product or Service Information</h2>
+                            <p>Specify the physical product or service covered under this installment agreement.</p>
+                        </div>
+                        <span class="badge badge-primary">2 of 5</span>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="itemType">Product or Service Type <span class="req-star">*</span></label>
+                            <select id="itemType" class="input-control">
+                                <option value="physical_product">Physical Product</option>
+                                <option value="service">Service</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="itemCategory">Product / Service Category <span class="req-star">*</span></label>
+                            <select id="itemCategory" class="input-control">
+                                <option value="">Select a category...</option>
+                                <option value="Electronics & Phones">Electronics &amp; Phones</option>
+                                <option value="Home Appliances & Solar">Home Appliances &amp; Solar</option>
+                                <option value="Furniture & Home Decor">Furniture &amp; Home Decor</option>
+                                <option value="Computers & Office">Computers &amp; Office</option>
+                                <option value="Automotive & Spare Parts">Automotive &amp; Spare Parts</option>
+                                <option value="Fashion & Tailoring">Fashion &amp; Tailoring</option>
+                                <option value="Professional & Technical Services">Professional &amp; Technical Services</option>
+                                <option value="Education & Training">Education &amp; Training</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <span class="field-error" id="err_itemCategory">Please select a category.</span>
+                        </div>
+
+                        <div class="form-group full-span">
+                            <label for="itemName">Product or Service Name <span class="req-star">*</span></label>
+                            <input type="text" id="itemName" class="input-control" placeholder="e.g. Samsung Galaxy A55 5G (256GB) or Full House Solar Installation">
+                            <span class="field-error" id="err_itemName">Please enter the product or service name.</span>
+                        </div>
+
+                        <div class="form-group full-span">
+                            <label for="itemDescription">Product / Service Description <span class="req-star">*</span></label>
+                            <textarea id="itemDescription" class="input-control" placeholder="Include model number, specifications, serial details, scope of service, or deliverables..."></textarea>
+                            <span class="field-error" id="err_itemDescription">Please provide a clear description of the item or service.</span>
+                        </div>
+
+                        <div class="form-group" id="quantityGroup">
+                            <label for="itemQuantity">Quantity <span class="req-star">*</span></label>
+                            <input type="number" id="itemQuantity" class="input-control" min="1" step="1" value="1">
+                            <span class="field-error" id="err_itemQuantity">Quantity must be at least 1.</span>
+                        </div>
+
+                        <div class="form-group" id="conditionGroup">
+                            <label for="itemCondition">Product Condition <span class="req-star">*</span></label>
+                            <select id="itemCondition" class="input-control">
+                                <option value="New">Brand New</option>
+                                <option value="Used">Used / Pre-Owned</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="unitPrice">Unit Price (TZS) <span class="req-star">*</span></label>
+                            <input type="number" id="unitPrice" class="input-control" min="100" step="100" placeholder="e.g. 500000">
+                            <span class="field-error" id="err_unitPrice">Please enter a valid unit price greater than 0.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="totalAgreedPrice">
+                                <span>Total Agreed Price (TZS) <span class="req-star">*</span></span>
+                                <span class="field-hint">Auto-calculated (editable)</span>
+                            </label>
+                            <input type="number" id="totalAgreedPrice" class="input-control" min="100" step="100" placeholder="e.g. 500000">
+                            <span class="field-error" id="err_totalAgreedPrice">Total agreed price must be greater than 0.</span>
+                        </div>
+
+                        <div class="form-group full-span">
+                            <label for="productImageInput">Product Image Upload <span class="field-hint">(Optional — PNG, JPG, WEBP up to 5MB)</span></label>
+                            <div class="upload-zone">
+                                <div class="upload-preview">
+                                    <div class="upload-thumb" id="imagePreviewThumb">
+                                        <i class="fa-regular fa-image"></i>
+                                    </div>
+                                    <div>
+                                        <strong style="font-size: 0.86rem; display: block;" id="imageFileName">No image selected</strong>
+                                        <span style="font-size: 0.77rem; color: var(--slate-muted);" id="imageFileMeta">Prepared for multipart/form-data upload when backend storage is connected.</span>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <label for="productImageInput" class="btn btn-outline btn-sm" style="margin: 0;">
+                                        <i class="fa-solid fa-upload"></i> Choose Image
+                                    </label>
+                                    <button type="button" class="btn btn-outline btn-sm" id="removeImageBtn" style="display: none;">Remove</button>
+                                    <input type="file" id="productImageInput" accept="image/png,image/jpeg,image/webp" style="display: none;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group full-span">
+                            <label for="itemNotes">Additional Notes <span class="field-hint">(Optional)</span></label>
+                            <textarea id="itemNotes" class="input-control" style="min-height: 70px;" placeholder="Any warranty notes, color preferences, or serial verification details..."></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- =========================================================
+                     STEP 3: PAYMENT ARRANGEMENT & PREFERRED METHOD
+                     ========================================================= -->
+                <section class="step-panel" id="stepPanel3" data-step="3">
+                    <div class="step-header">
+                        <div>
+                            <h2>Step 3: Payment Arrangement</h2>
+                            <p>Configure your deposit, installment count, payment frequency, and preferred payment channel.</p>
+                        </div>
+                        <span class="badge badge-primary">3 of 5</span>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="payTotalPrice">Total Agreed Price (TZS)</label>
+                            <input type="text" id="payTotalPrice" class="input-control" readonly value="TZS 0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="initialDeposit">Initial Deposit (TZS) <span class="req-star">*</span></label>
+                            <input type="number" id="initialDeposit" class="input-control" min="0" step="100" value="0" placeholder="e.g. 100000">
+                            <span class="field-hint">Enter 0 if no upfront deposit is required.</span>
+                            <span class="field-error" id="err_initialDeposit">Initial deposit cannot be negative or exceed the total price.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="remainingBalanceDisplay">Remaining Balance (TZS)</label>
+                            <input type="text" id="remainingBalanceDisplay" class="input-control" readonly value="TZS 0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="installmentCount">Number of Installments <span class="req-star">*</span></label>
+                            <input type="number" id="installmentCount" class="input-control" min="1" max="60" step="1" value="4">
+                            <span class="field-error" id="err_installmentCount">Please enter at least 1 installment (up to 60).</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="paymentFrequency">Payment Frequency <span class="req-star">*</span></label>
+                            <select id="paymentFrequency" class="input-control">
+                                <option value="daily">Daily</option>
+                                <option value="weekly" selected>Weekly</option>
+                                <option value="biweekly">Biweekly (Every 2 Weeks)</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="custom">Custom Schedule</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="installmentAmountDisplay">Standard Installment Amount (TZS)</label>
+                            <input type="text" id="installmentAmountDisplay" class="input-control" readonly value="TZS 0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="firstPaymentDate">First Payment Date <span class="req-star">*</span></label>
+                            <input type="date" id="firstPaymentDate" class="input-control">
+                            <span class="field-error" id="err_firstPaymentDate">Please select the first installment due date.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="expectedFinalDateDisplay">Expected Final Payment Date</label>
+                            <input type="text" id="expectedFinalDateDisplay" class="input-control" readonly value="—">
+                        </div>
+                    </div>
+
+                    <!-- Live Financial Totals Strip -->
+                    <div class="calc-summary-strip">
+                        <div class="calc-metric">
+                            <small>Initial Deposit</small>
+                            <strong id="stripDeposit">TZS 0</strong>
+                        </div>
+                        <div class="calc-metric">
+                            <small>Installments Total</small>
+                            <strong id="stripInstallmentsSum">TZS 0</strong>
+                        </div>
+                        <div class="calc-metric">
+                            <small>Total Amount Payable</small>
+                            <strong id="stripTotalPayable">TZS 0</strong>
+                        </div>
+                        <div class="calc-metric">
+                            <small>Expected Completion</small>
+                            <strong id="stripCompletionDate">—</strong>
+                        </div>
+                    </div>
+
+                    <!-- Generated Payment Schedule Preview / Custom Editor -->
+                    <div class="schedule-box">
+                        <div class="schedule-box-head">
+                            <div>
+                                <h4 style="font-size: 0.96rem;">Installment Payment Schedule</h4>
+                                <p style="font-size: 0.78rem;" id="scheduleHintText">Automatically calculated. Any rounding remainder is adjusted on the final installment.</p>
+                            </div>
+                            <span class="badge badge-primary" id="scheduleBalanceStatus">Balanced</span>
+                        </div>
+
+                        <div class="schedule-table-wrap">
+                            <table class="mini-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Due Date</th>
+                                        <th>Installment Amount (TZS)</th>
+                                        <th>Remaining After</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="scheduleTableBody"></tbody>
+                            </table>
+                        </div>
+                        <span class="field-error" id="err_scheduleTotal" style="margin-top: 10px;">
+                            Deposit + all installment amounts must equal the Total Agreed Price.
+                        </span>
+                    </div>
+
+                    <!-- Preferred Payment Method Selection -->
+                    <div class="sub-section">
+                        <h3 class="sub-section-title"><i class="fa-solid fa-wallet" style="color: var(--primary);"></i> Preferred Payment Method <span class="req-star">*</span></h3>
+                        <p class="sub-section-desc">Select the payment channel you intend to use when paying installments.</p>
+
+                        <div class="choice-grid-3" id="paymentMethodGrid">
+                            <label class="choice-card selected" data-method="M-Pesa">
+                                <input type="radio" name="preferred_payment_method" value="M-Pesa" checked>
+                                <div class="choice-card-icon"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                                <div class="choice-card-body">
+                                    <h4>M-Pesa</h4>
+                                    <p>Vodacom Mobile Money</p>
+                                </div>
+                            </label>
+
+                            <label class="choice-card" data-method="Airtel Money">
+                                <input type="radio" name="preferred_payment_method" value="Airtel Money">
+                                <div class="choice-card-icon"><i class="fa-solid fa-mobile-retro"></i></div>
+                                <div class="choice-card-body">
+                                    <h4>Airtel Money</h4>
+                                    <p>Airtel Mobile Wallet</p>
+                                </div>
+                            </label>
+
+                            <label class="choice-card" data-method="Mixx by Yas">
+                                <input type="radio" name="preferred_payment_method" value="Mixx by Yas">
+                                <div class="choice-card-icon"><i class="fa-solid fa-sim-card"></i></div>
+                                <div class="choice-card-body">
+                                    <h4>Mixx by Yas</h4>
+                                    <p>Yas Mobile Money</p>
+                                </div>
+                            </label>
+
+                            <label class="choice-card" data-method="Bank Transfer">
+                                <input type="radio" name="preferred_payment_method" value="Bank Transfer">
+                                <div class="choice-card-icon"><i class="fa-solid fa-building-columns"></i></div>
+                                <div class="choice-card-body">
+                                    <h4>Bank Transfer</h4>
+                                    <p>CRDB, NMB, KCB, NBC</p>
+                                </div>
+                            </label>
+
+                            <label class="choice-card" data-method="Cash">
+                                <input type="radio" name="preferred_payment_method" value="Cash">
+                                <div class="choice-card-icon"><i class="fa-solid fa-money-bill-wave"></i></div>
+                                <div class="choice-card-body">
+                                    <h4>Cash</h4>
+                                    <p>In-person verified receipt</p>
+                                </div>
+                            </label>
+
+                            <label class="choice-card" data-method="Other">
+                                <input type="radio" name="preferred_payment_method" value="Other">
+                                <div class="choice-card-icon"><i class="fa-solid fa-ellipsis"></i></div>
+                                <div class="choice-card-body">
+                                    <h4>Other</h4>
+                                    <p>Specify custom method</p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 14px;">
+                            <label for="paymentInstructions">Additional Payment Instructions <span class="field-hint">(Optional)</span></label>
+                            <input type="text" id="paymentInstructions" class="input-control" placeholder="e.g. Payments will be sent from +255 7XX XXX XXX or specify payment channel details">
+                        </div>
+
+                        <div class="info-callout">
+                            <i class="fa-solid fa-shield-halved" style="margin-top: 2px;"></i>
+                            <span><strong>No Money Transferred Now:</strong> Creating this agreement records your preferred payment method. Actual installment payments are initiated only after the seller approves the agreement.</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- =========================================================
+                     STEP 4: DELIVERY AND AGREEMENT TERMS
+                     ========================================================= -->
+                <section class="step-panel" id="stepPanel4" data-step="4">
+                    <div class="step-header">
+                        <div>
+                            <h2>Step 4: Delivery &amp; Agreement Terms</h2>
+                            <p id="step4Subtitle">Define when and how the product will be delivered, along with clear mutual terms.</p>
+                        </div>
+                        <span class="badge badge-primary">4 of 5</span>
+                    </div>
+
+                    <!-- Product Delivery / Service Execution Conditions -->
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label id="releaseConditionLabel">When should the customer receive the product? <span class="req-star">*</span></label>
+                    </div>
+
+                    <div class="choice-grid-3" id="deliveryConditionGrid" style="margin-bottom: 18px;">
+                        <label class="choice-card selected" data-delivery="after_full_payment">
+                            <input type="radio" name="delivery_condition" value="after_full_payment" checked>
+                            <div class="choice-card-icon"><i class="fa-solid fa-circle-check"></i></div>
+                            <div class="choice-card-body">
+                                <h4 id="optATitle">A. After full payment</h4>
+                                <p id="optADesc">Released once 100% of the total agreed price is paid.</p>
+                            </div>
+                        </label>
+
+                        <label class="choice-card" data-delivery="after_initial_deposit">
+                            <input type="radio" name="delivery_condition" value="after_initial_deposit">
+                            <div class="choice-card-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                            <div class="choice-card-body">
+                                <h4 id="optBTitle">B. After initial deposit</h4>
+                                <p id="optBDesc">Released right after the initial deposit is verified.</p>
+                            </div>
+                        </label>
+
+                        <label class="choice-card" data-delivery="after_specified_threshold">
+                            <input type="radio" name="delivery_condition" value="after_specified_threshold">
+                            <div class="choice-card-icon"><i class="fa-solid fa-sliders"></i></div>
+                            <div class="choice-card-body">
+                                <h4 id="optCTitle">C. After specified threshold</h4>
+                                <p id="optCDesc">Released upon reaching a specific paid amount or installment.</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Conditional Field for Option C -->
+                    <div class="form-grid" id="thresholdConditionWrap" style="display: none; margin-bottom: 18px;">
+                        <div class="form-group full-span">
+                            <label for="requiredReleaseAmount">Required Payment Amount or Installment Milestone <span class="req-star">*</span></label>
+                            <input type="text" id="requiredReleaseAmount" class="input-control" placeholder="e.g. TZS 300,000 paid (or after Installment #2)">
+                            <span class="field-error" id="err_requiredReleaseAmount">Please specify the required amount or installment milestone.</span>
+                        </div>
+                    </div>
+
+                    <!-- Physical Delivery Fields -->
+                    <div class="form-grid" id="physicalDeliveryFields">
+                        <div class="form-group">
+                            <label for="expectedDeliveryDate">Expected Delivery Date <span class="req-star">*</span></label>
+                            <input type="date" id="expectedDeliveryDate" class="input-control">
+                            <span class="field-error" id="err_expectedDeliveryDate">Please select an expected delivery date.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="deliveryLocation">Delivery Location / Pickup Point <span class="req-star">*</span></label>
+                            <input type="text" id="deliveryLocation" class="input-control" placeholder="e.g. Mikocheni B, Dar es Salaam or Seller Shop Pickup">
+                            <span class="field-error" id="err_deliveryLocation">Please enter the delivery location or pickup point.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="deliveryCharges">Delivery Charges (TZS)</label>
+                            <input type="number" id="deliveryCharges" class="input-control" min="0" step="500" value="0" placeholder="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="deliveryChargesPayer">Who Pays Delivery Charges?</label>
+                            <select id="deliveryChargesPayer" class="input-control">
+                                <option value="Customer">Customer</option>
+                                <option value="Seller (Free Delivery)">Seller (Included / Free Delivery)</option>
+                                <option value="Shared Equally (50/50)">Shared Equally (50/50)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full-span">
+                            <label for="deliveryInstructions">Additional Delivery Instructions <span class="field-hint">(Optional)</span></label>
+                            <input type="text" id="deliveryInstructions" class="input-control" placeholder="e.g. Inspect item packaging and serial number upon handover">
+                        </div>
+                    </div>
+
+                    <!-- Service Schedule Fields (Shown when Product/Service Type === 'service') -->
+                    <div class="form-grid" id="serviceDeliveryFields" style="display: none;">
+                        <div class="form-group">
+                            <label for="serviceStartDate">Service Commencement Date <span class="req-star">*</span></label>
+                            <input type="date" id="serviceStartDate" class="input-control">
+                            <span class="field-error" id="err_serviceStartDate">Please select the service commencement date.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="serviceEndDate">Expected Service Completion Date <span class="req-star">*</span></label>
+                            <input type="date" id="serviceEndDate" class="input-control">
+                            <span class="field-error" id="err_serviceEndDate">Please select the expected service completion date.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="serviceLocation">Service Location / Venue <span class="req-star">*</span></label>
+                            <input type="text" id="serviceLocation" class="input-control" placeholder="e.g. Client Site - Masaki, Dar es Salaam or Remote">
+                            <span class="field-error" id="err_serviceLocation">Please enter the service location.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="serviceExtraFees">Service Logistics / Transport Fee (TZS)</label>
+                            <input type="number" id="serviceExtraFees" class="input-control" min="0" step="500" value="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="serviceFeePayer">Who Covers Logistics Fee?</label>
+                            <select id="serviceFeePayer" class="input-control">
+                                <option value="Included in Service Price">Included in Service Price</option>
+                                <option value="Customer">Customer</option>
+                                <option value="Seller">Seller</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="serviceInstructions">Service Execution Instructions <span class="field-hint">(Optional)</span></label>
+                            <input type="text" id="serviceInstructions" class="input-control" placeholder="e.g. Work milestones and sign-off requirements">
+                        </div>
+                    </div>
+
+                    <!-- Terms and Conditions -->
+                    <div class="sub-section">
+                        <h3 class="sub-section-title"><i class="fa-solid fa-scale-balanced" style="color: var(--primary);"></i> Agreement Terms &amp; Conditions</h3>
+                        <p class="sub-section-desc">All terms below are shared transparently with the seller. No hidden penalties or interest are applied automatically.</p>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="gracePeriodDays">Grace Period (Days) <span class="req-star">*</span></label>
+                                <input type="number" id="gracePeriodDays" class="input-control" min="0" max="30" value="3">
+                                <span class="field-hint">Days allowed after a due date before a payment is marked overdue.</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="additionalCharges">Additional Charges or Interest <span class="req-star">*</span></label>
+                                <input type="text" id="additionalCharges" class="input-control" value="None (0% interest — agreed total price only)">
+                                <span class="field-hint">Must be explicitly disclosed and mutually agreed upon.</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="latePaymentPolicy">Late Payment Policy <span class="req-star">*</span></label>
+                                <textarea id="latePaymentPolicy" class="input-control">Customer will notify the seller prior to the due date if a delay occurs. Automated reminders are sent via PaySmallApp without automatic penalty fees unless explicitly agreed here.</textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="earlyPaymentPolicy">Early Payment Conditions <span class="req-star">*</span></label>
+                                <textarea id="earlyPaymentPolicy" class="input-control">Customer may pay any installment early or settle the full remaining balance ahead of schedule with zero prepayment fees.</textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cancellationPolicy">Cancellation Policy <span class="req-star">*</span></label>
+                                <textarea id="cancellationPolicy" class="input-control">Either party may request cancellation prior to product handover upon mutual written confirmation inside PaySmallApp.</textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="refundPolicy">Refund Policy <span class="req-star">*</span></label>
+                                <textarea id="refundPolicy" class="input-control">If the agreement is cancelled before delivery or the seller fails to fulfill delivery, verified paid installments are refundable according to the agreed settlement terms.</textarea>
+                            </div>
+
+                            <div class="form-group full-span">
+                                <label for="disputePolicy">Dispute Resolution Conditions <span class="req-star">*</span></label>
+                                <textarea id="disputePolicy" class="input-control" style="min-height: 70px;">Both parties agree to resolve disputes amicably using verified PaySmallApp digital receipts and transaction logs as the primary record of payment.</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- =========================================================
+                     STEP 5: REVIEW AND SUBMIT AGREEMENT
+                     ========================================================= -->
+                <section class="step-panel" id="stepPanel5" data-step="5">
+                    <div class="step-header">
+                        <div>
+                            <h2>Step 5: Review &amp; Submit Agreement</h2>
+                            <p>Carefully review your installment agreement proposal before sending it to the seller.</p>
+                        </div>
+                        <span class="badge badge-warning"><i class="fa-solid fa-clock"></i> Initial Status: Pending Seller Approval</span>
+                    </div>
+
+                    <!-- Professional Agreement Preview Document -->
+                    <div class="agreement-doc">
+                        <div class="doc-banner">
+                            <div class="doc-brand">
+                                <div class="logo-box"><i class="fa-solid fa-link"></i></div>
+                                <div>
+                                    <h3>PaySmallApp Installment Agreement</h3>
+                                    <span>Official Digital Installment Proposal</span>
+                                </div>
+                            </div>
+                            <div class="doc-meta-box">
+                                <span>Reference Placeholder</span>
+                                <strong id="prevRefCode">PSA-2026-PENDING</strong>
+                                <span id="prevCreatedDate">Created: —</span>
+                            </div>
+                        </div>
+
+                        <div class="doc-body">
+                            <!-- Customer & Seller Details -->
+                            <div class="doc-parties-grid">
+                                <div class="doc-box">
+                                    <div class="doc-box-head">
+                                        <h4>Customer Details</h4>
+                                        <span class="badge badge-primary">Proposer</span>
+                                    </div>
+                                    <div class="kv-row"><span>Full Name</span><strong id="prevCustName">Authenticated Customer</strong></div>
+                                    <div class="kv-row"><span>Email</span><strong id="prevCustEmail">Registered Account Email</strong></div>
+                                    <div class="kv-row"><span>Phone</span><strong id="prevCustPhone">Registered Phone</strong></div>
+                                </div>
+
+                                <div class="doc-box">
+                                    <div class="doc-box-head">
+                                        <h4>Seller Details</h4>
+                                        <button type="button" class="edit-step-btn" data-jump-step="1"><i class="fa-solid fa-pen"></i> Edit</button>
+                                    </div>
+                                    <div class="kv-row"><span>Seller Type</span><strong id="prevSellerType">—</strong></div>
+                                    <div class="kv-row"><span>Name / Business</span><strong id="prevSellerName">—</strong></div>
+                                    <div class="kv-row"><span>Email (Notifications)</span><strong id="prevSellerEmail">—</strong></div>
+                                    <div class="kv-row"><span>Phone</span><strong id="prevSellerPhone">—</strong></div>
+                                    <div class="kv-row"><span>Location</span><strong id="prevSellerLocation">—</strong></div>
+                                </div>
+                            </div>
+
+                            <!-- Product/Service & Financial Summary -->
+                            <div class="doc-parties-grid">
+                                <div class="doc-box">
+                                    <div class="doc-box-head">
+                                        <h4>Product / Service Details</h4>
+                                        <button type="button" class="edit-step-btn" data-jump-step="2"><i class="fa-solid fa-pen"></i> Edit</button>
+                                    </div>
+                                    <div class="kv-row"><span>Item Name</span><strong id="prevItemName">—</strong></div>
+                                    <div class="kv-row"><span>Type &amp; Category</span><strong id="prevItemTypeCat">—</strong></div>
+                                    <div class="kv-row"><span>Quantity / Condition</span><strong id="prevItemQtyCond">—</strong></div>
+                                    <div class="kv-row"><span>Unit Price</span><strong id="prevItemUnit">—</strong></div>
+                                    <div style="font-size: 0.8rem; color: var(--slate-muted); margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border);" id="prevItemDesc">—</div>
+                                </div>
+
+                                <div class="doc-box">
+                                    <div class="doc-box-head">
+                                        <h4>Payment Arrangement</h4>
+                                        <button type="button" class="edit-step-btn" data-jump-step="3"><i class="fa-solid fa-pen"></i> Edit</button>
+                                    </div>
+                                    <div class="kv-row"><span>Total Agreed Price</span><strong style="color: var(--primary);" id="prevTotalPrice">—</strong></div>
+                                    <div class="kv-row"><span>Initial Deposit</span><strong id="prevDeposit">—</strong></div>
+                                    <div class="kv-row"><span>Remaining Balance</span><strong id="prevRemaining">—</strong></div>
+                                    <div class="kv-row"><span>Installments</span><strong id="prevPlanSummary">—</strong></div>
+                                    <div class="kv-row"><span>Preferred Method</span><strong id="prevPayMethod">—</strong></div>
+                                    <div class="kv-row"><span>Expected Completion</span><strong id="prevCompletion">—</strong></div>
+                                </div>
+                            </div>
+
+                            <!-- Installment Schedule Table -->
+                            <div class="doc-box" style="margin-bottom: 18px;">
+                                <div class="doc-box-head">
+                                    <h4>Agreed Installment Schedule</h4>
+                                    <button type="button" class="edit-step-btn" data-jump-step="3"><i class="fa-solid fa-pen"></i> Edit Schedule</button>
+                                </div>
+                                <div class="schedule-table-wrap" style="max-height: 220px;">
+                                    <table class="mini-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Installment</th>
+                                                <th>Due Date</th>
+                                                <th>Amount Due</th>
+                                                <th>Balance After</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="prevScheduleBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Delivery & Terms -->
+                            <div class="doc-box" style="margin-bottom: 18px;">
+                                <div class="doc-box-head">
+                                    <h4>Delivery Conditions &amp; Agreement Terms</h4>
+                                    <button type="button" class="edit-step-btn" data-jump-step="4"><i class="fa-solid fa-pen"></i> Edit</button>
+                                </div>
+                                <div class="kv-row"><span>Release Condition</span><strong id="prevDeliveryCond">—</strong></div>
+                                <div class="kv-row"><span id="prevDateLabel">Expected Date</span><strong id="prevDeliveryDate">—</strong></div>
+                                <div class="kv-row"><span>Location</span><strong id="prevDeliveryLocation">—</strong></div>
+                                <div class="kv-row"><span>Delivery / Logistics Fee</span><strong id="prevDeliveryFee">—</strong></div>
+                                <div class="kv-row"><span>Grace Period</span><strong id="prevGracePeriod">—</strong></div>
+                                <div class="kv-row"><span>Extra Charges / Interest</span><strong id="prevExtraCharges">—</strong></div>
+                                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 0.8rem; color: var(--slate-muted); display: grid; gap: 6px;">
+                                    <div><strong>Late Payment:</strong> <span id="prevLatePolicy">—</span></div>
+                                    <div><strong>Early Payment:</strong> <span id="prevEarlyPolicy">—</span></div>
+                                    <div><strong>Cancellation:</strong> <span id="prevCancelPolicy">—</span></div>
+                                    <div><strong>Refund Policy:</strong> <span id="prevRefundPolicy">—</span></div>
+                                    <div><strong>Dispute Resolution:</strong> <span id="prevDisputePolicy">—</span></div>
+                                </div>
+                            </div>
+
+                            <!-- Dual Party Acceptance Section -->
+                            <div class="acceptance-grid">
+                                <div class="acceptance-box">
+                                    <h5><i class="fa-solid fa-user-check" style="color: var(--primary);"></i> Customer Acceptance</h5>
+                                    <p style="font-size: 0.8rem;">Submitted by customer upon confirmation below. Proposal will be locked for seller review.</p>
+                                    <span class="badge badge-primary" style="margin-top: 8px;">Ready to Submit</span>
+                                </div>
+                                <div class="acceptance-box">
+                                    <h5><i class="fa-solid fa-store" style="color: var(--warning);"></i> Seller Acceptance</h5>
+                                    <p style="font-size: 0.8rem;">Agreement remains <strong>Pending Seller Approval</strong> and will NOT become Active until the seller accepts these exact terms.</p>
+                                    <span class="badge badge-warning" style="margin-top: 8px;">Awaiting Seller Approval</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mandatory Confirmation Checkbox -->
+                    <label class="confirm-checkbox-wrap" for="confirmAgreementCheckbox">
+                        <input type="checkbox" id="confirmAgreementCheckbox">
+                        <span>I confirm that the information provided is accurate and I agree to submit this installment agreement proposal.</span>
+                    </label>
+                    <span class="field-error" id="err_confirmAgreementCheckbox" style="margin-top: 8px;">
+                        You must confirm the accuracy of this agreement proposal before submitting.
+                    </span>
+                </section>
+
+                <!-- Wizard Back / Continue / Submit Controls -->
+                <div class="wizard-footer" id="wizardFooter">
+                    <button type="button" class="btn btn-outline" id="prevStepBtn" style="visibility: hidden;">
+                        <i class="fa-solid fa-arrow-left"></i> Back
+                    </button>
+
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <button type="button" class="btn btn-primary" id="nextStepBtn">
+                            Continue <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="submitAgreementBtn" style="display: none;">
+                            <i class="fa-solid fa-paper-plane"></i> Submit Agreement
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- =========================================================
+                 POST-SUBMISSION CONFIRMATION VIEW
+                 ========================================================= -->
+            <div class="success-screen" id="submissionSuccessView">
+                <div class="success-icon-circle">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <span class="badge badge-warning"><i class="fa-solid fa-hourglass-half"></i> Status: <span id="resAgreementStatus">Pending Seller Approval</span></span>
+                <h2 style="font-size: 1.65rem; margin-top: 12px;" id="resHeadline">Agreement Submitted Successfully!</h2>
+                <p style="max-width: 540px; margin: 8px auto 0 auto;" id="resSubMessage">
+                    Your installment agreement proposal has been queued and will be sent to the seller for review and acceptance.
+                </p>
+
+                <div class="ref-pill">
+                    <span>Agreement ID:</span>
+                    <span id="resAgreementId">PSA-2026-00001</span>
+                </div>
+
+                <div class="doc-box" style="max-width: 580px; margin: 16px auto 24px auto; text-align: left;">
+                    <h4 style="font-size: 0.9rem; margin-bottom: 10px; color: var(--primary);">
+                        <i class="fa-solid fa-envelope-open-text"></i> What Happens Next (Email &amp; Approval Workflow)
+                    </h4>
+                    <ul style="list-style: none; display: grid; gap: 8px; font-size: 0.83rem; color: var(--dark-subtle);">
+                        <li><i class="fa-solid fa-1" style="color: var(--primary); width: 18px;"></i> <strong>Seller Review:</strong> The seller receives an email notification at <strong id="resSellerEmail">—</strong> to review and approve your proposed schedule.</li>
+                        <li><i class="fa-solid fa-2" style="color: var(--primary); width: 18px;"></i> <strong>PDF Confirmation:</strong> Once both parties accept, PaySmallApp generates a PDF agreement copy and emails it to both you and the seller.</li>
+                        <li><i class="fa-solid fa-3" style="color: var(--primary); width: 18px;"></i> <strong>Payment Receipts:</strong> Every future installment payment triggers automated email confirmations and a final settlement receipt upon completion.</li>
+                    </ul>
+                </div>
+
+                <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                    <a href="agreements.html" class="btn btn-primary">
+                        <i class="fa-solid fa-handshake"></i> View My Agreements
+                    </a>
+                    <a href="dashboard.html" class="btn btn-outline">
+                        <i class="fa-solid fa-house"></i> Return to Dashboard
+                    </a>
+                    <button type="button" class="btn btn-outline" id="createAnotherBtn">
+                        <i class="fa-solid fa-plus"></i> Create Another Agreement
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        (function () {
+            'use strict';
+
+            // --- Application State ---
+            let currentStep = 1;
+            const totalSteps = 5;
+            let isSubmitting = false;
+            let selectedRegisteredSeller = null;
+            let selectedProductImageFile = null;
+            let customScheduleAmounts = [];
+
+            // Authenticated customer context (populated silently if api/dashboard.php is active)
+            let authenticatedCustomer = {
+                id: null,
+                full_name: 'Authenticated Customer',
+                email: 'Registered Account Email',
+                phone: 'Registered Phone'
+            };
+
+            // --- Formatting & Utility Helpers ---
+            function formatTZS(amount) {
+                const num = Number(amount);
+                if (!Number.isFinite(num)) return 'TZS 0';
+                return 'TZS ' + Math.round(num).toLocaleString('en-US');
+            }
+
+            function formatReadableDate(isoDate) {
+                if (!isoDate) return '—';
+                const parts = String(isoDate).split('-');
+                if (parts.length !== 3) return isoDate;
+                const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+                if (Number.isNaN(d.getTime())) return isoDate;
+                return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+            }
+
+            function getTodayISO() {
+                const now = new Date();
+                const y = now.getFullYear();
+                const m = String(now.getMonth() + 1).padStart(2, '0');
+                const d = String(now.getDate()).padStart(2, '0');
+                return `${y}-${m}-${d}`;
+            }
+
+            function addFrequencyInterval(baseIsoDate, index, frequency) {
+                const parts = baseIsoDate.split('-');
+                const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+                if (frequency === 'daily') {
+                    d.setDate(d.getDate() + index);
+                } else if (frequency === 'weekly') {
+                    d.setDate(d.getDate() + (index * 7));
+                } else if (frequency === 'biweekly') {
+                    d.setDate(d.getDate() + (index * 14));
+                } else {
+                    // monthly or custom default spacing
+                    d.setMonth(d.getMonth() + index);
+                }
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${y}-${m}-${day}`;
+            }
+
+            function escapeHtml(val) {
+                if (val === null || val === undefined) return '';
+                return String(val)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+
+            function isValidEmail(email) {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim());
+            }
+
+            function showGlobalAlert(title, message) {
+                const box = document.getElementById('globalAlertBox');
+                document.getElementById('globalAlertTitle').textContent = title;
+                document.getElementById('globalAlertMessage').textContent = message;
+                box.style.display = 'flex';
+                box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            function hideGlobalAlert() {
+                document.getElementById('globalAlertBox').style.display = 'none';
+            }
+
+            function setFieldError(inputId, errorId, hasError, customMsg) {
+                const inputEl = document.getElementById(inputId);
+                const errEl = document.getElementById(errorId);
+                if (inputEl) inputEl.classList.toggle('is-invalid', hasError);
+                if (errEl) {
+                    if (customMsg) errEl.textContent = customMsg;
+                    errEl.classList.toggle('visible', hasError);
+                }
+            }
+
+            // --- Preserve Existing Authentication Context (Non-blocking) ---
+            async function loadCustomerSessionContext() {
+                try {
+                    const res = await fetch('api/dashboard.php', {
+                        method: 'GET',
+                        headers: { 'Accept': 'application/json' },
+                        credentials: 'same-origin'
+                    });
+                    if (res.status === 401) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    const payload = data.data || data;
+                    const cust = payload.customer || payload.user;
+                    if (cust && (cust.full_name || cust.name)) {
+                        authenticatedCustomer = {
+                            id: cust.user_id || cust.id || null,
+                            full_name: cust.full_name || cust.name,
+                            email: cust.email || 'Registered Account Email',
+                            phone: cust.phone_number || cust.phone || 'Registered Phone'
+                        };
+                        document.getElementById('customerSessionName').textContent = authenticatedCustomer.full_name;
+                        document.getElementById('customerSessionBadge').style.display = 'inline-flex';
+                    }
+                } catch (_) {
+                    // Backend endpoint not yet active; keep standalone frontend functional
+                }
+            }
+
+            // --- Step Navigation Controller ---
+            function goToStep(stepNumber) {
+                if (stepNumber < 1 || stepNumber > totalSteps) return;
+                hideGlobalAlert();
+                currentStep = stepNumber;
+
+                document.querySelectorAll('.step-panel').forEach(panel => {
+                    panel.classList.toggle('active', Number(panel.dataset.step) === currentStep);
+                });
+
+                document.querySelectorAll('.step-pill').forEach(pill => {
+                    const s = Number(pill.dataset.stepTarget);
+                    pill.classList.toggle('active', s === currentStep);
+                    pill.classList.toggle('completed', s < currentStep);
+                });
+
+                const pct = (currentStep / totalSteps) * 100;
+                document.getElementById('wizardProgressFill').style.width = `${pct}%`;
+
+                const prevBtn = document.getElementById('prevStepBtn');
+                const nextBtn = document.getElementById('nextStepBtn');
+                const submitBtn = document.getElementById('submitAgreementBtn');
+
+                prevBtn.style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+
+                if (currentStep === 3) {
+                    recalculatePaymentPlan();
+                }
+                if (currentStep === 5) {
+                    populateAgreementPreview();
+                    nextBtn.style.display = 'none';
+                    submitBtn.style.display = 'inline-flex';
+                } else {
+                    nextBtn.style.display = 'inline-flex';
+                    submitBtn.style.display = 'none';
+                }
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // --- STEP 1: Seller Type & Search Logic ---
+            function getSelectedSellerType() {
+                const checked = document.querySelector('input[name="seller_type"]:checked');
+                return checked ? checked.value : 'registered';
+            }
+
+            document.querySelectorAll('#sellerTypeSelector .choice-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    document.querySelectorAll('#sellerTypeSelector .choice-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    const radio = card.querySelector('input[type="radio"]');
+                    if (radio) radio.checked = true;
+
+                    const isReg = getSelectedSellerType() === 'registered';
+                    document.getElementById('registeredSellerSection').style.display = isReg ? 'block' : 'none';
+                    document.getElementById('unregisteredSellerSection').style.display = isReg ? 'none' : 'block';
+                    hideGlobalAlert();
+                });
+            });
+
+            // Prepared Registered Seller Search (ready for future backend endpoint)
+            async function handleRegisteredSellerSearch() {
+                const query = document.getElementById('sellerSearchInput').value.trim();
+                const resultsEl = document.getElementById('sellerResultsList');
+
+                if (!query) {
+                    resultsEl.innerHTML = `<p style="font-size: 0.82rem; color: var(--danger);">Enter a seller name, business name, or phone number to search.</p>`;
+                    return;
+                }
+
+                resultsEl.innerHTML = `<p style="font-size: 0.84rem;"><i class="fa-solid fa-spinner fa-spin"></i> Searching PaySmallApp seller registry...</p>`;
+
+                try {
+                    const res = await fetch(`api/sellers.php?q=${encodeURIComponent(query)}`, {
+                        headers: { 'Accept': 'application/json' },
+                        credentials: 'same-origin'
+                    });
+                    if (!res.ok) throw new Error('Seller registry API not yet connected');
+                    const data = await res.json();
+                    const sellers = Array.isArray(data.sellers) ? data.sellers : (Array.isArray(data.data) ? data.data : []);
+
+                    if (sellers.length === 0) {
+                        resultsEl.innerHTML = `
+                            <div class="warning-callout" style="margin-top: 0;">
+                                <i class="fa-solid fa-store-slash"></i>
+                                <div>
+                                    <strong>No registered seller matched "${escapeHtml(query)}"</strong>
+                                    <p style="font-size: 0.8rem; color: #92400e; margin-top: 2px;">You can switch to <strong>Unregistered Seller</strong> above and enter their email to send them an agreement invite.</p>
+                                </div>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    resultsEl.innerHTML = sellers.map((s, idx) => `
+                        <div class="seller-result-item">
+                            <div>
+                                <strong style="font-size: 0.92rem; display: block;">${escapeHtml(s.business_name || s.full_name)}</strong>
+                                <span style="font-size: 0.8rem; color: var(--slate-muted);">
+                                    ${escapeHtml(s.phone || '')} ${s.location ? '• ' + escapeHtml(s.location) : ''}
+                                </span>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-sm" data-pick-seller="${idx}">Select Seller</button>
+                        </div>
+                    `).join('');
+
+                    resultsEl.querySelectorAll('[data-pick-seller]').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const s = sellers[Number(btn.dataset.pickSeller)];
+                            selectRegisteredSeller({
+                                id: s.id || s.seller_id || null,
+                                name: s.business_name || s.full_name,
+                                phone: s.phone || s.phone_number || '',
+                                email: s.email || '',
+                                location: s.location || ''
+                            });
+                        });
+                    });
+                } catch (_) {
+                    // Graceful fallback when backend seller directory endpoint is not yet deployed
+                    resultsEl.innerHTML = `
+                        <div class="info-callout" style="margin-top: 0;">
+                            <i class="fa-solid fa-plug-circle-exclamation" style="margin-top: 2px;"></i>
+                            <div>
+                                <strong>Seller Directory Lookup Pending Backend Connection</strong>
+                                <p style="font-size: 0.8rem; color: var(--primary); margin-top: 3px;">
+                                    Live seller search will retrieve accounts once the seller directory API is active. You can select <strong>"${escapeHtml(query)}"</strong> as a registered seller reference below or switch to <strong>Unregistered Seller</strong>.
+                                </p>
+                                <button type="button" class="btn btn-primary btn-sm" style="margin-top: 8px;" id="useSearchedSellerBtn">
+                                    Use "${escapeHtml(query)}" as Registered Seller
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    const useBtn = document.getElementById('useSearchedSellerBtn');
+                    if (useBtn) {
+                        useBtn.addEventListener('click', () => {
+                            selectRegisteredSeller({
+                                id: null,
+                                name: query,
+                                phone: '',
+                                email: '',
+                                location: 'PaySmallApp Registered Merchant'
+                            });
+                        });
+                    }
+                }
+            }
+
+            function selectRegisteredSeller(sellerObj) {
+                selectedRegisteredSeller = sellerObj;
+                document.getElementById('selRegName').textContent = sellerObj.name;
+                document.getElementById('selRegMeta').textContent = [
+                    sellerObj.phone,
+                    sellerObj.email,
+                    sellerObj.location
+                ].filter(Boolean).join(' • ') || 'Registered PaySmallApp Account';
+
+                document.getElementById('selectedRegisteredSellerWrap').style.display = 'block';
+                document.getElementById('sellerResultsList').innerHTML = '';
+
+                // Ensure seller email is available for email notifications
+                const fallbackWrap = document.getElementById('regSellerEmailFallback');
+                const fallbackInput = document.getElementById('regSellerEmailInput');
+                if (!sellerObj.email) {
+                    fallbackWrap.style.display = 'grid';
+                    fallbackInput.value = '';
+                } else {
+                    fallbackWrap.style.display = 'none';
+                    fallbackInput.value = sellerObj.email;
+                }
+            }
+
+            document.getElementById('searchSellerBtn').addEventListener('click', handleRegisteredSellerSearch);
+            document.getElementById('sellerSearchInput').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleRegisteredSellerSearch();
+                }
+            });
+
+            document.getElementById('clearRegSellerBtn').addEventListener('click', () => {
+                selectedRegisteredSeller = null;
+                document.getElementById('selectedRegisteredSellerWrap').style.display = 'none';
+                document.getElementById('regSellerEmailFallback').style.display = 'none';
+                document.getElementById('sellerSearchInput').focus();
+            });
+
+            // --- STEP 2: Product or Service Logic & Auto-Total ---
+            const itemTypeEl = document.getElementById('itemType');
+            const itemQtyEl = document.getElementById('itemQuantity');
+            const unitPriceEl = document.getElementById('unitPrice');
+            const totalAgreedPriceEl = document.getElementById('totalAgreedPrice');
+            let userOverrodeTotal = false;
+
+            function syncProductOrServiceUI() {
+                const isService = itemTypeEl.value === 'service';
+                document.getElementById('conditionGroup').style.display = isService ? 'none' : 'flex';
+                document.getElementById('quantityGroup').querySelector('label').innerHTML = isService
+                    ? 'Service Units / Sessions <span class="field-hint">(Optional, default 1)</span>'
+                    : 'Quantity <span class="req-star">*</span>';
+
+                // Adapt Step 4 labels between Product Delivery and Service Execution
+                document.getElementById('step4Subtitle').textContent = isService
+                    ? 'Define service commencement/completion dates and mutual agreement terms.'
+                    : 'Define when and how the product will be delivered, along with clear mutual terms.';
+                document.getElementById('releaseConditionLabel').innerHTML = isService
+                    ? 'When should the seller commence or deliver the service? <span class="req-star">*</span>'
+                    : 'When should the customer receive the product? <span class="req-star">*</span>';
+
+                document.getElementById('optATitle').textContent = isService ? 'A. After full payment' : 'A. After full payment';
+                document.getElementById('optADesc').textContent = isService
+                    ? 'Service is delivered once 100% of the total agreed price is paid.'
+                    : 'Released once 100% of the total agreed price is paid.';
+                document.getElementById('optBTitle').textContent = 'B. After initial deposit';
+                document.getElementById('optBDesc').textContent = isService
+                    ? 'Service commences immediately after initial deposit verification.'
+                    : 'Released right after the initial deposit is verified.';
+                document.getElementById('optCTitle').textContent = 'C. After specified threshold';
+                document.getElementById('optCDesc').textContent = isService
+                    ? 'Service begins after reaching a specific paid amount or installment.'
+                    : 'Released upon reaching a specific paid amount or installment.';
+
+                document.getElementById('physicalDeliveryFields').style.display = isService ? 'none' : 'grid';
+                document.getElementById('serviceDeliveryFields').style.display = isService ? 'grid' : 'none';
+            }
+
+            function updateCalculatedTotalPrice() {
+                const qty = Math.max(1, Number(itemQtyEl.value) || 1);
+                const unit = Math.max(0, Number(unitPriceEl.value) || 0);
+                if (!userOverrodeTotal && unit > 0) {
+                    totalAgreedPriceEl.value = Math.round(qty * unit);
+                }
+            }
+
+            itemTypeEl.addEventListener('change', syncProductOrServiceUI);
+            itemQtyEl.addEventListener('input', () => {
+                userOverrodeTotal = false;
+                updateCalculatedTotalPrice();
+            });
+            unitPriceEl.addEventListener('input', () => {
+                userOverrodeTotal = false;
+                updateCalculatedTotalPrice();
+            });
+            totalAgreedPriceEl.addEventListener('input', () => {
+                userOverrodeTotal = true;
+            });
+
+            // Optional Product Image Preview (Prepared for future multipart/form-data upload)
+            const productImageInput = document.getElementById('productImageInput');
+            productImageInput.addEventListener('change', (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+
+                if (file.size > 5 * 1024 * 1024) {
+                    showGlobalAlert('Image Too Large', 'Please select an image smaller than 5MB.');
+                    productImageInput.value = '';
+                    return;
+                }
+
+                selectedProductImageFile = file;
+                document.getElementById('imageFileName').textContent = file.name;
+                document.getElementById('imageFileMeta').textContent = `${(file.size / 1024).toFixed(1)} KB • Ready for multipart upload`;
+                document.getElementById('removeImageBtn').style.display = 'inline-flex';
+
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    document.getElementById('imagePreviewThumb').innerHTML = `<img src="${ev.target.result}" alt="Product Preview">`;
+                };
+                reader.readAsDataURL(file);
+            });
+
+            document.getElementById('removeImageBtn').addEventListener('click', () => {
+                selectedProductImageFile = null;
+                productImageInput.value = '';
+                document.getElementById('imageFileName').textContent = 'No image selected';
+                document.getElementById('imageFileMeta').textContent = 'Prepared for multipart/form-data upload when backend storage is connected.';
+                document.getElementById('imagePreviewThumb').innerHTML = `<i class="fa-regular fa-image"></i>`;
+                document.getElementById('removeImageBtn').style.display = 'none';
+            });
+
+            // --- STEP 3: Automatic Installment Schedule & Financial Calculator ---
+            const initialDepositEl = document.getElementById('initialDeposit');
+            const installmentCountEl = document.getElementById('installmentCount');
+            const paymentFrequencyEl = document.getElementById('paymentFrequency');
+            const firstPaymentDateEl = document.getElementById('firstPaymentDate');
+
+            // Default First Payment Date to today
+            firstPaymentDateEl.value = getTodayISO();
+
+            function buildInstallmentSchedule() {
+                const total = Math.max(0, Math.round(Number(totalAgreedPriceEl.value) || 0));
+                const deposit = Math.max(0, Math.round(Number(initialDepositEl.value) || 0));
+                const remaining = Math.max(0, total - deposit);
+                const count = Math.min(60, Math.max(1, Math.floor(Number(installmentCountEl.value) || 1)));
+                const freq = paymentFrequencyEl.value;
+                const startDate = firstPaymentDateEl.value || getTodayISO();
+
+                const schedule = [];
+
+                if (freq === 'custom') {
+                    // Maintain user-edited custom amounts or initialize evenly
+                    if (customScheduleAmounts.length !== count) {
+                        const base = Math.floor(remaining / count);
+                        const rem = remaining - (base * count);
+                        customScheduleAmounts = Array.from({ length: count }, (_, i) =>
+                            i === count - 1 ? base + rem : base
+                        );
+                    }
+
+                    let runningRem = remaining;
+                    for (let i = 0; i < count; i++) {
+                        const amt = Math.max(0, Math.round(Number(customScheduleAmounts[i]) || 0));
+                        runningRem = Math.max(0, runningRem - amt);
+                        schedule.push({
+                            installment_number: i + 1,
+                            due_date: addFrequencyInterval(startDate, i, 'monthly'),
+                            amount: amt,
+                            remaining_after: runningRem
+                        });
+                    }
+                } else {
+                    const baseAmount = Math.floor(remaining / count);
+                    const remainder = remaining - (baseAmount * count);
+                    let runningRem = remaining;
+
+                    for (let i = 0; i < count; i++) {
+                        // Final installment absorbs any uneven remainder so totals match 100%
+                        const amt = (i === count - 1) ? (baseAmount + remainder) : baseAmount;
+                        runningRem = Math.max(0, runningRem - amt);
+                        schedule.push({
+                            installment_number: i + 1,
+                            due_date: addFrequencyInterval(startDate, i, freq),
+                            amount: amt,
+                            remaining_after: runningRem
+                        });
+                    }
+                    customScheduleAmounts = schedule.map(s => s.amount);
+                }
+
+                return { total, deposit, remaining, count, freq, schedule };
+            }
+
+            function recalculatePaymentPlan() {
+                const { total, deposit, remaining, count, freq, schedule } = buildInstallmentSchedule();
+                const installmentsSum = schedule.reduce((sum, item) => sum + item.amount, 0);
+                const totalPayable = deposit + installmentsSum;
+                const finalDate = schedule.length > 0 ? schedule[schedule.length - 1].due_date : '—';
+                const standardInst = schedule.length > 0 ? schedule[0].amount : 0;
+
+                document.getElementById('payTotalPrice').value = formatTZS(total);
+                document.getElementById('remainingBalanceDisplay').value = formatTZS(remaining);
+                document.getElementById('installmentAmountDisplay').value = freq === 'custom'
+                    ? 'Custom Amounts'
+                    : (schedule.length > 1 && schedule[schedule.length - 1].amount !== standardInst
+                        ? `${formatTZS(standardInst)} (Final: ${formatTZS(schedule[schedule.length - 1].amount)})`
+                        : formatTZS(standardInst));
+                document.getElementById('expectedFinalDateDisplay').value = formatReadableDate(finalDate);
+
+                document.getElementById('stripDeposit').textContent = formatTZS(deposit);
+                document.getElementById('stripInstallmentsSum').textContent = formatTZS(installmentsSum);
+                document.getElementById('stripTotalPayable').textContent = formatTZS(totalPayable);
+                document.getElementById('stripCompletionDate').textContent = formatReadableDate(finalDate);
+
+                const isBalanced = (total > 0) && (deposit <= total) && (totalPayable === total);
+                const statusBadge = document.getElementById('scheduleBalanceStatus');
+                if (isBalanced) {
+                    statusBadge.className = 'badge badge-success';
+                    statusBadge.textContent = 'Balanced (100% Match)';
+                    setFieldError('scheduleTableBody', 'err_scheduleTotal', false);
+                } else {
+                    statusBadge.className = 'badge badge-warning';
+                    const diff = total - totalPayable;
+                    statusBadge.textContent = diff > 0
+                        ? `Short by ${formatTZS(diff)}`
+                        : `Exceeds by ${formatTZS(Math.abs(diff))}`;
+                }
+
+                document.getElementById('scheduleHintText').textContent = freq === 'custom'
+                    ? 'Custom mode enabled: edit individual installment amounts below so they sum to the remaining balance.'
+                    : 'Automatically calculated. Any uneven remainder is placed on the final installment.';
+
+                const tbody = document.getElementById('scheduleTableBody');
+                tbody.innerHTML = schedule.map((row, idx) => `
+                    <tr>
+                        <td><strong>#${row.installment_number}</strong></td>
+                        <td>${formatReadableDate(row.due_date)}</td>
+                        <td>
+                            ${freq === 'custom'
+                                ? `<input type="number" class="custom-inst-input" min="0" step="100" data-custom-idx="${idx}" value="${row.amount}">`
+                                : `<strong>${formatTZS(row.amount)}</strong>`
+                            }
+                        </td>
+                        <td>${formatTZS(row.remaining_after)}</td>
+                    </tr>
+                `).join('');
+
+                if (freq === 'custom') {
+                    tbody.querySelectorAll('.custom-inst-input').forEach(inp => {
+                        inp.addEventListener('input', (e) => {
+                            const i = Number(e.target.dataset.customIdx);
+                            customScheduleAmounts[i] = Math.max(0, Math.round(Number(e.target.value) || 0));
+                            recalculatePaymentPlan();
+                        });
+                    });
+                }
+            }
+
+            [totalAgreedPriceEl, initialDepositEl, installmentCountEl, paymentFrequencyEl, firstPaymentDateEl].forEach(el => {
+                el.addEventListener('input', recalculatePaymentPlan);
+                el.addEventListener('change', recalculatePaymentPlan);
+            });
+
+            // Preferred Payment Method Cards
+            document.querySelectorAll('#paymentMethodGrid .choice-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    document.querySelectorAll('#paymentMethodGrid .choice-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    const radio = card.querySelector('input[type="radio"]');
+                    if (radio) radio.checked = true;
+                });
+            });
+
+            // --- STEP 4: Delivery Condition Cards ---
+            document.querySelectorAll('#deliveryConditionGrid .choice-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    document.querySelectorAll('#deliveryConditionGrid .choice-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    const radio = card.querySelector('input[type="radio"]');
+                    if (radio) radio.checked = true;
+
+                    const showThreshold = radio && radio.value === 'after_specified_threshold';
+                    document.getElementById('thresholdConditionWrap').style.display = showThreshold ? 'grid' : 'none';
+                });
+            });
+
+            // --- Step-by-Step Validation ---
+            function validateStep(step) {
+                hideGlobalAlert();
+                let valid = true;
+
+                if (step === 1) {
+                    const type = getSelectedSellerType();
+                    if (type === 'registered') {
+                        if (!selectedRegisteredSeller) {
+                            showGlobalAlert('Seller Selection Required', 'Please search and select a registered PaySmallApp seller, or switch to Unregistered Seller.');
+                            return false;
+                        }
+                        const emailVal = document.getElementById('regSellerEmailInput').value.trim();
+                        if (!selectedRegisteredSeller.email && !isValidEmail(emailVal)) {
+                            showGlobalAlert('Seller Email Required', 'Please enter a valid notification email address for this seller.');
+                            document.getElementById('regSellerEmailInput').focus();
+                            return false;
+                        }
+                    } else {
+                        const sName = document.getElementById('unregSellerName').value.trim();
+                        const sPhone = document.getElementById('unregSellerPhone').value.trim();
+                        const sEmail = document.getElementById('unregSellerEmail').value.trim();
+                        const sLoc = document.getElementById('unregSellerLocation').value.trim();
+
+                        setFieldError('unregSellerName', 'err_unregSellerName', !sName);
+                        setFieldError('unregSellerPhone', 'err_unregSellerPhone', sPhone.length < 7);
+                        setFieldError('unregSellerEmail', 'err_unregSellerEmail', !isValidEmail(sEmail));
+                        setFieldError('unregSellerLocation', 'err_unregSellerLocation', !sLoc);
+
+                        if (!sName || sPhone.length < 7 || !isValidEmail(sEmail) || !sLoc) {
+                            valid = false;
+                        }
+                    }
+                }
+
+                if (step === 2) {
+                    const cat = document.getElementById('itemCategory').value.trim();
+                    const name = document.getElementById('itemName').value.trim();
+                    const desc = document.getElementById('itemDescription').value.trim();
+                    const qty = Number(document.getElementById('itemQuantity').value);
+                    const unit = Number(document.getElementById('unitPrice').value);
+                    const total = Number(document.getElementById('totalAgreedPrice').value);
+
+                    setFieldError('itemCategory', 'err_itemCategory', !cat);
+                    setFieldError('itemName', 'err_itemName', !name);
+                    setFieldError('itemDescription', 'err_itemDescription', !desc);
+                    setFieldError('itemQuantity', 'err_itemQuantity', !Number.isFinite(qty) || qty < 1);
+                    setFieldError('unitPrice', 'err_unitPrice', !Number.isFinite(unit) || unit <= 0);
+                    setFieldError('totalAgreedPrice', 'err_totalAgreedPrice', !Number.isFinite(total) || total <= 0);
+
+                    if (!cat || !name || !desc || qty < 1 || unit <= 0 || total <= 0) {
+                        valid = false;
+                    }
+                }
+
+                if (step === 3) {
+                    const { total, deposit, count, schedule } = buildInstallmentSchedule();
+                    const firstDate = firstPaymentDateEl.value;
+                    const installmentsSum = schedule.reduce((sum, r) => sum + r.amount, 0);
+
+                    const badDeposit = !Number.isFinite(deposit) || deposit < 0 || deposit > total;
+                    const badCount = !Number.isFinite(count) || count < 1 || count > 60;
+                    const badDate = !firstDate;
+                    const badSum = (deposit + installmentsSum) !== total;
+
+                    setFieldError('initialDeposit', 'err_initialDeposit', badDeposit);
+                    setFieldError('installmentCount', 'err_installmentCount', badCount);
+                    setFieldError('firstPaymentDate', 'err_firstPaymentDate', badDate);
+                    setFieldError(null, 'err_scheduleTotal', badSum);
+
+                    if (badDeposit || badCount || badDate || badSum) {
+                        valid = false;
+                        if (badSum) {
+                            showGlobalAlert(
+                                'Invalid Installment Schedule',
+                                `The initial deposit (${formatTZS(deposit)}) plus installments (${formatTZS(installmentsSum)}) must equal the Total Agreed Price (${formatTZS(total)}).`
+                            );
+                            return false;
+                        }
+                    }
+                }
+
+                if (step === 4) {
+                    const delCond = document.querySelector('input[name="delivery_condition"]:checked')?.value;
+                    if (delCond === 'after_specified_threshold') {
+                        const reqAmt = document.getElementById('requiredReleaseAmount').value.trim();
+                        setFieldError('requiredReleaseAmount', 'err_requiredReleaseAmount', !reqAmt);
+                        if (!reqAmt) valid = false;
+                    } else {
+                        setFieldError('requiredReleaseAmount', 'err_requiredReleaseAmount', false);
+                    }
+
+                    const isService = itemTypeEl.value === 'service';
+                    if (!isService) {
+                        const dDate = document.getElementById('expectedDeliveryDate').value;
+                        const dLoc = document.getElementById('deliveryLocation').value.trim();
+                        setFieldError('expectedDeliveryDate', 'err_expectedDeliveryDate', !dDate);
+                        setFieldError('deliveryLocation', 'err_deliveryLocation', !dLoc);
+                        if (!dDate || !dLoc) valid = false;
+                    } else {
+                        const sStart = document.getElementById('serviceStartDate').value;
+                        const sEnd = document.getElementById('serviceEndDate').value;
+                        const sLoc = document.getElementById('serviceLocation').value.trim();
+                        setFieldError('serviceStartDate', 'err_serviceStartDate', !sStart);
+                        setFieldError('serviceEndDate', 'err_serviceEndDate', !sEnd || (sStart && sEnd < sStart));
+                        setFieldError('serviceLocation', 'err_serviceLocation', !sLoc);
+                        if (!sStart || !sEnd || (sStart && sEnd < sStart) || !sLoc) valid = false;
+                    }
+                }
+
+                if (!valid) {
+                    showGlobalAlert('Missing or Invalid Details', 'Please complete all required fields highlighted in red before continuing.');
+                }
+                return valid;
+            }
+
+            // --- Build Structured Payload & Populate Step 5 Preview ---
+            function collectAgreementPayload() {
+                const sellerType = getSelectedSellerType();
+                const seller = sellerType === 'registered'
+                    ? {
+                        type: 'registered',
+                        seller_id: selectedRegisteredSeller?.id || null,
+                        name: selectedRegisteredSeller?.name || '',
+                        phone: selectedRegisteredSeller?.phone || '',
+                        email: selectedRegisteredSeller?.email || document.getElementById('regSellerEmailInput').value.trim(),
+                        location: selectedRegisteredSeller?.location || ''
+                    }
+                    : {
+                        type: 'unregistered',
+                        seller_id: null,
+                        name: document.getElementById('unregSellerName').value.trim(),
+                        phone: document.getElementById('unregSellerPhone').value.trim(),
+                        email: document.getElementById('unregSellerEmail').value.trim(),
+                        location: document.getElementById('unregSellerLocation').value.trim()
+                    };
+
+                const isService = itemTypeEl.value === 'service';
+                const product = {
+                    type: itemTypeEl.value,
+                    category: document.getElementById('itemCategory').value.trim(),
+                    name: document.getElementById('itemName').value.trim(),
+                    description: document.getElementById('itemDescription').value.trim(),
+                    quantity: Math.max(1, Number(itemQtyEl.value) || 1),
+                    condition: isService ? 'N/A' : document.getElementById('itemCondition').value,
+                    unit_price: Math.round(Number(unitPriceEl.value) || 0),
+                    total_agreed_price: Math.round(Number(totalAgreedPriceEl.value) || 0),
+                    additional_notes: document.getElementById('itemNotes').value.trim(),
+                    has_product_image: Boolean(selectedProductImageFile),
+                    product_image_name: selectedProductImageFile ? selectedProductImageFile.name : null
+                };
+
+                const { total, deposit, remaining, count, freq, schedule } = buildInstallmentSchedule();
+                const preferredMethod = document.querySelector('input[name="preferred_payment_method"]:checked')?.value || 'M-Pesa';
+                const payment = {
+                    total_agreed_price: total,
+                    initial_deposit: deposit,
+                    remaining_balance: remaining,
+                    number_of_installments: count,
+                    payment_frequency: freq,
+                    installment_amount: schedule.length > 0 ? schedule[0].amount : 0,
+                    first_payment_date: firstPaymentDateEl.value,
+                    expected_final_payment_date: schedule.length > 0 ? schedule[schedule.length - 1].due_date : null,
+                    total_amount_payable: deposit + schedule.reduce((s, r) => s + r.amount, 0),
+                    preferred_payment_method: preferredMethod,
+                    payment_instructions: document.getElementById('paymentInstructions').value.trim(),
+                    schedule: schedule
+                };
+
+                const releaseCond = document.querySelector('input[name="delivery_condition"]:checked')?.value || 'after_full_payment';
+                const delivery = isService
+                    ? {
+                        release_condition: releaseCond,
+                        required_threshold: releaseCond === 'after_specified_threshold' ? document.getElementById('requiredReleaseAmount').value.trim() : null,
+                        service_commencement_date: document.getElementById('serviceStartDate').value,
+                        service_completion_date: document.getElementById('serviceEndDate').value,
+                        location: document.getElementById('serviceLocation').value.trim(),
+                        charges: Math.round(Number(document.getElementById('serviceExtraFees').value) || 0),
+                        charges_paid_by: document.getElementById('serviceFeePayer').value,
+                        instructions: document.getElementById('serviceInstructions').value.trim()
+                    }
+                    : {
+                        release_condition: releaseCond,
+                        required_threshold: releaseCond === 'after_specified_threshold' ? document.getElementById('requiredReleaseAmount').value.trim() : null,
+                        expected_delivery_date: document.getElementById('expectedDeliveryDate').value,
+                        location: document.getElementById('deliveryLocation').value.trim(),
+                        charges: Math.round(Number(document.getElementById('deliveryCharges').value) || 0),
+                        charges_paid_by: document.getElementById('deliveryChargesPayer').value,
+                        instructions: document.getElementById('deliveryInstructions').value.trim()
+                    };
+
+                const terms = {
+                    grace_period_days: Math.max(0, Number(document.getElementById('gracePeriodDays').value) || 0),
+                    additional_charges_or_interest: document.getElementById('additionalCharges').value.trim(),
+                    late_payment_policy: document.getElementById('latePaymentPolicy').value.trim(),
+                    early_payment_conditions: document.getElementById('earlyPaymentPolicy').value.trim(),
+                    cancellation_policy: document.getElementById('cancellationPolicy').value.trim(),
+                    refund_policy: document.getElementById('refundPolicy').value.trim(),
+                    dispute_resolution_conditions: document.getElementById('disputePolicy').value.trim()
+                };
+
+                return {
+                    agreement_status: 'pending_seller_approval',
+                    customer_confirmed: document.getElementById('confirmAgreementCheckbox').checked,
+                    created_date: getTodayISO(),
+                    email_notifications_prepared: {
+                        agreement_confirmation_pdf: true,
+                        installment_payment_receipts: true,
+                        final_settlement_confirmation: true
+                    },
+                    seller,
+                    product,
+                    payment,
+                    delivery,
+                    terms
+                };
+            }
+
+            function populateAgreementPreview() {
+                const data = collectAgreementPayload();
+
+                document.getElementById('prevCreatedDate').textContent = `Created: ${formatReadableDate(data.created_date)}`;
+                document.getElementById('prevCustName').textContent = authenticatedCustomer.full_name;
+                document.getElementById('prevCustEmail').textContent = authenticatedCustomer.email;
+                document.getElementById('prevCustPhone').textContent = authenticatedCustomer.phone;
+
+                document.getElementById('prevSellerType').textContent = data.seller.type === 'registered'
+                    ? 'Registered PaySmallApp Seller'
+                    : 'Unregistered Seller (Email Invite)';
+                document.getElementById('prevSellerName').textContent = data.seller.name || '—';
+                document.getElementById('prevSellerEmail').textContent = data.seller.email || '—';
+                document.getElementById('prevSellerPhone').textContent = data.seller.phone || 'Not provided';
+                document.getElementById('prevSellerLocation').textContent = data.seller.location || '—';
+
+                document.getElementById('prevItemName').textContent = data.product.name;
+                document.getElementById('prevItemTypeCat').textContent = `${data.product.type === 'service' ? 'Service' : 'Physical Product'} • ${data.product.category}`;
+                document.getElementById('prevItemQtyCond').textContent = data.product.type === 'service'
+                    ? `${data.product.quantity} Unit(s)`
+                    : `${data.product.quantity} Unit(s) • ${data.product.condition}`;
+                document.getElementById('prevItemUnit').textContent = formatTZS(data.product.unit_price);
+                document.getElementById('prevItemDesc').textContent = data.product.description;
+
+                document.getElementById('prevTotalPrice').textContent = formatTZS(data.payment.total_agreed_price);
+                document.getElementById('prevDeposit').textContent = formatTZS(data.payment.initial_deposit);
+                document.getElementById('prevRemaining').textContent = formatTZS(data.payment.remaining_balance);
+                document.getElementById('prevPlanSummary').textContent = `${data.payment.number_of_installments} × (${data.payment.payment_frequency})`;
+                document.getElementById('prevPayMethod').textContent = data.payment.preferred_payment_method;
+                document.getElementById('prevCompletion').textContent = formatReadableDate(data.payment.expected_final_payment_date);
+
+                document.getElementById('prevScheduleBody').innerHTML = data.payment.schedule.map(row => `
+                    <tr>
+                        <td><strong>Installment #${row.installment_number}</strong></td>
+                        <td>${formatReadableDate(row.due_date)}</td>
+                        <td><strong>${formatTZS(row.amount)}</strong></td>
+                        <td>${formatTZS(row.remaining_after)}</td>
+                    </tr>
+                `).join('');
+
+                const condMap = {
+                    after_full_payment: 'After full payment (100% settled)',
+                    after_initial_deposit: 'After initial deposit verification',
+                    after_specified_threshold: `After threshold: ${data.delivery.required_threshold || 'Specified milestone'}`
+                };
+                document.getElementById('prevDeliveryCond').textContent = condMap[data.delivery.release_condition] || '—';
+
+                if (data.product.type === 'service') {
+                    document.getElementById('prevDateLabel').textContent = 'Service Window';
+                    document.getElementById('prevDeliveryDate').textContent = `${formatReadableDate(data.delivery.service_commencement_date)} → ${formatReadableDate(data.delivery.service_completion_date)}`;
+                } else {
+                    document.getElementById('prevDateLabel').textContent = 'Expected Delivery Date';
+                    document.getElementById('prevDeliveryDate').textContent = formatReadableDate(data.delivery.expected_delivery_date);
+                }
+                document.getElementById('prevDeliveryLocation').textContent = data.delivery.location || '—';
+                document.getElementById('prevDeliveryFee').textContent = `${formatTZS(data.delivery.charges)} (${data.delivery.charges_paid_by})`;
+
+                document.getElementById('prevGracePeriod').textContent = `${data.terms.grace_period_days} day(s)`;
+                document.getElementById('prevExtraCharges').textContent = data.terms.additional_charges_or_interest;
+                document.getElementById('prevLatePolicy').textContent = data.terms.late_payment_policy;
+                document.getElementById('prevEarlyPolicy').textContent = data.terms.early_payment_conditions;
+                document.getElementById('prevCancelPolicy').textContent = data.terms.cancellation_policy;
+                document.getElementById('prevRefundPolicy').textContent = data.terms.refund_policy;
+                document.getElementById('prevDisputePolicy').textContent = data.terms.dispute_resolution_conditions;
+            }
+
+            // --- Wizard Navigation Button Handlers ---
+            document.getElementById('nextStepBtn').addEventListener('click', () => {
+                if (validateStep(currentStep)) {
+                    goToStep(currentStep + 1);
+                }
+            });
+
+            document.getElementById('prevStepBtn').addEventListener('click', () => {
+                goToStep(currentStep - 1);
+            });
+
+            document.querySelectorAll('.step-pill').forEach(pill => {
+                pill.addEventListener('click', () => {
+                    const target = Number(pill.dataset.stepTarget);
+                    if (target < currentStep) {
+                        goToStep(target);
+                    } else if (target > currentStep) {
+                        // Validate sequential steps forward
+                        for (let s = currentStep; s < target; s++) {
+                            if (!validateStep(s)) return;
+                        }
+                        goToStep(target);
+                    }
+                });
+            });
+
+            document.querySelectorAll('[data-jump-step]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    goToStep(Number(btn.dataset.jumpStep));
+                });
+            });
+
+            // --- 8. FUTURE PHP BACKEND INTEGRATION (api/agreement.php) ---
+            async function submitAgreement(agreementData) {
+                if (isSubmitting) return;
+                isSubmitting = true;
+
+                const submitBtn = document.getElementById('submitAgreementBtn');
+                const originalBtnHtml = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<span class="spinner-sm"></span> Submitting Agreement...`;
+                hideGlobalAlert();
+
+                try {
+                    const response = await fetch('api/agreement.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        credentials: 'same-origin',
+                        body: JSON.stringify(agreementData)
+                    });
+
+                    if (response.status === 401) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+
+                    let result;
+                    try {
+                        result = await response.json();
+                    } catch (_) {
+                        throw new Error('The agreement backend (api/agreement.php) is not active yet. Your form details have been preserved.');
+                    }
+
+                    if (!response.ok || !result.success) {
+                        throw new Error(result.message || 'Agreement submission failed. Please try again.');
+                    }
+
+                    // Display post-submission confirmation
+                    document.getElementById('agreementWizardForm').style.display = 'none';
+                    document.getElementById('stepperCard').style.display = 'none';
+
+                    const statusText = String(result.agreement_status || 'pending_seller_approval')
+                        .replace(/_/g, ' ')
+                        .replace(/\b\w/g, c => c.toUpperCase());
+
+                    document.getElementById('resAgreementStatus').textContent = statusText;
+                    document.getElementById('resHeadline').textContent = result.message || 'Agreement Submitted Successfully!';
+                    document.getElementById('resAgreementId').textContent = result.agreement_id || 'PSA-2026-PENDING';
+                    document.getElementById('resSellerEmail').textContent = agreementData.seller.email;
+
+                    document.getElementById('submissionSuccessView').classList.add('active');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                } catch (error) {
+                    console.error('Agreement submission error:', error);
+                    showGlobalAlert(
+                        'Could Not Submit Agreement',
+                        error.message || 'Unable to reach api/agreement.php right now. All your entered information is safe on this page.'
+                    );
+                } finally {
+                    isSubmitting = false;
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHtml;
+                }
+            }
+
+            document.getElementById('agreementWizardForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                // Re-validate steps 1 through 4 before submission
+                for (let s = 1; s <= 4; s++) {
+                    if (!validateStep(s)) {
+                        goToStep(s);
+                        return;
+                    }
+                }
+
+                const confirmed = document.getElementById('confirmAgreementCheckbox').checked;
+                setFieldError('confirmAgreementCheckbox', 'err_confirmAgreementCheckbox', !confirmed);
+                if (!confirmed) {
+                    showGlobalAlert('Confirmation Required', 'Please check the confirmation box to submit your installment agreement proposal.');
+                    return;
+                }
+
+                const payload = collectAgreementPayload();
+                await submitAgreement(payload);
+            });
+
+            document.getElementById('createAnotherBtn').addEventListener('click', () => {
+                document.getElementById('agreementWizardForm').reset();
+                selectedRegisteredSeller = null;
+                selectedProductImageFile = null;
+                customScheduleAmounts = [];
+                userOverrodeTotal = false;
+
+                document.getElementById('selectedRegisteredSellerWrap').style.display = 'none';
+                document.getElementById('regSellerEmailFallback').style.display = 'none';
+                document.getElementById('imagePreviewThumb').innerHTML = `<i class="fa-regular fa-image"></i>`;
+                document.getElementById('imageFileName').textContent = 'No image selected';
+                document.getElementById('removeImageBtn').style.display = 'none';
+                firstPaymentDateEl.value = getTodayISO();
+
+                document.getElementById('submissionSuccessView').classList.remove('active');
+                document.getElementById('stepperCard').style.display = 'block';
+                document.getElementById('agreementWizardForm').style.display = 'block';
+                syncProductOrServiceUI();
+                recalculatePaymentPlan();
+                goToStep(1);
+            });
+
+            // --- Prefill Step 2 from a marketplace product (agreement.html?product_id=12) ---
+            async function prefillFromProduct() {
+                const productId = new URLSearchParams(window.location.search).get('product_id');
+                if (!productId) return;
+                try {
+                    const res = await fetch(`api/products.php?id=${encodeURIComponent(productId)}`, {
+                        headers: { 'Accept': 'application/json' },
+                        credentials: 'same-origin'
+                    });
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    const p = data.data && data.data.product;
+                    if (!p) return;
+
+                    document.getElementById('itemName').value = p.name || '';
+                    document.getElementById('itemDescription').value = p.description || '';
+                    unitPriceEl.value = Math.round(Number(p.price) || 0);
+                    userOverrodeTotal = false;
+                    updateCalculatedTotalPrice();
+
+                    const categoryEl = document.getElementById('itemCategory');
+                    const match = Array.from(categoryEl.options).find(o =>
+                        o.value.toLowerCase() === String(p.category || '').toLowerCase() ||
+                        o.textContent.toLowerCase().includes(String(p.category || '').toLowerCase().split(' ')[0] || '\u0000'));
+                    if (match) categoryEl.value = match.value;
+
+                    if (p.seller_id) {
+                        selectRegisteredSeller({
+                            id: p.seller_id,
+                            name: p.seller_name || 'Registered Seller',
+                            phone: p.seller_phone || '',
+                            email: p.seller_email || '',
+                            location: p.seller_location || ''
+                        });
+                    }
+                    recalculatePaymentPlan();
+                } catch (_) {
+                    // Product service unavailable; the user fills Step 2 manually
+                }
+            }
+
+            // Initialize page
+            document.addEventListener('DOMContentLoaded', () => {
+                syncProductOrServiceUI();
+                recalculatePaymentPlan();
+                loadCustomerSessionContext();
+                prefillFromProduct();
+            });
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Store — LipaLink</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary: #1769AA;
+            --primary-hover: #12558c;
+            --primary-light: #f0f7fc;
+            --dark: #0f172a;
+            --dark-subtle: #334155;
+            --slate-muted: #64748b;
+            --bg-page: #f8fafc;
+            --border: #e2e8f0;
+            --radius-card: 16px;
+            --radius-pill: 9999px;
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-page);
+            color: var(--dark);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 72px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+        }
+
+        .navbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--dark);
+            text-decoration: none;
+        }
+
+        .logo-box {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), #0f4c7d);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+        }
+
+        .nav-panel {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--slate-muted);
+            font-size: 0.86rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .nav-links a.active, .nav-links a:hover { color: var(--primary); }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mobile-toggle {
+            display: none;
+            margin-left: auto;
+            background: none;
+            border: none;
+            font-size: 1.35rem;
+            color: var(--dark);
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: var(--radius-pill);
+            text-decoration: none;
+        }
+
+        .btn-primary { background: var(--primary); color: #ffffff; border: none; cursor: pointer; }
+        .btn-outline { background: #ffffff; color: var(--dark-subtle); border: 1px solid var(--border); }
+
+        .form-wrapper {
+            padding: 120px 0 60px 0;
+            max-width: 580px;
+            margin: 0 auto;
+        }
+
+        .form-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 36px;
+            box-shadow: 0 10px 25px -5px rgba(23, 105, 170, 0.08);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+            outline: none;
+            background: var(--bg-page);
+            margin-top: 6px;
+            margin-bottom: 16px;
+        }
+
+        .input-field.is-invalid { border-color: #ef4444; }
+
+        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        .store-message {
+            display: none;
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            margin-bottom: 18px;
+            line-height: 1.45;
+        }
+
+        .store-message.error { display: block; color: #b91c1c; background: #fef2f2; border: 1px solid #fecaca; }
+        .store-message.success { display: block; color: #166534; background: #f0fdf4; border: 1px solid #bbf7d0; }
+
+        footer {
+            background: var(--dark);
+            color: var(--slate-muted);
+            padding: 40px 0;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 1080px) {
+            .mobile-toggle { display: inline-flex; }
+            .nav-panel {
+                display: none;
+                position: absolute;
+                top: 72px;
+                left: 0;
+                right: 0;
+                background: #ffffff;
+                border-bottom: 1px solid var(--border);
+                flex-direction: column;
+                align-items: stretch;
+                padding: 8px 24px 20px;
+                gap: 4px;
+                box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08);
+                z-index: 1001;
+            }
+            .navbar.menu-open .nav-panel { display: flex; }
+            .nav-links, .nav-actions { flex-direction: column; align-items: stretch; }
+            .nav-links a, .nav-actions .btn { padding: 12px 4px; }
+        }
+
+        @media (max-width: 640px) {
+            .form-card { padding: 24px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <div class="logo-box"><i class="fa-solid fa-link"></i></div>
+                LipaLink
+            </a>
+            <button class="mobile-toggle" aria-label="Toggle Menu" aria-expanded="false">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="nav-panel">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="how-it-works.html">How It Works</a></li>
+                    <li><a href="marketplace.html">Marketplace</a></li>
+                    <li><a href="for-sellers.html">For Sellers</a></li>
+                    <li><a href="register-store.html" class="active">Register Store</a></li>
+                    <li><a href="security.html">Security</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="login.html" class="btn btn-outline">Log In</a>
+                    <a href="register.html" class="btn btn-primary">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="form-wrapper">
+            <div class="form-card">
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <i class="fa-solid fa-store" style="font-size: 2.2rem; color: var(--primary); margin-bottom: 10px;"></i>
+                    <h2 style="font-size: 1.6rem;">Register Your Store</h2>
+                    <p style="font-size: 0.875rem; color: var(--slate-muted);">Start receiving installment payments from customers</p>
+                </div>
+
+                <div id="storeMessage" class="store-message" role="alert"></div>
+
+                <form id="storeForm" novalidate>
+                    <label for="storeName" style="font-size: 0.825rem; font-weight: 700;">Business / Store Name</label>
+                    <input type="text" id="storeName" name="business_name" class="input-field" placeholder="e.g. Mwanza Tech Hub" autocomplete="organization" required>
+
+                    <label for="ownerName" style="font-size: 0.825rem; font-weight: 700;">Owner Full Name</label>
+                    <input type="text" id="ownerName" name="full_name" class="input-field" placeholder="e.g. David Hassan" autocomplete="name" required>
+
+                    <label for="storePhone" style="font-size: 0.825rem; font-weight: 700;">Phone Number (For Payouts)</label>
+                    <input type="tel" id="storePhone" name="phone" class="input-field" placeholder="07XX XXX XXX or +255 7XX XXX XXX" autocomplete="tel" inputmode="tel" required>
+
+                    <label for="storeEmail" style="font-size: 0.825rem; font-weight: 700;">Business Email</label>
+                    <input type="email" id="storeEmail" name="email" class="input-field" placeholder="store@example.com" autocomplete="email" required>
+
+                    <label for="storeLocation" style="font-size: 0.825rem; font-weight: 700;">Store Location (City / Area)</label>
+                    <input type="text" id="storeLocation" name="location" class="input-field" placeholder="e.g. Kariakoo, Dar es Salaam">
+
+                    <label for="storeCategory" style="font-size: 0.825rem; font-weight: 700;">Business Category</label>
+                    <select id="storeCategory" name="category" class="input-field">
+                        <option>Electronics & Phones</option>
+                        <option>Home Solar & Appliances</option>
+                        <option>Furniture & Decor</option>
+                        <option>Fashion & Apparel</option>
+                        <option>General Retail Shop</option>
+                        <option>Services</option>
+                    </select>
+
+                    <label for="storePayout" style="font-size: 0.825rem; font-weight: 700;">Preferred Settlement Wallet</label>
+                    <select id="storePayout" name="payout_method" class="input-field">
+                        <option value="mobile_money">Mobile Money (M-Pesa / Tigo / Airtel)</option>
+                        <option value="bank">Bank Account (CRDB / NMB / KCB)</option>
+                    </select>
+
+                    <button type="submit" id="storeSubmitBtn" class="btn btn-primary" style="width: 100%; padding: 14px; justify-content: center; font-size: 0.95rem;">
+                        Open Merchant Store
+                    </button>
+
+                    <p style="font-size: 0.75rem; color: var(--slate-muted); text-align: center; margin-top: 14px;">
+                        By registering you agree to our <a href="terms.html" style="color: var(--primary);">Terms of Service</a> and <a href="privacy.html" style="color: var(--primary);">Privacy Policy</a>.
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 LipaLink. All rights reserved.</p>
+    </footer>
+    <script>
+        const navbar = document.querySelector('.navbar');
+        const toggle = document.querySelector('.mobile-toggle');
+        if (navbar && toggle) {
+            toggle.addEventListener('click', () => {
+                const open = navbar.classList.toggle('menu-open');
+                toggle.setAttribute('aria-expanded', String(open));
+                toggle.innerHTML = open ? '<i class="fa-solid fa-xmark"></i>' : '<i class="fa-solid fa-bars"></i>';
+            });
+        }
+
+        // --- Store registration ---
+        const storeForm = document.getElementById('storeForm');
+        const storeMessage = document.getElementById('storeMessage');
+
+        function showStoreMessage(type, text) {
+            storeMessage.textContent = text;
+            storeMessage.className = 'store-message ' + type;
+        }
+
+        function normalizeTanzanianPhone(raw) {
+            let digits = String(raw || '').replace(/\D+/g, '');
+            if (digits.length === 9 && /^[67]/.test(digits)) digits = '255' + digits;
+            else if (digits.length === 10 && digits.startsWith('0')) digits = '255' + digits.slice(1);
+            return digits;
+        }
+
+        // Prefill from the quick form on the homepage, if the visitor came from there
+        try {
+            const draft = JSON.parse(sessionStorage.getItem('lipalink_store_draft') || 'null');
+            if (draft) {
+                if (draft.business_name) document.getElementById('storeName').value = draft.business_name;
+                if (draft.phone) document.getElementById('storePhone').value = draft.phone;
+                if (draft.category) document.getElementById('storeCategory').value = draft.category;
+                if (draft.payout_method) document.getElementById('storePayout').value = draft.payout_method;
+                sessionStorage.removeItem('lipalink_store_draft');
+            }
+        } catch (_) { /* ignore */ }
+
+        storeForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            storeMessage.className = 'store-message';
+
+            const fields = {
+                business_name: document.getElementById('storeName'),
+                full_name: document.getElementById('ownerName'),
+                phone: document.getElementById('storePhone'),
+                email: document.getElementById('storeEmail')
+            };
+            Object.values(fields).forEach(el => el.classList.remove('is-invalid'));
+
+            const phone = normalizeTanzanianPhone(fields.phone.value);
+            const checks = [
+                [fields.business_name, fields.business_name.value.trim().length >= 2, 'Please enter your business or store name.'],
+                [fields.full_name, fields.full_name.value.trim().length >= 2, 'Please enter the owner\'s full name.'],
+                [fields.phone, /^255[67]\d{8}$/.test(phone), 'Please enter a valid Tanzanian phone number (e.g. 0712 345 678).'],
+                [fields.email, /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email.value.trim()), 'Please enter a valid business email address.']
+            ];
+            for (const [el, ok, msg] of checks) {
+                if (!ok) {
+                    el.classList.add('is-invalid');
+                    el.focus();
+                    showStoreMessage('error', msg);
+                    return;
+                }
+            }
+
+            const formData = new FormData(storeForm);
+            formData.set('phone', phone);
+
+            const submitBtn = document.getElementById('storeSubmitBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp; Registering store...';
+
+            try {
+                const response = await fetch('api/register-store.php', { method: 'POST', body: formData, credentials: 'same-origin' });
+                let data;
+                try {
+                    data = await response.json();
+                } catch (_) {
+                    throw new Error('The store registration service is not responding correctly. Please try again later.');
+                }
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || 'Store registration failed. Please check your details.');
+                }
+                showStoreMessage('success', (data.message || 'Your store has been registered!') + ' Create a customer login to manage it, or log in if you already have one.');
+                storeForm.reset();
+                storeForm.style.display = 'none';
+                storeMessage.insertAdjacentHTML('afterend',
+                    '<div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">' +
+                    '<a href="register.html" class="btn btn-primary">Create Account</a>' +
+                    '<a href="login.html" class="btn btn-outline">Log In</a>' +
+                    '</div>');
+            } catch (error) {
+                console.error('Store registration error:', error);
+                showStoreMessage('error', error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+    </script>
+</body>
+</html>

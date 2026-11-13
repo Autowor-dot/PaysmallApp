@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile — LipaLink</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <aside class="sidebar" id="sidebar" aria-label="Primary Navigation">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="logo">
+                    <div class="logo-box"><i class="fa-solid fa-link"></i></div>
+                    <span>LipaLink</span>
+                </a>
+                <button class="sidebar-close" id="sidebarClose" aria-label="Close Menu"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <span class="nav-section-label">Menu</span>
+                <a href="dashboard.html" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-house"></i> Dashboard</span></a>
+                <a href="marketplace.html" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-compass"></i> Discover Products</span></a>
+                <a href="dashboard.html#active-installments-section" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-layer-group"></i> My Installments</span></a>
+                <a href="dashboard.html#upcoming-payments-section" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-credit-card"></i> My Payments</span></a>
+                <a href="agreements.html" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-handshake"></i> My Agreements</span></a>
+
+                <span class="nav-section-label">Activity &amp; Records</span>
+                <a href="dashboard.html#notifications-section" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-bell"></i> Notifications</span></a>
+                <a href="transactions.html" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-receipt"></i> Transactions &amp; Receipts</span></a>
+
+                <span class="nav-section-label">Account</span>
+                <a href="profile.html" class="nav-item"><span class="nav-item-left"><i class="fa-regular fa-user"></i> My Profile</span></a>
+                <a href="settings.html" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-gear"></i> Settings</span></a>
+                <a href="login.html" class="nav-item logout-item" data-logout><span class="nav-item-left"><i class="fa-solid fa-right-from-bracket"></i> Logout</span></a>
+            </nav>
+        </aside>
+
+        <div class="main-content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open Navigation"><i class="fa-solid fa-bars"></i></button>
+                    <div class="welcome-block">
+                        <h1>My Profile</h1>
+                        <p>Manage your personal details and account security.</p>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <div class="dropdown-wrapper">
+                        <button class="profile-trigger" id="profileTrigger" aria-expanded="false">
+                            <div class="avatar" id="headerAvatar">CU</div>
+                            <span class="profile-trigger-name" id="headerProfileName">Customer</span>
+                            <i class="fa-solid fa-chevron-down" style="font-size: 0.72rem; color: var(--slate-muted);"></i>
+                        </button>
+                        <div class="dropdown-menu" id="profileDropdown">
+                            <div style="padding: 8px 12px 10px 12px; border-bottom: 1px solid var(--border); margin-bottom: 6px;">
+                                <div style="font-size: 0.85rem; font-weight: 700; color: var(--dark);" id="dropdownUserName">Customer Account</div>
+                                <div style="font-size: 0.75rem; color: var(--slate-muted);" id="dropdownUserEmail">—</div>
+                            </div>
+                            <a href="profile.html" class="dropdown-link"><i class="fa-regular fa-user"></i> Profile</a>
+                            <a href="settings.html" class="dropdown-link"><i class="fa-solid fa-sliders"></i> Settings</a>
+                            <a href="login.html" class="dropdown-link danger" data-logout><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="dashboard-container">
+                <div id="profileAlert" class="inline-alert"></div>
+
+                <!-- Profile hero -->
+                <section class="card-panel">
+                    <div class="profile-hero">
+                        <div class="profile-avatar-lg" id="profileAvatar">CU</div>
+                        <div style="flex: 1; min-width: 0;">
+                            <h3 id="profileName"><span class="skeleton">Loading name</span></h3>
+                            <div class="profile-hero-meta">
+                                <span><i class="fa-regular fa-envelope"></i> <span id="profileEmail">—</span></span>
+                                <span><i class="fa-solid fa-phone"></i> <span id="profilePhone">—</span></span>
+                                <span><i class="fa-regular fa-calendar"></i> Member since <span id="profileSince">—</span></span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> Customer Account</span>
+                            <span class="badge badge-primary" id="profileIdBadge">ID —</span>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="two-col-equal">
+                    <!-- Personal information -->
+                    <section class="card-panel" style="margin-bottom: 0;">
+                        <div class="panel-header">
+                            <div class="panel-title-group">
+                                <h3>Personal Information</h3>
+                                <p>Keep your contact details current so sellers and reminders reach you.</p>
+                            </div>
+                        </div>
+
+                        <div id="infoAlert" class="inline-alert"></div>
+
+                        <form id="profileForm" novalidate>
+                            <div class="form-grid">
+                                <div class="form-group full">
+                                    <label for="fullName">Full Name</label>
+                                    <input type="text" id="fullName" name="full_name" class="form-control" autocomplete="name" required>
+                                    <span class="form-error" id="err_fullName">Please enter your full name.</span>
+                                </div>
+                                <div class="form-group full">
+                                    <label for="email">Email Address</label>
+                                    <input type="email" id="email" name="email" class="form-control" autocomplete="email" required>
+                                    <span class="form-error" id="err_email">Please enter a valid email address.</span>
+                                </div>
+                                <div class="form-group full">
+                                    <label for="phone">Phone Number</label>
+                                    <input type="tel" id="phone" name="phone" class="form-control" autocomplete="tel" inputmode="tel" required>
+                                    <span class="form-hint">Used for Mobile Money payments and SMS reminders. Format: 07XX XXX XXX.</span>
+                                    <span class="form-error" id="err_phone">Please enter a valid Tanzanian phone number.</span>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-outline btn-sm" id="resetProfileBtn">Discard Changes</button>
+                                <button type="submit" class="btn btn-primary btn-sm" id="saveProfileBtn"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <!-- Change password -->
+                    <section class="card-panel" id="password" style="margin-bottom: 0;">
+                        <div class="panel-header">
+                            <div class="panel-title-group">
+                                <h3>Change Password</h3>
+                                <p>Use at least 8 characters with a mix of letters, numbers and symbols.</p>
+                            </div>
+                        </div>
+
+                        <div id="passwordAlert" class="inline-alert"></div>
+
+                        <form id="passwordForm" novalidate>
+                            <div class="form-grid">
+                                <div class="form-group full">
+                                    <label for="currentPassword">Current Password</label>
+                                    <input type="password" id="currentPassword" name="current_password" class="form-control" autocomplete="current-password" required>
+                                    <span class="form-error" id="err_currentPassword">Please enter your current password.</span>
+                                </div>
+                                <div class="form-group full">
+                                    <label for="newPassword">New Password</label>
+                                    <input type="password" id="newPassword" name="new_password" class="form-control" autocomplete="new-password" minlength="8" required>
+                                    <div class="progress-track" style="height: 5px; margin-top: 4px;"><div class="progress-fill" id="pwStrength" style="width: 0%;"></div></div>
+                                    <span class="form-error" id="err_newPassword">Your new password must be at least 8 characters.</span>
+                                </div>
+                                <div class="form-group full">
+                                    <label for="confirmPassword">Confirm New Password</label>
+                                    <input type="password" id="confirmPassword" name="confirm_password" class="form-control" autocomplete="new-password" required>
+                                    <span class="form-error" id="err_confirmPassword">Passwords do not match.</span>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary btn-sm" id="savePasswordBtn"><i class="fa-solid fa-key"></i> Update Password</button>
+                            </div>
+                        </form>
+                    </section>
+                </div>
+
+                <section class="card-panel" style="margin-top: 24px;">
+                    <div class="panel-header" style="margin-bottom: 8px;">
+                        <div class="panel-title-group">
+                            <h3>More Account Options</h3>
+                            <p>Notification preferences, language and account closure live in Settings.</p>
+                        </div>
+                        <a href="settings.html" class="btn btn-outline btn-sm"><i class="fa-solid fa-sliders"></i> Open Settings</a>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="actionModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h4 id="modalTitle">Details</h4>
+                <button class="modal-close" id="modalCloseBtn" aria-label="Close Modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-foot" id="modalFoot"></div>
+        </div>
+    </div>
+
+    <script src="assets/js/app-shell.js"></script>
+    <script>
+        (async function () {
+            'use strict';
+            const L = window.LipaLink;
+
+            const session = await L.requireSession();
+            if (!session) return;
+
+            let currentUser = session.user;
+
+            if (!session.online) {
+                L.showAlert('profileAlert', 'info', 'You are viewing cached account details. Changes will be saved once the LipaLink server is reachable.');
+            }
+
+            // ---------- Render ----------
+            function normalizePhone(raw) {
+                let digits = String(raw || '').replace(/\D+/g, '');
+                if (digits.length === 9 && /^[67]/.test(digits)) digits = '255' + digits;
+                else if (digits.length === 10 && digits.startsWith('0')) digits = '255' + digits.slice(1);
+                return digits;
+            }
+
+            function displayPhone(raw) {
+                const d = normalizePhone(raw);
+                if (/^255\d{9}$/.test(d)) return '+255 ' + d.slice(3, 6) + ' ' + d.slice(6, 9) + ' ' + d.slice(9);
+                return raw || '—';
+            }
+
+            function fillProfile(user) {
+                const name = user.full_name || user.name || 'Customer';
+                document.getElementById('profileAvatar').textContent = L.getInitials(name);
+                document.getElementById('profileName').textContent = name;
+                document.getElementById('profileEmail').textContent = user.email || '—';
+                document.getElementById('profilePhone').textContent = displayPhone(user.phone);
+                document.getElementById('profileSince').textContent = user.created_at ? L.formatDate(user.created_at) : 'this year';
+                document.getElementById('profileIdBadge').textContent = 'ID ' + (user.id ? '#' + String(user.id).padStart(5, '0') : '—');
+
+                document.getElementById('fullName').value = name;
+                document.getElementById('email').value = user.email || '';
+                document.getElementById('phone').value = user.phone || '';
+            }
+
+            fillProfile(currentUser);
+
+            function setError(inputId, hasError) {
+                document.getElementById(inputId).classList.toggle('is-invalid', hasError);
+                document.getElementById('err_' + inputId).classList.toggle('visible', hasError);
+            }
+
+            // ---------- Personal info ----------
+            document.getElementById('resetProfileBtn').addEventListener('click', function () {
+                fillProfile(currentUser);
+                ['fullName', 'email', 'phone'].forEach(function (id) { setError(id, false); });
+                L.hideAlert('infoAlert');
+            });
+
+            document.getElementById('profileForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+                L.hideAlert('infoAlert');
+
+                const fullName = document.getElementById('fullName').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const phone = normalizePhone(document.getElementById('phone').value);
+
+                const okName = fullName.length >= 2;
+                const okEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+                const okPhone = /^255[67]\d{8}$/.test(phone);
+                setError('fullName', !okName);
+                setError('email', !okEmail);
+                setError('phone', !okPhone);
+                if (!okName || !okEmail || !okPhone) return;
+
+                const btn = document.getElementById('saveProfileBtn');
+                const original = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+                try {
+                    const data = await L.apiPostJson('api/profile.php', {
+                        action: 'update_profile',
+                        full_name: fullName,
+                        email: email,
+                        phone: phone
+                    });
+                    const updated = (data.data && data.data.user) || data.user || Object.assign({}, currentUser, { full_name: fullName, email: email, phone: phone });
+                    currentUser = Object.assign({}, currentUser, updated);
+                    L.storeUser(currentUser);
+                    L.renderUserHeader(currentUser);
+                    fillProfile(currentUser);
+                    L.showAlert('infoAlert', 'success', data.message || 'Your profile has been updated.');
+                } catch (err) {
+                    L.showAlert('infoAlert', 'error', err.message);
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = original;
+                }
+            });
+
+            // ---------- Password ----------
+            const newPw = document.getElementById('newPassword');
+            newPw.addEventListener('input', function () {
+                const v = newPw.value;
+                const bar = document.getElementById('pwStrength');
+                let score = 0;
+                if (v.length >= 8) score++;
+                if (/[A-Z]/.test(v) && /[a-z]/.test(v)) score++;
+                if (/\d/.test(v)) score++;
+                if (/[^A-Za-z0-9]/.test(v)) score++;
+                const pct = v.length === 0 ? 0 : Math.max(20, score * 25);
+                bar.style.width = pct + '%';
+                bar.style.background = score <= 1 ? 'var(--danger)' : (score <= 2 ? 'var(--warning)' : 'var(--success)');
+            });
+
+            document.getElementById('passwordForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+                L.hideAlert('passwordAlert');
+
+                const current = document.getElementById('currentPassword').value;
+                const next = newPw.value;
+                const confirm = document.getElementById('confirmPassword').value;
+
+                setError('currentPassword', current.length === 0);
+                setError('newPassword', next.length < 8);
+                setError('confirmPassword', next !== confirm);
+                if (current.length === 0 || next.length < 8 || next !== confirm) return;
+
+                if (current === next) {
+                    L.showAlert('passwordAlert', 'error', 'Your new password must be different from your current password.');
+                    return;
+                }
+
+                const btn = document.getElementById('savePasswordBtn');
+                const original = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Updating...';
+
+                try {
+                    const data = await L.apiPostJson('api/profile.php', {
+                        action: 'change_password',
+                        current_password: current,
+                        new_password: next,
+                        confirm_password: confirm
+                    });
+                    document.getElementById('passwordForm').reset();
+                    document.getElementById('pwStrength').style.width = '0%';
+                    L.showAlert('passwordAlert', 'success', data.message || 'Your password has been changed.');
+                } catch (err) {
+                    L.showAlert('passwordAlert', 'error', err.message);
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = original;
+                }
+            });
+
+            // Clear field errors while typing
+            document.querySelectorAll('.form-control').forEach(function (input) {
+                input.addEventListener('input', function () {
+                    if (document.getElementById('err_' + input.id)) setError(input.id, false);
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

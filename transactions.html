@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions &amp; Receipts — LipaLink</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <aside class="sidebar" id="sidebar" aria-label="Primary Navigation">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="logo">
+                    <div class="logo-box"><i class="fa-solid fa-link"></i></div>
+                    <span>LipaLink</span>
+                </a>
+                <button class="sidebar-close" id="sidebarClose" aria-label="Close Menu"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <span class="nav-section-label">Menu</span>
+                <a href="dashboard.html" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-house"></i> Dashboard</span></a>
+                <a href="marketplace.html" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-compass"></i> Discover Products</span></a>
+                <a href="dashboard.html#active-installments-section" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-layer-group"></i> My Installments</span></a>
+                <a href="dashboard.html#upcoming-payments-section" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-credit-card"></i> My Payments</span></a>
+                <a href="agreements.html" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-handshake"></i> My Agreements</span></a>
+
+                <span class="nav-section-label">Activity &amp; Records</span>
+                <a href="dashboard.html#notifications-section" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-bell"></i> Notifications</span></a>
+                <a href="transactions.html" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-receipt"></i> Transactions &amp; Receipts</span></a>
+
+                <span class="nav-section-label">Account</span>
+                <a href="profile.html" class="nav-item"><span class="nav-item-left"><i class="fa-regular fa-user"></i> My Profile</span></a>
+                <a href="settings.html" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-gear"></i> Settings</span></a>
+                <a href="login.html" class="nav-item logout-item" data-logout><span class="nav-item-left"><i class="fa-solid fa-right-from-bracket"></i> Logout</span></a>
+            </nav>
+        </aside>
+
+        <div class="main-content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open Navigation"><i class="fa-solid fa-bars"></i></button>
+                    <div class="welcome-block">
+                        <h1>Transactions &amp; Receipts</h1>
+                        <p>Every installment payment and its official digital receipt.</p>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <div class="dropdown-wrapper">
+                        <button class="profile-trigger" id="profileTrigger" aria-expanded="false">
+                            <div class="avatar" id="headerAvatar">CU</div>
+                            <span class="profile-trigger-name" id="headerProfileName">Customer</span>
+                            <i class="fa-solid fa-chevron-down" style="font-size: 0.72rem; color: var(--slate-muted);"></i>
+                        </button>
+                        <div class="dropdown-menu" id="profileDropdown">
+                            <div style="padding: 8px 12px 10px 12px; border-bottom: 1px solid var(--border); margin-bottom: 6px;">
+                                <div style="font-size: 0.85rem; font-weight: 700; color: var(--dark);" id="dropdownUserName">Customer Account</div>
+                                <div style="font-size: 0.75rem; color: var(--slate-muted);" id="dropdownUserEmail">—</div>
+                            </div>
+                            <a href="profile.html" class="dropdown-link"><i class="fa-regular fa-user"></i> Profile</a>
+                            <a href="settings.html" class="dropdown-link"><i class="fa-solid fa-sliders"></i> Settings</a>
+                            <a href="login.html" class="dropdown-link danger" data-logout><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="dashboard-container">
+                <div class="state-banner" id="loadingBanner">
+                    <div class="state-banner-info">
+                        <div class="spinner" aria-hidden="true"></div>
+                        <div>
+                            <strong style="font-size: 0.92rem; display: block;">Loading your transactions...</strong>
+                            <span style="font-size: 0.82rem; color: var(--slate-muted);">Fetching payment history and receipts.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="state-banner error" id="errorBanner" style="display: none;" role="alert">
+                    <div class="state-banner-info">
+                        <i class="fa-solid fa-circle-exclamation" style="font-size: 1.3rem;"></i>
+                        <div>
+                            <strong style="font-size: 0.92rem; display: block;" id="errorTitle">Unable to load transactions</strong>
+                            <span style="font-size: 0.82rem;" id="errorMessage">Please verify your connection or sign in again.</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline btn-sm" id="retryBtn"><i class="fa-solid fa-rotate-right"></i> Retry</button>
+                </div>
+
+                <!-- Summary -->
+                <section class="summary-grid" aria-label="Payment Summary" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-label">Total Paid</span>
+                            <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
+                        </div>
+                        <div class="stat-value" id="statTotalPaid">—</div>
+                        <div class="stat-sub">Completed payments only</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-label">Transactions</span>
+                            <div class="stat-icon blue"><i class="fa-solid fa-receipt"></i></div>
+                        </div>
+                        <div class="stat-value" id="statCount">—</div>
+                        <div class="stat-sub" id="statCountSub">All time</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-label">Last Payment</span>
+                            <div class="stat-icon amber"><i class="fa-regular fa-clock"></i></div>
+                        </div>
+                        <div class="stat-value" id="statLast">—</div>
+                        <div class="stat-sub" id="statLastSub">No payments yet</div>
+                    </div>
+                </section>
+
+                <!-- Table -->
+                <section class="card-panel">
+                    <div class="panel-header">
+                        <div class="panel-title-group">
+                            <h3>Payment History</h3>
+                            <p>Search, filter and download your receipts.</p>
+                        </div>
+                        <button type="button" class="btn btn-outline btn-sm" id="exportBtn"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+                    </div>
+
+                    <div class="filter-bar">
+                        <div class="search-wrap">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="search" id="searchInput" class="form-control" placeholder="Search by receipt ID, product or seller" aria-label="Search transactions">
+                        </div>
+                        <select id="statusFilter" class="form-control" aria-label="Filter by status">
+                            <option value="">All statuses</option>
+                            <option value="completed">Completed</option>
+                            <option value="pending">Pending</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                        <input type="date" id="fromDate" class="form-control" aria-label="From date">
+                        <input type="date" id="toDate" class="form-control" aria-label="To date">
+                        <button type="button" class="btn btn-outline btn-sm" id="clearFiltersBtn">Clear</button>
+                    </div>
+
+                    <div id="transactionsContainer"></div>
+
+                    <div class="pagination" id="pagination" style="display: none;">
+                        <span id="pageInfo">Showing 0 of 0</span>
+                        <div class="pagination-btns">
+                            <button type="button" class="btn btn-outline btn-sm" id="prevPageBtn"><i class="fa-solid fa-chevron-left"></i> Prev</button>
+                            <button type="button" class="btn btn-outline btn-sm" id="nextPageBtn">Next <i class="fa-solid fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="actionModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h4 id="modalTitle">Details</h4>
+                <button class="modal-close" id="modalCloseBtn" aria-label="Close Modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-foot" id="modalFoot"></div>
+        </div>
+    </div>
+
+    <script src="assets/js/app-shell.js"></script>
+    <script>
+        (async function () {
+            'use strict';
+            const L = window.LipaLink;
+            const PAGE_SIZE = 10;
+
+            const session = await L.requireSession();
+            if (!session) return;
+
+            let allTransactions = [];
+            let filtered = [];
+            let page = 1;
+
+            // ---------- Normalisation ----------
+            function normalize(tx, index) {
+                const amount = Number(tx.amount_paid ?? tx.amount ?? 0);
+                const statusRaw = String(tx.status || 'Completed');
+                return {
+                    raw: tx,
+                    id: tx.id ?? index,
+                    code: tx.transaction_id || tx.transaction_code || tx.reference || ('#TX-' + (tx.id || index + 1)),
+                    item: tx.product_name || tx.agreement_name || 'Installment Payment',
+                    seller: tx.seller_name || '',
+                    amount: amount,
+                    date: tx.transaction_date || tx.created_at || '',
+                    method: tx.payment_method || 'Mobile Money',
+                    payer: tx.payer_phone || '',
+                    status: statusRaw,
+                    statusKey: statusRaw.toLowerCase().includes('fail') || statusRaw.toLowerCase().includes('cancel') ? 'failed'
+                        : (statusRaw.toLowerCase().includes('pend') ? 'pending' : 'completed')
+                };
+            }
+
+            function badgeFor(statusKey) {
+                return statusKey === 'failed' ? 'badge-danger' : (statusKey === 'pending' ? 'badge-warning' : 'badge-success');
+            }
+
+            // ---------- Summary ----------
+            function renderSummary(list) {
+                const completed = list.filter(function (t) { return t.statusKey === 'completed'; });
+                const total = completed.reduce(function (s, t) { return s + t.amount; }, 0);
+                document.getElementById('statTotalPaid').textContent = L.formatTZS(total);
+                document.getElementById('statCount').textContent = list.length.toLocaleString('en-US');
+                document.getElementById('statCountSub').textContent = completed.length + ' completed, ' + (list.length - completed.length) + ' other';
+
+                const sorted = completed.slice().sort(function (a, b) {
+                    return (L.parseDate(b.date) || 0) - (L.parseDate(a.date) || 0);
+                });
+                if (sorted.length) {
+                    document.getElementById('statLast').textContent = L.formatTZS(sorted[0].amount);
+                    document.getElementById('statLastSub').textContent = L.formatDate(sorted[0].date) + ' • ' + sorted[0].item;
+                } else {
+                    document.getElementById('statLast').textContent = '—';
+                    document.getElementById('statLastSub').textContent = 'No payments yet';
+                }
+            }
+
+            // ---------- Filters ----------
+            function applyFilters() {
+                const q = document.getElementById('searchInput').value.trim().toLowerCase();
+                const status = document.getElementById('statusFilter').value;
+                const from = document.getElementById('fromDate').value ? new Date(document.getElementById('fromDate').value + 'T00:00:00') : null;
+                const to = document.getElementById('toDate').value ? new Date(document.getElementById('toDate').value + 'T23:59:59') : null;
+
+                filtered = allTransactions.filter(function (t) {
+                    if (status && t.statusKey !== status) return false;
+                    if (q && !(t.code + ' ' + t.item + ' ' + t.seller + ' ' + t.method).toLowerCase().includes(q)) return false;
+                    const d = L.parseDate(t.date);
+                    if (from && (!d || d < from)) return false;
+                    if (to && (!d || d > to)) return false;
+                    return true;
+                });
+                page = 1;
+                renderTable();
+            }
+
+            ['searchInput', 'statusFilter', 'fromDate', 'toDate'].forEach(function (id) {
+                document.getElementById(id).addEventListener('input', applyFilters);
+                document.getElementById(id).addEventListener('change', applyFilters);
+            });
+
+            document.getElementById('clearFiltersBtn').addEventListener('click', function () {
+                ['searchInput', 'statusFilter', 'fromDate', 'toDate'].forEach(function (id) { document.getElementById(id).value = ''; });
+                applyFilters();
+            });
+
+            // ---------- Table ----------
+            function renderTable() {
+                const container = document.getElementById('transactionsContainer');
+                const pagination = document.getElementById('pagination');
+
+                if (filtered.length === 0) {
+                    const hasAny = allTransactions.length > 0;
+                    container.innerHTML =
+                        '<div class="empty-state">' +
+                        '<i class="fa-solid fa-receipt"></i>' +
+                        '<h4>' + (hasAny ? 'No transactions match your filters' : 'No transactions recorded') + '</h4>' +
+                        '<p>' + (hasAny ? 'Try a different search term, status or date range.' : 'Once you make an installment payment, your receipts will appear here.') + '</p>' +
+                        (hasAny ? '' : '<a href="dashboard.html#upcoming-payments-section" class="btn btn-primary btn-sm">View Upcoming Payments</a>') +
+                        '</div>';
+                    pagination.style.display = 'none';
+                    return;
+                }
+
+                const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+                page = Math.min(page, totalPages);
+                const start = (page - 1) * PAGE_SIZE;
+                const rows = filtered.slice(start, start + PAGE_SIZE);
+
+                container.innerHTML =
+                    '<div class="table-responsive"><table class="tx-table"><thead><tr>' +
+                    '<th>Receipt ID</th><th>Product / Agreement</th><th>Amount</th><th>Date</th><th>Method</th><th>Status</th><th>Receipt</th>' +
+                    '</tr></thead><tbody>' +
+                    rows.map(function (t) {
+                        return '<tr>' +
+                            '<td><span class="tx-id">' + L.escapeHtml(t.code) + '</span></td>' +
+                            '<td><strong style="color: var(--dark);">' + L.escapeHtml(t.item) + '</strong>' +
+                            (t.seller ? '<br><small class="text-muted"><i class="fa-solid fa-store"></i> ' + L.escapeHtml(t.seller) + '</small>' : '') + '</td>' +
+                            '<td><strong style="color: var(--dark);">' + L.formatTZS(t.amount) + '</strong></td>' +
+                            '<td>' + L.formatDate(t.date) + '</td>' +
+                            '<td>' + L.escapeHtml(t.method) + '</td>' +
+                            '<td><span class="badge ' + badgeFor(t.statusKey) + '">' + L.escapeHtml(t.status) + '</span></td>' +
+                            '<td><button type="button" class="btn btn-outline btn-sm" data-receipt="' + L.escapeHtml(String(t.id)) + '"><i class="fa-solid fa-file-invoice"></i> View</button></td>' +
+                            '</tr>';
+                    }).join('') +
+                    '</tbody></table></div>';
+
+                pagination.style.display = 'flex';
+                document.getElementById('pageInfo').textContent =
+                    'Showing ' + (start + 1) + '–' + Math.min(start + PAGE_SIZE, filtered.length) + ' of ' + filtered.length + ' transactions';
+                document.getElementById('prevPageBtn').disabled = page <= 1;
+                document.getElementById('nextPageBtn').disabled = page >= totalPages;
+            }
+
+            document.getElementById('prevPageBtn').addEventListener('click', function () { page--; renderTable(); });
+            document.getElementById('nextPageBtn').addEventListener('click', function () { page++; renderTable(); });
+
+            // ---------- Receipt modal ----------
+            document.addEventListener('click', function (e) {
+                const btn = e.target.closest('[data-receipt]');
+                if (!btn) return;
+                const t = allTransactions.find(function (x) { return String(x.id) === btn.getAttribute('data-receipt'); });
+                if (!t) return;
+                openReceipt(t);
+            });
+
+            function receiptRows(t) {
+                return '<div class="modal-row"><span class="text-muted">Receipt / TX ID</span><strong class="tx-id">' + L.escapeHtml(t.code) + '</strong></div>' +
+                    '<div class="modal-row"><span class="text-muted">Product / Agreement</span><strong>' + L.escapeHtml(t.item) + '</strong></div>' +
+                    (t.seller ? '<div class="modal-row"><span class="text-muted">Seller</span><strong>' + L.escapeHtml(t.seller) + '</strong></div>' : '') +
+                    '<div class="modal-row"><span class="text-muted">Payment Date</span><strong>' + L.formatDateTime(t.date) + '</strong></div>' +
+                    '<div class="modal-row"><span class="text-muted">Payment Method</span><strong>' + L.escapeHtml(t.method) + '</strong></div>' +
+                    (t.payer ? '<div class="modal-row"><span class="text-muted">Paid From</span><strong>' + L.escapeHtml(t.payer) + '</strong></div>' : '') +
+                    '<div class="modal-row"><span class="text-muted">Status</span><strong>' + L.escapeHtml(t.status) + '</strong></div>';
+            }
+
+            function openReceipt(t) {
+                L.openModal(
+                    'Official Digital Receipt',
+                    '<div style="text-align: center; padding-bottom: 14px; border-bottom: 1px dashed var(--border); margin-bottom: 10px;">' +
+                    '<span class="badge ' + badgeFor(t.statusKey) + '"><i class="fa-solid fa-check"></i> ' + (t.statusKey === 'completed' ? 'Verified Payment Receipt' : L.escapeHtml(t.status)) + '</span>' +
+                    '<div style="font-size: 1.35rem; font-weight: 800; margin-top: 8px;">' + L.formatTZS(t.amount) + '</div>' +
+                    '</div>' + receiptRows(t),
+                    '<button type="button" class="btn btn-outline btn-sm" data-modal-close>Close</button>' +
+                    '<button type="button" class="btn btn-primary btn-sm" id="printReceiptBtn"><i class="fa-solid fa-print"></i> Print / Save PDF</button>'
+                );
+                document.getElementById('printReceiptBtn').addEventListener('click', function () { printReceipt(t); });
+            }
+
+            function printReceipt(t) {
+                const user = session.user || {};
+                const win = window.open('', '_blank', 'width=680,height=820');
+                if (!win) return;
+                win.document.write(
+                    '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Receipt ' + L.escapeHtml(t.code) + '</title>' +
+                    '<style>body{font-family:Arial,Helvetica,sans-serif;color:#0f172a;padding:32px;max-width:620px;margin:0 auto}' +
+                    'h1{font-size:20px;margin:0 0 4px}.muted{color:#64748b;font-size:13px}.amt{font-size:28px;font-weight:800;color:#1769AA;margin:18px 0}' +
+                    'table{width:100%;border-collapse:collapse;margin-top:12px}td{padding:9px 0;border-bottom:1px solid #e2e8f0;font-size:14px}td:first-child{color:#64748b;width:45%}' +
+                    '.foot{margin-top:28px;font-size:12px;color:#64748b;border-top:1px dashed #cbd5e1;padding-top:12px}</style></head><body>' +
+                    '<h1>LipaLink Payment Receipt</h1><div class="muted">Pay at your pace • Official digital record</div>' +
+                    '<div class="amt">' + L.formatTZS(t.amount) + '</div>' +
+                    '<table>' +
+                    '<tr><td>Receipt ID</td><td><strong>' + L.escapeHtml(t.code) + '</strong></td></tr>' +
+                    '<tr><td>Customer</td><td>' + L.escapeHtml(user.full_name || user.name || '') + '</td></tr>' +
+                    '<tr><td>Product / Agreement</td><td>' + L.escapeHtml(t.item) + '</td></tr>' +
+                    (t.seller ? '<tr><td>Seller</td><td>' + L.escapeHtml(t.seller) + '</td></tr>' : '') +
+                    '<tr><td>Payment Date</td><td>' + L.formatDateTime(t.date) + '</td></tr>' +
+                    '<tr><td>Method</td><td>' + L.escapeHtml(t.method) + '</td></tr>' +
+                    '<tr><td>Status</td><td>' + L.escapeHtml(t.status) + '</td></tr>' +
+                    '</table>' +
+                    '<div class="foot">Generated on ' + new Date().toLocaleString('en-GB') + '. Keep this receipt as proof of payment. Questions? Contact LipaLink support.</div>' +
+                    '<script>window.onload=function(){window.print();}<\/script></body></html>'
+                );
+                win.document.close();
+            }
+
+            // ---------- CSV export ----------
+            document.getElementById('exportBtn').addEventListener('click', function () {
+                if (filtered.length === 0) return;
+                const header = ['Receipt ID', 'Product / Agreement', 'Seller', 'Amount (TZS)', 'Date', 'Method', 'Status'];
+                const esc = function (v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; };
+                const lines = [header.map(esc).join(',')].concat(filtered.map(function (t) {
+                    return [t.code, t.item, t.seller, Math.round(t.amount), t.date, t.method, t.status].map(esc).join(',');
+                }));
+                const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'lipalink-transactions-' + new Date().toISOString().slice(0, 10) + '.csv';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+            });
+
+            // ---------- Load ----------
+            async function loadTransactions() {
+                const loading = document.getElementById('loadingBanner');
+                const errorBanner = document.getElementById('errorBanner');
+                loading.style.display = 'flex';
+                errorBanner.style.display = 'none';
+
+                try {
+                    const data = await L.apiFetch('api/transactions.php');
+                    const payload = data.data || data;
+                    const list = Array.isArray(payload.transactions) ? payload.transactions : [];
+                    allTransactions = list.map(normalize);
+                } catch (err) {
+                    allTransactions = [];
+                    document.getElementById('errorTitle').textContent = session.online ? 'Unable to load transactions' : 'Transaction history unavailable';
+                    document.getElementById('errorMessage').textContent = session.online
+                        ? (err.message || 'Could not reach api/transactions.php.')
+                        : 'You are signed in. Your receipts will appear here when the LipaLink server is reachable.';
+                    errorBanner.style.display = 'flex';
+                } finally {
+                    loading.style.display = 'none';
+                }
+
+                renderSummary(allTransactions);
+                applyFilters();
+            }
+
+            document.getElementById('retryBtn').addEventListener('click', loadTransactions);
+            loadTransactions();
+        })();
+    </script>
+</body>
+</html>

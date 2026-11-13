@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trust & Security — LipaLink</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary: #1769AA;
+            --primary-hover: #12558c;
+            --primary-light: #f0f7fc;
+            --dark: #0f172a;
+            --dark-subtle: #334155;
+            --slate-muted: #64748b;
+            --bg-page: #f8fafc;
+            --border: #e2e8f0;
+            --radius-card: 16px;
+            --radius-pill: 9999px;
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-page);
+            color: var(--dark);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 72px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+        }
+
+        .navbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--dark);
+            text-decoration: none;
+        }
+
+        .logo-box {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), #0f4c7d);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+        }
+
+        .nav-panel {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--slate-muted);
+            font-size: 0.86rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .nav-links a.active, .nav-links a:hover { color: var(--primary); }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mobile-toggle {
+            display: none;
+            margin-left: auto;
+            background: none;
+            border: none;
+            font-size: 1.35rem;
+            color: var(--dark);
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: var(--radius-pill);
+            text-decoration: none;
+        }
+
+        .btn-primary { background: var(--primary); color: #ffffff; }
+        .btn-outline { background: #ffffff; color: var(--dark-subtle); border: 1px solid var(--border); }
+
+        .page-hero {
+            padding: 130px 0 40px 0;
+            background: radial-gradient(circle at 85% 15%, #eaf4fd 0%, #f8fafc 55%);
+            text-align: center;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin: 40px 0;
+        }
+
+        .sec-box {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 32px;
+        }
+
+        .sec-box i {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        footer {
+            background: var(--dark);
+            color: #64748b;
+            padding: 40px 0;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 1080px) {
+            .mobile-toggle { display: inline-flex; }
+            .nav-panel {
+                display: none;
+                position: absolute;
+                top: 72px;
+                left: 0;
+                right: 0;
+                background: #ffffff;
+                border-bottom: 1px solid var(--border);
+                flex-direction: column;
+                align-items: stretch;
+                padding: 8px 24px 20px;
+                gap: 4px;
+                box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08);
+                z-index: 1001;
+            }
+            .navbar.menu-open .nav-panel { display: flex; }
+            .nav-links, .nav-actions { flex-direction: column; align-items: stretch; }
+            .nav-links a, .nav-actions .btn { padding: 12px 4px; }
+        }
+
+        @media (max-width: 768px) {
+            .grid-4 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <div class="logo-box"><i class="fa-solid fa-link"></i></div>
+                LipaLink
+            </a>
+            <button class="mobile-toggle" aria-label="Toggle Menu" aria-expanded="false">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="nav-panel">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="how-it-works.html">How It Works</a></li>
+                    <li><a href="marketplace.html">Marketplace</a></li>
+                    <li><a href="for-sellers.html">For Sellers</a></li>
+                    <li><a href="register-store.html">Register Store</a></li>
+                    <li><a href="security.html" class="active">Security</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="login.html" class="btn btn-outline">Log In</a>
+                    <a href="register.html" class="btn btn-primary">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-hero">
+        <div class="container">
+            <h1 style="font-size: 2.3rem; margin-bottom: 10px;"><i class="fa-solid fa-shield-halved" style="color: var(--primary);"></i> Security & Trust First</h1>
+            <p style="color: var(--slate-muted); max-width: 600px; margin: 0 auto;">LipaLink ensures transparent transaction tracking and verified digital records for every installment payment.</p>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <div class="grid-4">
+                <div class="sec-box">
+                    <i class="fa-solid fa-user-check"></i>
+                    <h3 style="font-size: 1.2rem; margin-bottom: 8px;">Verified Merchants</h3>
+                    <p style="font-size: 0.9rem; color: var(--slate-muted);">Every business listing products on LipaLink goes through business verification and ID checks to protect buyers.</p>
+                </div>
+
+                <div class="sec-box">
+                    <i class="fa-solid fa-file-invoice"></i>
+                    <h3 style="font-size: 1.2rem; margin-bottom: 8px;">Encrypted Digital Receipts</h3>
+                    <p style="font-size: 0.9rem; color: var(--slate-muted);">Every payment generates an immutable digital receipt sent directly to both buyer and seller via SMS and email.</p>
+                </div>
+
+                <div class="sec-box">
+                    <i class="fa-solid fa-lock"></i>
+                    <h3 style="font-size: 1.2rem; margin-bottom: 8px;">Secure Direct Payouts</h3>
+                    <p style="font-size: 0.9rem; color: var(--slate-muted);">LipaLink connects directly with licensed Mobile Money and banking APIs to ensure reliable fund settlement.</p>
+                </div>
+
+                <div class="sec-box">
+                    <i class="fa-solid fa-handshake-angle"></i>
+                    <h3 style="font-size: 1.2rem; margin-bottom: 8px;">Clear Dispute Resolution</h3>
+                    <p style="font-size: 0.9rem; color: var(--slate-muted);">In case of any payment or order discrepancy, our support team reviews logged receipts to resolve issues fast.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 LipaLink. All rights reserved.</p>
+    </footer>
+    <script>
+        const navbar = document.querySelector('.navbar');
+        const toggle = document.querySelector('.mobile-toggle');
+        if (navbar && toggle) {
+            toggle.addEventListener('click', () => {
+                const open = navbar.classList.toggle('menu-open');
+                toggle.setAttribute('aria-expanded', String(open));
+                toggle.innerHTML = open ? '<i class="fa-solid fa-xmark"></i>' : '<i class="fa-solid fa-bars"></i>';
+            });
+        }
+    </script>
+</body>
+</html>

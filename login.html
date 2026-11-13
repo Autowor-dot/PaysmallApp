@@ -1,0 +1,449 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In — LipaLink</title>
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary: #1769AA;
+            --primary-hover: #12558c;
+            --primary-light: #f0f7fc;
+            --dark: #0f172a;
+            --dark-subtle: #334155;
+            --slate-muted: #64748b;
+            --bg-page: #f8fafc;
+            --border: #e2e8f0;
+            --border-hover: #cbd5e1;
+            --shadow-lg: 0 20px 40px -15px rgba(23, 105, 170, 0.16);
+            --radius-pill: 9999px;
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: radial-gradient(circle at 85% 15%, #eaf4fd 0%, #f8fafc 60%);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .auth-nav {
+            height: 72px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--dark);
+            text-decoration: none;
+        }
+
+        .logo-box {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), #0f4c7d);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 1.05rem;
+        }
+
+        .btn-link {
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .auth-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+        }
+
+        .auth-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 440px;
+            border-radius: 20px;
+            padding: 36px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .auth-header h2 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-top: 10px;
+            margin-bottom: 6px;
+        }
+
+        .auth-header p {
+            font-size: 0.875rem;
+            color: var(--slate-muted);
+        }
+
+        .btn-google {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            background: #ffffff;
+            border-radius: var(--radius-pill);
+            color: var(--dark-subtle);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 20px;
+        }
+
+        .btn-google:hover {
+            background: var(--bg-page);
+            border-color: var(--border-hover);
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            font-size: 0.775rem;
+            color: var(--slate-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .auth-divider::before, .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-group label {
+            font-size: 0.825rem;
+            font-weight: 700;
+            color: var(--dark-subtle);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+            outline: none;
+            background: var(--bg-page);
+            transition: border-color 0.2s ease;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+            background: #ffffff;
+        }
+
+        .auth-options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.825rem;
+        }
+
+        .auth-options a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-pill);
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            margin-top: 8px;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .login-message {
+            display: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .login-message.error {
+            display: block;
+            color: #b91c1c;
+            background: #fef2f2;
+        }
+
+        .login-message.success {
+            display: block;
+            color: #166534;
+            background: #f0fdf4;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header Navigation Bar -->
+    <header class="auth-nav">
+        <a href="index.html" class="logo">
+            <div class="logo-box"><i class="fa-solid fa-link"></i></div>
+            LipaLink
+        </a>
+
+        <a href="index.html" class="btn-link">← Back to Home</a>
+    </header>
+
+    <!-- Center Log In Card -->
+    <div class="auth-wrapper">
+        <div class="auth-card">
+
+            <div class="auth-header">
+                <div class="logo-box" style="margin: 0 auto 10px auto; width: 42px; height: 42px; font-size: 1.1rem;">
+                    <i class="fa-solid fa-link"></i>
+                </div>
+
+                <h2>Log In to LipaLink</h2>
+                <p>Access your buyer progress or merchant store balance</p>
+            </div>
+
+            <!-- Social Google Login -->
+            <button type="button" class="btn-google"
+                onclick="alert('Google Sign-in is not yet connected. Please use your email or phone number.');">
+
+                <svg width="18" height="18" viewBox="0 0 18 18">
+                    <path fill="#4285F4" d="M17.64 9.2c0-.74-.06-1.28-.19-1.84H9v3.34h4.96c-.1.83-.64 2.08-1.84 2.92l2.84 2.2c1.7-1.57 2.68-3.88 2.68-6.62z"/>
+                    <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.84-2.2c-.76.53-1.78.9-3.12.9-2.38 0-4.41-1.57-5.13-3.74L.97 13.04C2.45 15.98 5.48 18 9 18z"/>
+                    <path fill="#FBBC05" d="M3.87 10.78c-.19-.58-.3-1.18-.3-1.78s.11-1.2.3-1.78L.97 4.96C.35 6.18 0 7.55 0 9s.35 2.82.97 4.04l2.9-2.26z"/>
+                    <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0 5.48 0 2.45 2.02.97 4.96l2.9 2.26C4.59 5.05 6.62 3.58 9 3.58z"/>
+                </svg>
+
+                Continue with Google
+            </button>
+
+            <div class="auth-divider">or log in with credentials</div>
+
+            <!-- Login Form -->
+            <form class="auth-form" id="loginForm">
+
+                <div class="input-group">
+                    <label for="loginInput">Email Address or Phone Number</label>
+                    <input
+                        type="text"
+                        id="loginInput"
+                        name="login"
+                        placeholder="name@example.com or 07XXXXXXXX"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label for="passwordInput">Password</label>
+                    <input
+                        type="password"
+                        id="passwordInput"
+                        name="password"
+                        placeholder="••••••••"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                <div class="auth-options">
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--slate-muted);">
+                        <input type="checkbox" id="rememberMe" style="width: auto;">
+                        Remember me
+                    </label>
+
+                    <a href="forgot-password.html">Forgot password?</a>
+                </div>
+
+                <div id="loginMessage" class="login-message"></div>
+
+                <button type="submit" class="btn-submit" id="loginButton">
+                    Log In to Account
+                </button>
+
+            </form>
+
+            <div style="margin-top: 24px; text-align: center; font-size: 0.875rem; color: var(--slate-muted);">
+                Don't have a LipaLink account?
+
+                <a href="register.html" style="color: var(--primary); font-weight: 700; text-decoration: none;">
+                    Create Free Account
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Login JavaScript -->
+    <script>
+        const loginForm = document.getElementById("loginForm");
+
+        // Contextual messages when arriving from registration or account closure
+        (function () {
+            const params = new URLSearchParams(window.location.search);
+            const messageBox = document.getElementById("loginMessage");
+            if (params.get("registered") === "1") {
+                messageBox.textContent = "Your account has been created. Log in to continue.";
+                messageBox.className = "login-message success";
+            } else if (params.get("closed") === "1") {
+                messageBox.textContent = "Your account has been closed. We're sorry to see you go.";
+                messageBox.className = "login-message success";
+            } else if (params.get("reset") === "1") {
+                messageBox.textContent = "Your password has been reset. Log in with your new password.";
+                messageBox.className = "login-message success";
+            }
+        })();
+
+        // Accepts 07XXXXXXXX, +255 7XX..., etc. and returns 2557XXXXXXXX (emails pass through unchanged)
+        function normalizeLoginIdentifier(value) {
+            const trimmed = String(value || "").trim();
+            if (trimmed.includes("@")) return trimmed;
+            let digits = trimmed.replace(/\D+/g, "");
+            if (digits.length === 9 && /^[67]/.test(digits)) digits = "255" + digits;
+            else if (digits.length === 10 && digits.startsWith("0")) digits = "255" + digits.slice(1);
+            return /^255\d{9}$/.test(digits) ? digits : trimmed;
+        }
+
+        loginForm.addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            const loginButton = document.getElementById("loginButton");
+            const messageBox = document.getElementById("loginMessage");
+
+            const formData = new FormData(loginForm);
+            formData.set("login", normalizeLoginIdentifier(formData.get("login")));
+
+            loginButton.disabled = true;
+            loginButton.textContent = "Logging in...";
+            messageBox.className = "login-message";
+            messageBox.textContent = "";
+
+            try {
+
+                const response = await fetch("api/login.php", {
+                    method: "POST",
+                    body: formData
+                });
+
+                let data;
+                try {
+                    data = await response.json();
+                } catch (parseError) {
+                    throw new Error("The login service is not responding correctly. Please try again later.");
+                }
+
+                if (response.ok && data.success) {
+
+                    messageBox.textContent = "Login successful! Redirecting...";
+                    messageBox.className = "login-message success";
+
+                    // Store basic user information for the frontend.
+                    // This is not a secure authentication session.
+                    sessionStorage.setItem("lipalink_user", JSON.stringify(data.user));
+
+                    // Honour a safe same-site "next" page (e.g. login.html?next=pay.html?payment_id=3)
+                    const next = new URLSearchParams(window.location.search).get("next") || "";
+                    const safeNext = /^[a-z0-9-]+\.html(\?[^\s]*)?$/i.test(next) ? next : "dashboard.html";
+                    setTimeout(function() {
+                        window.location.href = safeNext;
+                    }, 1000);
+
+                } else {
+
+                    messageBox.textContent = data.message || "Login failed. Please try again.";
+                    messageBox.className = "login-message error";
+
+                    loginButton.disabled = false;
+                    loginButton.textContent = "Log In to Account";
+                }
+
+            } catch (error) {
+
+                messageBox.textContent = error.message || "Unable to connect to the server. Please try again.";
+                messageBox.className = "login-message error";
+
+                loginButton.disabled = false;
+                loginButton.textContent = "Log In to Account";
+
+                console.error("Login error:", error);
+            }
+
+        });
+    </script>
+
+</body>
+</html>

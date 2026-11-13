@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Agreements — LipaLink</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/app.css">
+    <style>
+        .tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
+        .tab-btn { background: none; border: none; border-bottom: 2px solid transparent; padding: 10px 14px; font: inherit; font-weight: 700; font-size: 0.875rem; color: var(--slate-muted); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+        .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .tab-btn .badge { padding: 2px 8px; }
+        .agreement-list { display: flex; flex-direction: column; gap: 12px; }
+        .agreement-row { display: grid; grid-template-columns: 1fr auto; gap: 14px; padding: 16px 18px; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-page); align-items: center; }
+        .agreement-row:hover { border-color: var(--primary); background: #fff; }
+        .agreement-row h4 { font-size: 0.95rem; margin-bottom: 3px; }
+        .agreement-meta { display: flex; flex-wrap: wrap; gap: 10px 14px; font-size: 0.8rem; color: var(--slate-muted); }
+        .agreement-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .schedule-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 10px; }
+        .schedule-table th, .schedule-table td { padding: 7px 8px; border-bottom: 1px solid var(--border); text-align: left; }
+        .schedule-table th { font-size: 0.72rem; text-transform: uppercase; color: var(--slate-muted); }
+        .modal-box.wide { max-width: 640px; }
+        .modal-body.scroll { max-height: 60vh; overflow-y: auto; }
+        @media (max-width: 640px) { .agreement-row { grid-template-columns: 1fr; } .agreement-actions { justify-content: flex-start; } }
+    </style>
+</head>
+<body>
+
+    <div class="app-layout">
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <aside class="sidebar" id="sidebar" aria-label="Primary Navigation">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="logo">
+                    <div class="logo-box"><i class="fa-solid fa-link"></i></div>
+                    <span>LipaLink</span>
+                </a>
+                <button class="sidebar-close" id="sidebarClose" aria-label="Close Menu"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <span class="nav-section-label">Menu</span>
+                <a href="dashboard.html" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-house"></i> Dashboard</span></a>
+                <a href="marketplace.html" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-compass"></i> Discover Products</span></a>
+                <a href="dashboard.html#active-installments-section" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-layer-group"></i> My Installments</span></a>
+                <a href="dashboard.html#upcoming-payments-section" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-credit-card"></i> My Payments</span></a>
+                <a href="agreements.html" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-handshake"></i> My Agreements</span></a>
+
+                <span class="nav-section-label">Activity &amp; Records</span>
+                <a href="dashboard.html#notifications-section" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-bell"></i> Notifications</span></a>
+                <a href="transactions.html" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-receipt"></i> Transactions &amp; Receipts</span></a>
+
+                <span class="nav-section-label">Account</span>
+                <a href="profile.html" class="nav-item"><span class="nav-item-left"><i class="fa-regular fa-user"></i> My Profile</span></a>
+                <a href="settings.html" class="nav-item"><span class="nav-item-left"><i class="fa-solid fa-gear"></i> Settings</span></a>
+                <a href="login.html" class="nav-item logout-item" data-logout><span class="nav-item-left"><i class="fa-solid fa-right-from-bracket"></i> Logout</span></a>
+            </nav>
+        </aside>
+
+        <div class="main-content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open Navigation"><i class="fa-solid fa-bars"></i></button>
+                    <div class="welcome-block">
+                        <h1>My Agreements</h1>
+                        <p>Installment proposals you have sent and received.</p>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <a href="agreement.html" class="btn btn-primary btn-sm"><i class="fa-solid fa-file-signature"></i> New Agreement</a>
+                    <div class="dropdown-wrapper">
+                        <button class="profile-trigger" id="profileTrigger" aria-expanded="false">
+                            <div class="avatar" id="headerAvatar">CU</div>
+                            <span class="profile-trigger-name" id="headerProfileName">Customer</span>
+                            <i class="fa-solid fa-chevron-down" style="font-size: 0.72rem; color: var(--slate-muted);"></i>
+                        </button>
+                        <div class="dropdown-menu" id="profileDropdown">
+                            <div style="padding: 8px 12px 10px 12px; border-bottom: 1px solid var(--border); margin-bottom: 6px;">
+                                <div style="font-size: 0.85rem; font-weight: 700; color: var(--dark);" id="dropdownUserName">Customer Account</div>
+                                <div style="font-size: 0.75rem; color: var(--slate-muted);" id="dropdownUserEmail">—</div>
+                            </div>
+                            <a href="profile.html" class="dropdown-link"><i class="fa-regular fa-user"></i> Profile</a>
+                            <a href="settings.html" class="dropdown-link"><i class="fa-solid fa-sliders"></i> Settings</a>
+                            <a href="login.html" class="dropdown-link danger" data-logout><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="dashboard-container">
+                <div class="state-banner" id="loadingBanner">
+                    <div class="state-banner-info">
+                        <div class="spinner" aria-hidden="true"></div>
+                        <div>
+                            <strong style="font-size: 0.92rem; display: block;">Loading your agreements...</strong>
+                            <span style="font-size: 0.82rem; color: var(--slate-muted);">Fetching proposals and their approval status.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="state-banner error" id="errorBanner" style="display: none;" role="alert">
+                    <div class="state-banner-info">
+                        <i class="fa-solid fa-circle-exclamation" style="font-size: 1.3rem;"></i>
+                        <div>
+                            <strong style="font-size: 0.92rem; display: block;" id="errorTitle">Unable to load agreements</strong>
+                            <span style="font-size: 0.82rem;" id="errorMessage"></span>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline btn-sm" id="retryBtn"><i class="fa-solid fa-rotate-right"></i> Retry</button>
+                </div>
+
+                <div id="pageAlert" class="inline-alert"></div>
+
+                <section class="card-panel">
+                    <div class="tabs" role="tablist">
+                        <button type="button" class="tab-btn active" data-tab="sent" role="tab">Sent by me <span class="badge badge-primary" id="sentCount">0</span></button>
+                        <button type="button" class="tab-btn" data-tab="received" role="tab">Received as seller <span class="badge badge-warning" id="receivedCount">0</span></button>
+                    </div>
+
+                    <div class="filter-bar" style="margin-bottom: 14px;">
+                        <select id="statusFilter" class="form-control" aria-label="Filter by status">
+                            <option value="">All statuses</option>
+                            <option value="pending_seller_approval">Pending seller approval</option>
+                            <option value="accepted">Accepted</option>
+                            <option value="declined">Declined</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+
+                    <div id="agreementsContainer"></div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="actionModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-box wide">
+            <div class="modal-head">
+                <h4 id="modalTitle">Details</h4>
+                <button class="modal-close" id="modalCloseBtn" aria-label="Close Modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body scroll" id="modalBody"></div>
+            <div class="modal-foot" id="modalFoot"></div>
+        </div>
+    </div>
+
+    <script src="assets/js/app-shell.js"></script>
+    <script>
+        (async function () {
+            'use strict';
+            const L = window.LipaLink;
+
+            const session = await L.requireSession();
+            if (!session) return;
+
+            let state = { sent: [], received: [], is_seller: false };
+            let activeTab = 'sent';
+
+            const STATUS = {
+                pending_seller_approval: { label: 'Pending seller approval', cls: 'badge-warning', icon: 'fa-solid fa-hourglass-half' },
+                accepted:  { label: 'Accepted',  cls: 'badge-success', icon: 'fa-solid fa-circle-check' },
+                declined:  { label: 'Declined',  cls: 'badge-danger',  icon: 'fa-solid fa-circle-xmark' },
+                cancelled: { label: 'Cancelled', cls: 'badge-danger',  icon: 'fa-solid fa-ban' },
+                completed: { label: 'Completed', cls: 'badge-success', icon: 'fa-solid fa-flag-checkered' }
+            };
+
+            function statusBadge(status) {
+                const s = STATUS[status] || { label: String(status || '').replace(/_/g, ' '), cls: 'badge-primary', icon: 'fa-solid fa-circle-info' };
+                return '<span class="badge ' + s.cls + '"><i class="' + s.icon + '"></i> ' + L.escapeHtml(s.label) + '</span>';
+            }
+
+            // ---------- Tabs ----------
+            document.querySelectorAll('.tab-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
+                    btn.classList.add('active');
+                    activeTab = btn.getAttribute('data-tab');
+                    render();
+                });
+            });
+            document.getElementById('statusFilter').addEventListener('change', render);
+
+            // ---------- Render ----------
+            function render() {
+                document.getElementById('sentCount').textContent = state.sent.length;
+                document.getElementById('receivedCount').textContent = state.received.filter(function (a) { return a.status === 'pending_seller_approval'; }).length;
+
+                const filter = document.getElementById('statusFilter').value;
+                const list = (activeTab === 'sent' ? state.sent : state.received).filter(function (a) { return !filter || a.status === filter; });
+                const container = document.getElementById('agreementsContainer');
+
+                if (list.length === 0) {
+                    container.innerHTML =
+                        '<div class="empty-state">' +
+                        '<i class="fa-solid fa-handshake"></i>' +
+                        '<h4>' + (activeTab === 'sent' ? 'No agreements sent yet' : 'No agreements received') + '</h4>' +
+                        '<p>' + (activeTab === 'sent'
+                            ? 'Create a pay-small agreement with any registered or unregistered seller.'
+                            : 'Proposals that buyers send to your store (or to your email address) will appear here for you to accept or decline.') + '</p>' +
+                        (activeTab === 'sent' ? '<a href="agreement.html" class="btn btn-primary btn-sm">Create Agreement</a>' : '<a href="register-store.html" class="btn btn-outline btn-sm">Register a Store</a>') +
+                        '</div>';
+                    return;
+                }
+
+                container.innerHTML = '<div class="agreement-list">' + list.map(function (a) {
+                    const counterpart = activeTab === 'sent'
+                        ? '<i class="fa-solid fa-store"></i> ' + L.escapeHtml(a.seller_name || a.seller_email || 'Seller')
+                        : '<i class="fa-regular fa-user"></i> ' + L.escapeHtml(a.customer_name || 'Customer');
+                    const actions = ['<button type="button" class="btn btn-outline btn-sm" data-view="' + a.id + '">View</button>'];
+                    if (a.status === 'pending_seller_approval') {
+                        if (activeTab === 'received') {
+                            actions.push('<button type="button" class="btn btn-primary btn-sm" data-respond="accept" data-id="' + a.id + '"><i class="fa-solid fa-check"></i> Accept</button>');
+                            actions.push('<button type="button" class="btn btn-outline btn-sm" data-respond="decline" data-id="' + a.id + '">Decline</button>');
+                        } else {
+                            actions.push('<button type="button" class="btn btn-outline btn-sm" data-cancel="' + a.id + '">Cancel</button>');
+                        }
+                    }
+                    return '<div class="agreement-row">' +
+                        '<div>' +
+                        '<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px;"><h4 style="margin: 0;">' + L.escapeHtml(a.product_name) + '</h4>' + statusBadge(a.status) + '</div>' +
+                        '<div class="agreement-meta">' +
+                        '<span class="tx-id">' + L.escapeHtml(a.agreement_id) + '</span>' +
+                        '<span>' + counterpart + '</span>' +
+                        '<span><i class="fa-solid fa-coins"></i> ' + L.formatTZS(a.total_price) + ' • ' + a.number_of_installments + ' × ' + L.escapeHtml(a.payment_frequency) + '</span>' +
+                        '<span><i class="fa-regular fa-calendar"></i> ' + L.formatDate(a.created_at) + '</span>' +
+                        '</div></div>' +
+                        '<div class="agreement-actions">' + actions.join('') + '</div>' +
+                        '</div>';
+                }).join('') + '</div>';
+            }
+
+            // ---------- Detail modal ----------
+            async function viewAgreement(id) {
+                L.openModal('Agreement details', '<p class="text-muted"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</p>');
+                try {
+                    const data = await L.apiFetch('api/agreement.php?id=' + encodeURIComponent(id));
+                    const a = data.data.agreement;
+                    const p = a.payload || {};
+                    const pay = p.payment || {};
+                    const del = p.delivery || {};
+                    const terms = p.terms || {};
+                    const row = function (k, v) { return '<div class="modal-row"><span class="text-muted">' + k + '</span><strong style="text-align: right; max-width: 60%;">' + v + '</strong></div>'; };
+
+                    let html = '<div style="margin-bottom: 10px;">' + statusBadge(a.status) + ' <span class="tx-id" style="margin-left: 8px;">' + L.escapeHtml(a.agreement_id) + '</span></div>';
+                    html += row('Product / Service', L.escapeHtml(a.product_name));
+                    html += row('Customer', L.escapeHtml(a.customer_name || '') + (a.customer_phone ? ' • ' + L.escapeHtml(a.customer_phone) : ''));
+                    html += row('Seller', L.escapeHtml(a.seller_name || '—') + (a.seller_email ? ' • ' + L.escapeHtml(a.seller_email) : ''));
+                    html += row('Total price', L.formatTZS(a.total_price));
+                    html += row('Initial deposit', L.formatTZS(a.initial_deposit));
+                    html += row('Plan', a.number_of_installments + ' × ' + L.escapeHtml(a.payment_frequency) + (pay.preferred_payment_method ? ' via ' + L.escapeHtml(pay.preferred_payment_method) : ''));
+                    if (pay.expected_final_payment_date) html += row('Final payment', L.formatDate(pay.expected_final_payment_date));
+                    if (del.release_condition) html += row('Release condition', L.escapeHtml(String(del.release_condition).replace(/_/g, ' ')));
+                    if (del.location) html += row('Delivery location', L.escapeHtml(del.location));
+                    if (terms.grace_period_days !== undefined) html += row('Grace period', terms.grace_period_days + ' day(s)');
+                    if (a.response_note) html += row('Seller note', L.escapeHtml(a.response_note));
+                    if (a.responded_at) html += row('Responded', L.formatDateTime(a.responded_at));
+
+                    if (Array.isArray(pay.schedule) && pay.schedule.length) {
+                        html += '<table class="schedule-table"><thead><tr><th>#</th><th>Due</th><th>Amount</th><th>Remaining</th></tr></thead><tbody>' +
+                            pay.schedule.map(function (r) {
+                                return '<tr><td>' + r.installment_number + '</td><td>' + L.formatDate(r.due_date) + '</td><td><strong>' + L.formatTZS(r.amount) + '</strong></td><td>' + L.formatTZS(r.remaining_after) + '</td></tr>';
+                            }).join('') + '</tbody></table>';
+                    }
+
+                    const foot = ['<button type="button" class="btn btn-outline btn-sm" data-modal-close>Close</button>'];
+                    if (a.status === 'pending_seller_approval' && a.role === 'seller') {
+                        foot.push('<button type="button" class="btn btn-outline btn-sm" data-respond="decline" data-id="' + a.id + '">Decline</button>');
+                        foot.push('<button type="button" class="btn btn-primary btn-sm" data-respond="accept" data-id="' + a.id + '"><i class="fa-solid fa-check"></i> Accept</button>');
+                    }
+                    L.openModal('Agreement ' + a.agreement_id, html, foot.join(''));
+                } catch (err) {
+                    L.openModal('Agreement details', '<p style="color: var(--danger);">' + L.escapeHtml(err.message) + '</p>');
+                }
+            }
+
+            function respondPrompt(id, decision) {
+                const accept = decision === 'accept';
+                L.openModal(
+                    accept ? 'Accept this agreement?' : 'Decline this agreement?',
+                    '<p style="margin-bottom: 12px;">' + (accept
+                        ? 'Accepting activates the installment plan for the customer. Make sure the price, schedule and delivery terms are correct.'
+                        : 'The customer will be notified that you declined. You can add a short note explaining why.') + '</p>' +
+                    '<div id="respondAlert" class="inline-alert"></div>' +
+                    '<div class="form-group"><label for="respondNote">Note to customer (optional)</label><textarea id="respondNote" class="form-control" rows="3" maxlength="500"></textarea></div>',
+                    '<button type="button" class="btn btn-outline btn-sm" data-modal-close>Back</button>' +
+                    '<button type="button" class="btn ' + (accept ? 'btn-primary' : 'btn-danger') + ' btn-sm" id="confirmRespondBtn">' + (accept ? 'Accept agreement' : 'Decline agreement') + '</button>'
+                );
+                document.getElementById('confirmRespondBtn').addEventListener('click', async function () {
+                    this.disabled = true;
+                    try {
+                        const data = await L.apiPostJson('api/agreement.php', {
+                            action: 'respond', agreement_id: id, decision: decision,
+                            note: document.getElementById('respondNote').value.trim()
+                        });
+                        L.closeModal();
+                        L.showAlert('pageAlert', 'success', data.message || 'Response saved.');
+                        await load();
+                    } catch (err) {
+                        L.showAlert('respondAlert', 'error', err.message);
+                        this.disabled = false;
+                    }
+                });
+            }
+
+            function cancelPrompt(id) {
+                L.openModal(
+                    'Cancel this proposal?',
+                    '<p>The seller will no longer be able to accept it. You can create a new agreement at any time.</p><div id="cancelAlert" class="inline-alert" style="margin-top: 12px;"></div>',
+                    '<button type="button" class="btn btn-outline btn-sm" data-modal-close>Keep it</button>' +
+                    '<button type="button" class="btn btn-danger btn-sm" id="confirmCancelBtn">Cancel proposal</button>'
+                );
+                document.getElementById('confirmCancelBtn').addEventListener('click', async function () {
+                    this.disabled = true;
+                    try {
+                        const data = await L.apiPostJson('api/agreement.php', { action: 'cancel', agreement_id: id });
+                        L.closeModal();
+                        L.showAlert('pageAlert', 'success', data.message || 'Agreement cancelled.');
+                        await load();
+                    } catch (err) {
+                        L.showAlert('cancelAlert', 'error', err.message);
+                        this.disabled = false;
+                    }
+                });
+            }
+
+            document.addEventListener('click', function (e) {
+                const view = e.target.closest('[data-view]');
+                if (view) { viewAgreement(Number(view.getAttribute('data-view'))); return; }
+                const respond = e.target.closest('[data-respond]');
+                if (respond) { respondPrompt(Number(respond.getAttribute('data-id')), respond.getAttribute('data-respond')); return; }
+                const cancel = e.target.closest('[data-cancel]');
+                if (cancel) { cancelPrompt(Number(cancel.getAttribute('data-cancel'))); }
+            });
+
+            // ---------- Load ----------
+            async function load() {
+                const loading = document.getElementById('loadingBanner');
+                const errorBanner = document.getElementById('errorBanner');
+                loading.style.display = 'flex';
+                errorBanner.style.display = 'none';
+                try {
+                    const data = await L.apiFetch('api/agreement.php');
+                    state = Object.assign({ sent: [], received: [], is_seller: false }, data.data || {});
+                } catch (err) {
+                    state = { sent: [], received: [], is_seller: false };
+                    document.getElementById('errorTitle').textContent = session.online ? 'Unable to load agreements' : 'Agreements unavailable';
+                    document.getElementById('errorMessage').textContent = session.online
+                        ? err.message
+                        : 'You are signed in. Your agreements will appear here when the LipaLink server is reachable.';
+                    errorBanner.style.display = 'flex';
+                } finally {
+                    loading.style.display = 'none';
+                }
+                render();
+            }
+
+            document.getElementById('retryBtn').addEventListener('click', load);
+            load();
+        })();
+    </script>
+</body>
+</html>
