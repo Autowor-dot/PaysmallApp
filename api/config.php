@@ -48,6 +48,10 @@ $LIPALINK_CONFIG = [
     'mail_transport' => 'brevo',
     'mail_api_key'   => '',
 
+    // Google "Continue with Google": OAuth 2.0 Web client ID from Google Cloud Console (not a secret).
+    // Authorised JavaScript origin must be this site's origin. Empty disables the Google buttons.
+    'google_client_id' => '',
+
     // Key for api/cron.php (scheduled reminders). Empty = falls back to install_key.
     'cron_key' => '',
 ];

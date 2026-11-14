@@ -23,6 +23,7 @@ json_response(200, [
         'enabled' => site_flag('maintenance_mode', false),
         'message' => site_setting('maintenance_message', ''),
     ],
+    'google_client_id' => (string) cfg('google_client_id', ''),
     'registration' => [
         'users'   => site_flag('allow_user_registration', true),
         'sellers' => site_flag('allow_seller_registration', true),
