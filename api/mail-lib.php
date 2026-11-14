@@ -9,6 +9,7 @@
  *   'mail'   – PHP mail() (works on hosts that allow it)
  *   'brevo'  – https://api.brevo.com/v3/smtp/email   (key: xkeysib-…)
  *   'resend' – https://api.resend.com/emails          (key: re_…)
+ *   'mailersend' – https://api.mailersend.com/v1/email  (key: mlsn.…; MailerLite's transactional service)
  *
  * Configure in api/config.local.php:
  *   'mail_transport' => 'brevo',
@@ -38,6 +39,18 @@ function deliver_email(string $to, string $subject, string $body, string $fromEm
                     'to'          => [['email' => $to]],
                     'subject'     => $subject,
                     'textContent' => $body,
+                ]
+            );
+        case 'mailersend':
+            return email_via_http(
+                'mailersend',
+                'https://api.mailersend.com/v1/email',
+                ['Authorization: Bearer ' . (string) cfg('mail_api_key', ''), 'Content-Type: application/json', 'X-Requested-With: XMLHttpRequest'],
+                [
+                    'from'    => ['email' => $fromEmail, 'name' => $fromName],
+                    'to'      => [['email' => $to]],
+                    'subject' => $subject,
+                    'text'    => $body,
                 ]
             );
         case 'resend':
@@ -103,6 +116,10 @@ function email_via_http(string $name, string $url, array $headers, array $payloa
     $decoded = json_decode((string) $response, true);
     if (is_array($decoded)) {
         $detail = (string) ($decoded['message'] ?? $decoded['error'] ?? ($decoded['errors'][0]['message'] ?? ''));
+        if (isset($decoded['errors']) && is_array($decoded['errors'])) {
+            $first = reset($decoded['errors']);
+            if (is_array($first) && isset($first[0]) && is_string($first[0])) { $detail .= ' - ' . $first[0]; }
+        }
     }
     return ['ok' => false, 'error' => $name . ' HTTP ' . $status . ($detail !== '' ? ': ' . mb_substr($detail, 0, 160) : ''), 'transport' => $name];
 }

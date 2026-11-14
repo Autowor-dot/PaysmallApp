@@ -133,6 +133,7 @@ All outgoing mail goes through `send_mail()` → `api/mail-lib.php` and is logge
 | `mail_transport` | Needs | Notes |
 | --- | --- | --- |
 | `mail` (default) | nothing | PHP `mail()`. Free InfinityFree accounts cannot deliver mail this way; entries log as `failed`. |
+| `mailersend` | `mail_api_key` = MailerSend API token, sending domain verified in MailerSend | HTTPS API; MailerLite's transactional service (MailerLite itself only sends campaigns/automations). Free plan ~3,000 mails/month |
 | `brevo` | `mail_api_key` = Brevo API key, sender verified in Brevo | HTTPS API, free tier ~300 mails/day |
 | `resend` | `mail_api_key` = Resend API key, domain verified in Resend | HTTPS API |
 

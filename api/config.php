@@ -40,7 +40,7 @@ $LIPALINK_CONFIG = [
     'install_key' => 'change-me-before-running-install',
 
     // Outgoing email. InfinityFree's free plan cannot deliver PHP mail(), so set
-    // mail_transport to 'brevo' or 'resend' with an API key in config.local.php (see api/mail-lib.php).
+    // mail_transport to 'mailersend', 'brevo' or 'resend' with an API key in config.local.php (see api/mail-lib.php).
     'mail_from'      => 'no-reply@lipalink.co.tz',
     'mail_from_name' => 'LipaLink',
     'mail_enabled'   => true,
