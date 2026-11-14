@@ -40,11 +40,12 @@ $LIPALINK_CONFIG = [
     'install_key' => 'change-me-before-running-install',
 
     // Outgoing email. InfinityFree's free plan cannot deliver PHP mail(), so set
-    // mail_transport to 'mailersend', 'brevo' or 'resend' with an API key in config.local.php (see api/mail-lib.php).
+    // the default transport is Brevo's HTTPS API: put your Brevo API key (xkeysib-…) in config.local.php as mail_api_key
+    // and use a sender address verified in Brevo as mail_from. Other transports: 'mail', 'resend', 'mailersend' (see api/mail-lib.php).
     'mail_from'      => 'no-reply@lipalink.co.tz',
     'mail_from_name' => 'LipaLink',
     'mail_enabled'   => true,
-    'mail_transport' => 'mail',
+    'mail_transport' => 'brevo',
     'mail_api_key'   => '',
 
     // Key for api/cron.php (scheduled reminders). Empty = falls back to install_key.

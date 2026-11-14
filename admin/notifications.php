@@ -66,6 +66,8 @@ $settingsRows = [
     ['notify_email_agreement_request', 'Agreement request email to seller'],
     ['notify_email_agreement_accepted', 'Accepted agreement emailed to seller & customer'],
     ['notify_email_payment_receipt', 'Payment receipt email to seller'],
+    ['notify_email_payment_receipt_customer', 'Payment receipt email to customer'],
+    ['notify_email_registration', 'Welcome email on customer / store registration'],
 ];
 
 $pageTitle = 'Notifications';

@@ -180,3 +180,7 @@ ALTER TABLE sellers ADD COLUMN IF NOT EXISTS status_reason VARCHAR(255) NULL;
 
 -- Added with the seller hub / reminders (002): email reminders switch
 INSERT IGNORE INTO site_settings (setting_key, setting_value) VALUES ('notify_email_reminders', '1');
+
+-- Added with the Brevo email integration: welcome emails and customer receipts switches
+INSERT IGNORE INTO site_settings (setting_key, setting_value) VALUES ('notify_email_registration', '1');
+INSERT IGNORE INTO site_settings (setting_key, setting_value) VALUES ('notify_email_payment_receipt_customer', '1');

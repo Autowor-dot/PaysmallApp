@@ -56,10 +56,21 @@ try {
         [$userId, $businessName, $fullName, $phone, $email, $location, $category, $payout, 'pending']
     );
 
+    $sellerId = (int) db()->insert_id;
+    if (site_flag('notify_email_registration', true)) {
+        send_mail(
+            $email,
+            cfg('app_name') . ': store "' . $businessName . '" registered',
+            sprintf("Hello %s,\n\nYour store \"%s\" has been registered on %s and is pending verification by our team.\n\nWhile you wait you can sign in and open your Seller Hub to add products and set your installment defaults:\n%s/seller.html\n\nYou will be notified once verification is complete.\n\n— %s",
+                $fullName, $businessName, cfg('app_name'), app_base_url(), cfg('app_name')),
+            'store_registered', 'seller', (string) $sellerId
+        );
+    }
+
     json_response(201, [
         'success'   => true,
         'message'   => 'Your store has been registered and is pending verification.',
-        'seller_id' => (int) db()->insert_id,
+        'seller_id' => $sellerId,
     ]);
 } catch (mysqli_sql_exception $e) {
     if ((int) $e->getCode() === 1062) {

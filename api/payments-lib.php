@@ -165,7 +165,7 @@ function notify_seller_of_payment(array $tx, ?string $verifiedVia): void
             return;
         }
         $rows = db_select(
-            'SELECT a.id, a.agreement_code, a.seller_name, a.seller_email, a.seller_id, u.full_name AS customer_name, s.user_id AS seller_user_id
+            'SELECT a.id, a.agreement_code, a.seller_name, a.seller_email, a.seller_id, u.full_name AS customer_name, u.email AS customer_email, s.user_id AS seller_user_id
              FROM installment_plans pl
              JOIN agreements a ON a.id = pl.agreement_id
              JOIN users u ON u.id = a.customer_id
@@ -187,6 +187,16 @@ function notify_seller_of_payment(array $tx, ?string $verifiedVia): void
         if (!empty($a['seller_user_id'])) {
             add_notification((int) $a['seller_user_id'], 'payment', 'Installment payment received',
                 sprintf('%s paid TZS %s on agreement %s (ref %s).', $a['customer_name'], $amount, $a['agreement_code'], $tx['transaction_code']));
+        }
+        if (!empty($a['customer_email']) && site_flag('notify_email_payment_receipt_customer', true)) {
+            send_mail(
+                (string) $a['customer_email'],
+                cfg('app_name') . ': your payment receipt ' . $tx['transaction_code'],
+                sprintf("Hello %s,\n\nYour installment payment has been confirmed.\n\nReceipt no.: %s\nAgreement: %s\nSeller: %s\nProduct/service: %s\nAmount: TZS %s\nMethod: %s\nProvider reference: %s\nDate: %s\n\n%s\n\nView all receipts: %s/transactions.html\n\n— %s",
+                    $a['customer_name'], $tx['transaction_code'], $a['agreement_code'], $a['seller_name'] ?: '-', $tx['product_name'], $amount,
+                    $tx['payment_method'], $tx['provider_reference'] ?? '-', date('j M Y H:i'), $note, app_base_url(), cfg('app_name')),
+                'payment_receipt_customer', 'transaction', (string) $tx['id']
+            );
         }
         if (!empty($a['seller_email']) && site_flag('notify_email_payment_receipt', true)) {
             send_mail(

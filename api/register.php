@@ -60,6 +60,16 @@ try {
 
     $userId = (int) db()->insert_id;
 
+    if (site_flag('notify_email_registration', true)) {
+        send_mail(
+            $email,
+            cfg('app_name') . ': welcome, your account is ready',
+            sprintf("Hello %s,\n\nYour %s account has been created successfully.\n\nPhone: %s\nEmail: %s\n\nYou can now log in, browse verified sellers and set up pay-small installment plans:\n%s/login.html\n\nIf you did not create this account, please contact support.\n\n— %s",
+                $fullName, cfg('app_name'), $phone, $email, app_base_url(), cfg('app_name')),
+            'registration_welcome', 'user', (string) $userId
+        );
+    }
+
     json_response(201, [
         'success' => true,
         'message' => 'Your LipaLink account has been created successfully!',

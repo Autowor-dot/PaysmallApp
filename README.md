@@ -132,13 +132,34 @@ All outgoing mail goes through `send_mail()` → `api/mail-lib.php` and is logge
 
 | `mail_transport` | Needs | Notes |
 | --- | --- | --- |
-| `mail` (default) | nothing | PHP `mail()`. Free InfinityFree accounts cannot deliver mail this way; entries log as `failed`. |
+| `brevo` (default) | `mail_api_key` = Brevo API key (`xkeysib-…`), sender address or domain verified in Brevo | HTTPS API, free plan 300 emails/day, no card required. Works on InfinityFree. |
+| `mail` | nothing | PHP `mail()`. Free InfinityFree accounts cannot deliver mail this way; entries log as `failed`. |
 | `mailersend` | `mail_api_key` = MailerSend API token, sending domain verified in MailerSend | HTTPS API; MailerLite's transactional service (MailerLite itself only sends campaigns/automations). Free plan ~3,000 mails/month |
-| `brevo` | `mail_api_key` = Brevo API key, sender verified in Brevo | HTTPS API, free tier ~300 mails/day |
 | `resend` | `mail_api_key` = Resend API key, domain verified in Resend | HTTPS API |
 
 Set `mail_transport`, `mail_api_key`, `mail_from` and `mail_from_name` in `api/config.local.php`. In-app notifications
 (bell icon, dashboard) are created regardless of email delivery.
+
+**Brevo setup (free plan)**
+1. Create an account at https://www.brevo.com (no card needed) and confirm your email.
+2. Senders & IP → *Senders*: add the address you will send from (e.g. your Gmail or `no-reply@yourdomain`) and
+   click the confirmation link Brevo sends to it. To send from your own domain, also authenticate the domain
+   (DKIM/DMARC records) under *Domains*; a verified single address is enough to start.
+3. SMTP & API → *API Keys* → *Generate a new API key*. Copy it once (it starts with `xkeysib-`).
+4. On the server edit `api/config.local.php` and add:
+   ```php
+   'mail_transport' => 'brevo',
+   'mail_api_key'   => 'xkeysib-…',
+   'mail_from'      => 'the verified sender address',
+   'mail_from_name' => 'LipaLink',
+   ```
+   The key lives only in that server-side file (git-ignored, never sent to the browser).
+5. Trigger any email (e.g. *Forgot password*) and check Admin → Notifications → Email log shows **Sent**.
+
+**Emails sent by the platform** (each can be switched off under Admin → Website Settings → Notifications):
+welcome on customer registration, store registration confirmation, agreement request to the seller, accepted
+agreement to both parties, payment receipt to the customer and to the seller, installment reminders
+(upcoming / due today / overdue), password reset link, and contact-form copies to support.
 
 ## Backups
 
@@ -158,7 +179,7 @@ Take one before every migration or deploy.
 
 - No live payment gateway is connected yet; `pay.html` creates the pending transaction and waits for the webhook
   (or the development simulator). Mobile Money / bank APIs plug into `api/payment-webhook.php`.
-- Email delivery needs a Brevo or Resend API key on InfinityFree (see above).
+- Email delivery needs the Brevo API key in `api/config.local.php` (see above); without it every email logs as failed.
 - Seller verification is manual (Admin → Sellers); KYC documents are not uploaded through the site.
 - Online catalog search in the marketplace uses a demo product API (dummyjson.com) with live FX conversion,
   intended as a discovery aid; prices are indicative and the seller sets the real price in the agreement.
