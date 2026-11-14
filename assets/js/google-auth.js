@@ -48,7 +48,10 @@
     function redirectAfterLogin(mode) {
         var next = new URLSearchParams(window.location.search).get('next') || '';
         var safeNext = /^[a-z0-9-]+\.html(\?[^\s]*)?$/i.test(next) ? next : 'dashboard.html';
-        setTimeout(function () { window.location.href = mode === 'register' ? 'dashboard.html' : safeNext; }, 900);
+        var seller = window.lipalinkLoginRole === 'seller' || new URLSearchParams(window.location.search).get('as') === 'seller';
+        if (mode === 'register') { safeNext = 'dashboard.html'; }
+        else if (safeNext === 'dashboard.html' && seller) { safeNext = 'seller.html'; }
+        setTimeout(function () { window.location.href = safeNext; }, 900);
     }
 
     // --- Config + Google script -------------------------------------------------------------

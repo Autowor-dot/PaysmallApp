@@ -276,6 +276,22 @@
                 <p>Access your buyer progress or merchant store balance</p>
             </div>
 
+            <!-- Customer / Seller choice: both use the same account, sellers land on the Seller Hub -->
+            <div class="login-role" role="tablist" aria-label="Log in as" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: #f1f5f9; border-radius: 12px; padding: 5px; margin: 0 0 18px;">
+                <button type="button" class="login-role-btn active" data-role="customer" role="tab" aria-selected="true"
+                        style="border: 0; border-radius: 9px; padding: 10px 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; background: #fff; color: var(--primary); box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);">
+                    <i class="fa-solid fa-user"></i> Customer
+                </button>
+                <button type="button" class="login-role-btn" data-role="seller" role="tab" aria-selected="false"
+                        style="border: 0; border-radius: 9px; padding: 10px 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; background: transparent; color: var(--slate-muted);">
+                    <i class="fa-solid fa-store"></i> Seller
+                </button>
+            </div>
+            <p id="roleHint" style="display: none; margin: -8px 0 16px; font-size: 0.85rem; color: var(--slate-muted); text-align: center;">
+                Use the email or phone of your <strong>store owner account</strong>. You will land on your Seller Hub.
+                No store yet? <a href="register-store.html" style="color: var(--primary); font-weight: 700; text-decoration: none;">Register your store</a>.
+            </p>
+
             <!-- Social Google Login -->
             <button type="button" class="btn-google" id="googleLoginBtn" data-google-auth="login">
 
@@ -350,6 +366,42 @@
     <script src="assets/js/google-auth.js" defer></script>
     <script>
         const loginForm = document.getElementById("loginForm");
+        // ---- Customer / Seller switch -------------------------------------------------------
+        // Sellers use the same account as customers; choosing "Seller" sends them to the Seller Hub
+        // after login (login.html?as=seller preselects it). Exposed for google-auth.js too.
+        window.lipalinkLoginRole = "customer";
+        (function () {
+            const buttons = document.querySelectorAll(".login-role-btn");
+            const hint = document.getElementById("roleHint");
+            const title = document.querySelector(".auth-header h2");
+            const subtitle = document.querySelector(".auth-header p");
+            const submit = document.getElementById("loginButton");
+            function setRole(role) {
+                window.lipalinkLoginRole = role === "seller" ? "seller" : "customer";
+                buttons.forEach(function (b) {
+                    const on = b.getAttribute("data-role") === window.lipalinkLoginRole;
+                    b.classList.toggle("active", on);
+                    b.setAttribute("aria-selected", on ? "true" : "false");
+                    b.style.background = on ? "#fff" : "transparent";
+                    b.style.color = on ? "var(--primary)" : "var(--slate-muted)";
+                    b.style.boxShadow = on ? "0 1px 3px rgba(15, 23, 42, 0.12)" : "none";
+                });
+                const seller = window.lipalinkLoginRole === "seller";
+                if (hint) hint.style.display = seller ? "block" : "none";
+                if (title) title.textContent = seller ? "Seller Log In" : "Log In to LipaLink";
+                if (subtitle) subtitle.textContent = seller ? "Manage your store, requests, customers and payments" : "Access your buyer progress or merchant store balance";
+                if (submit && !submit.disabled) submit.textContent = seller ? "Log In to Seller Hub" : "Log In to Account";
+                try {
+                    const url = new URL(window.location.href);
+                    if (seller) url.searchParams.set("as", "seller"); else url.searchParams.delete("as");
+                    history.replaceState(null, "", url.pathname + (url.search || "") + url.hash);
+                } catch (_) { /* ignore */ }
+            }
+            buttons.forEach(function (b) { b.addEventListener("click", function () { setRole(b.getAttribute("data-role")); }); });
+            const initial = new URLSearchParams(window.location.search).get("as");
+            if (initial === "seller") setRole("seller");
+        })();
+
 
         // Contextual messages when arriving from registration or account closure
         (function () {
@@ -417,7 +469,7 @@
 
                     // Honour a safe same-site "next" page (e.g. login.html?next=pay.html?payment_id=3)
                     const next = new URLSearchParams(window.location.search).get("next") || "";
-                    const safeNext = /^[a-z0-9-]+\.html(\?[^\s]*)?$/i.test(next) ? next : "dashboard.html";
+                    const safeNext = /^[a-z0-9-]+\.html(\?[^\s]*)?$/i.test(next) ? next : (window.lipalinkLoginRole === "seller" ? "seller.html" : "dashboard.html");
                     setTimeout(function() {
                         window.location.href = safeNext;
                     }, 1000);
@@ -428,7 +480,7 @@
                     messageBox.className = "login-message error";
 
                     loginButton.disabled = false;
-                    loginButton.textContent = "Log In to Account";
+                    loginButton.textContent = window.lipalinkLoginRole === "seller" ? "Log In to Seller Hub" : "Log In to Account";
                 }
 
             } catch (error) {
