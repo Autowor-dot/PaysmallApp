@@ -329,10 +329,34 @@
         const storeMessage = document.getElementById('storeMessage');
         // Password fields are only needed when nobody is signed in (the store is then its own login)
         const accountFields = document.getElementById('storeAccountFields');
-        const signedInUser = (function () { try { return JSON.parse(sessionStorage.getItem('lipalink_user') || 'null'); } catch (_) { return null; } })();
-        if (signedInUser && accountFields) {
-            accountFields.innerHTML = '<div style="margin: 14px 0 6px; padding: 10px 12px; border-radius: 10px; background: #f0fdf4; color: #166534; font-size: 0.8rem; line-height: 1.5;"><i class="fa-solid fa-user-check"></i> Signed in as <strong>' + String(signedInUser.full_name || signedInUser.email || 'you').replace(/</g, '&lt;') + '</strong>. The store will be added to this account; no new password needed.</div>';
+        let signedInUser = null;
+        const accountFieldsHtml = accountFields ? accountFields.innerHTML : '';
+        function applySignedInState(user) {
+            signedInUser = user || null;
+            if (!accountFields) return;
+            if (signedInUser) {
+                accountFields.innerHTML = '<div style="margin: 14px 0 6px; padding: 10px 12px; border-radius: 10px; background: #f0fdf4; color: #166534; font-size: 0.8rem; line-height: 1.5;"><i class="fa-solid fa-user-check"></i> Signed in as <strong>' + String(signedInUser.full_name || signedInUser.email || 'you').replace(/</g, '&lt;') + '</strong>. The store will be added to this account; no new password needed.</div>';
+            } else if (!accountFields.querySelector('#storePassword')) {
+                accountFields.innerHTML = accountFieldsHtml;
+            }
         }
+        // Ask the server whether a session really exists (the cached copy in sessionStorage can be stale)
+        (async function () {
+            try {
+                const res = await fetch('api/profile.php', { credentials: 'same-origin', headers: { 'Accept': 'application/json' } });
+                if (res.ok) {
+                    const data = await res.json();
+                    const user = data && data.data && data.data.user ? data.data.user : (data && data.user ? data.user : null);
+                    if (user) { try { sessionStorage.setItem('lipalink_user', JSON.stringify(user)); } catch (_) { /* ignore */ } }
+                    applySignedInState(user);
+                } else {
+                    try { sessionStorage.removeItem('lipalink_user'); } catch (_) { /* ignore */ }
+                    applySignedInState(null);
+                }
+            } catch (_) {
+                applySignedInState(null);
+            }
+        })();
 
 
         function showStoreMessage(type, text) {
