@@ -161,6 +161,20 @@ welcome on customer registration, store registration confirmation, agreement req
 agreement to both parties, payment receipt to the customer and to the seller, installment reminders
 (upcoming / due today / overdue), password reset link, and contact-form copies to support.
 
+
+## "Continue with Google"
+
+`login.html` and `register.html` offer Google sign-in through Google Identity Services (`assets/js/google-auth.js`).
+The browser gets an OAuth access token from Google; `api/google-auth.php` verifies it with Google (`tokeninfo`, audience
+must equal your client ID, email must be verified), signs in the matching account, or creates one after asking for the
+customer's Mobile Money phone number. Google-created accounts have no password until the user sets one via *Forgot password*.
+
+Setup (free, no billing):
+1. Google Cloud Console → create a project → **Google Auth Platform**: app name, support email, audience *External*,
+   fill the branding links (home page, privacy, terms), then *Audience → Publish app*.
+2. *Clients → Create client → Web application*, authorised JavaScript origin = your site origin (e.g. `https://paysmallapp.free.je`).
+3. Put the client ID (public, ends with `.apps.googleusercontent.com`) in `api/config.local.php` as `'google_client_id'`.
+   The buttons stay disabled with a clear message while it is empty. The client secret is not needed.
 ## Backups
 
 Admin → **Backups** (Super Admin) or `api/backup.php?key=<install_key>` writes a complete SQL dump to `/backups`
