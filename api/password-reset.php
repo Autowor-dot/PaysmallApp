@@ -47,7 +47,7 @@ try {
                     $owner = db_select('SELECT * FROM users WHERE id = ? LIMIT 1', 'i', [(int) $seller['user_id']])[0] ?? null;
                     if ($owner !== null) {
                         $user = $owner;
-                        $note = sprintf('The store "%s" is managed by the LipaLink account %s, so the reset link was sent to that account\x27s email address. Log in with that account to open the Seller Hub.',
+                        $note = sprintf('The store "%s" is managed by the LipaLink account %s, so the reset link was sent to the email address of that account. Log in with that account to open the Seller Hub.',
                             $seller['business_name'], mask_email((string) $owner['email']));
                     }
                 } elseif ($seller !== null) {
