@@ -106,6 +106,28 @@ complaint/dispute cases).
 `maintenance.flag` + the root `.htaccess`, redirects public pages to `maintenance.html`.
 `/admin`, `api/health.php`, `api/site-status.php` and the payment webhook keep working.
 
+
+## Accounts, sellers and authentication
+
+One `users` row per person. A **seller** is a user who owns a `sellers` row (store). Store registration
+(`register-store.html`) creates the login too when nobody is signed in (password + confirm, hashed with
+`password_hash()`), signs the owner in and opens the Seller Hub; when a user is already signed in, the store is
+attached to that account. Stores registered earlier without a login are attached to an account by matching
+email or phone at the next login / registration / Google sign-in, and *Forgot password* on a store's contact
+email creates or finds the owner login and emails the reset link to the **account's** address (never to a
+store contact address, so a store registration cannot take over an account).
+
+Login (`login.html`) has a Customer / Seller switch: sellers land on `seller.html`, customers on
+`dashboard.html` (`login.html?as=seller` preselects Seller). Sessions are PHP sessions (cookie
+`LIPALINKSESS`, HttpOnly, SameSite=Lax, Secure on HTTPS, path `/`), regenerated on login, destroyed on logout;
+every protected page calls `LipaLink.requireSession()` and every API checks the session server-side.
+
+Password reset: hashed single-use tokens (`password_resets`, SHA-256), 30-minute expiry, all outstanding tokens
+for the user are deleted on use, generic response for unknown identifiers, throttled (5 requests per IP per
+15 minutes, 3 per identifier per hour via `auth_throttle`), security email on every password change.
+
+Google sign-in stores the Google account ID in `users.google_sub` (migration 003) and matches on it first, then
+on the Google-verified email; the first Google sign-in on an existing account sends a security notice.
 ## Seller hub, agreements and payment recording
 
 - **Agreements** (`agreement.html` wizard) create an `agreements` row plus an `installment_plans` row with one

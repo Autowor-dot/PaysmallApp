@@ -21,6 +21,7 @@ $fields = [
     'notify_email_payment_receipt'    => ['Email the seller a receipt when an installment payment is confirmed', 'bool', 'notifications', null],
     'notify_email_registration'       => ['Email a welcome / confirmation message on customer and store registration', 'bool', 'notifications', null],
     'notify_email_payment_receipt_customer' => ['Email the customer a receipt when an installment payment is confirmed', 'bool', 'notifications', null],
+    'notify_email_security'           => ['Email account-security notices (password changed, Google sign-in linked)', 'bool', 'notifications', null],
     'notify_email_reminders'          => ['Email customers upcoming, due-today and overdue installment reminders', 'bool', 'notifications', null],
     'admin_session_timeout_minutes'   => ['Admin idle timeout (minutes)', 'int', 'security', [5, 480]],
     'admin_max_login_attempts'        => ['Failed sign-ins before lockout', 'int', 'security', [3, 20]],

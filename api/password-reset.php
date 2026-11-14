@@ -12,7 +12,7 @@ require_once __DIR__ . '/config.php';
 
 require_method('POST');
 
-const RESET_TOKEN_TTL_MINUTES = 60;
+const RESET_TOKEN_TTL_MINUTES = 30;
 
 try {
     if (!table_exists('password_resets')) {
@@ -31,6 +31,10 @@ try {
             $login = input_string($input, 'login', 190);
             if ($login === '') {
                 json_error(400, 'Please enter your email address or phone number.');
+            }
+            // Abuse protection: 5 requests per IP per 15 minutes, 3 per identifier per hour (same generic reply)
+            if (throttle_hit('reset_ip', client_ip(), 5, 900) || throttle_hit('reset_login', $login, 3, 3600)) {
+                json_response(200, ['success' => true, 'message' => 'If an account matches those details, a password reset link has been sent to its email address.']);
             }
 
             $phone = normalize_phone($login);
@@ -132,6 +136,10 @@ try {
             $hash = password_hash($password, PASSWORD_DEFAULT);
             db_execute('UPDATE users SET password_hash = ? WHERE id = ?', 'si', [$hash, (int) $reset['user_id']]);
             db_execute('DELETE FROM password_resets WHERE user_id = ?', 'i', [(int) $reset['user_id']]);
+            $changed = db_select('SELECT * FROM users WHERE id = ? LIMIT 1', 'i', [(int) $reset['user_id']])[0] ?? null;
+            if ($changed !== null) {
+                send_security_email($changed, 'your password was changed', sprintf('The password of your %s account was changed on %s using a password-reset link.', cfg('app_name'), date('j M Y H:i')));
+            }
 
             add_notification((int) $reset['user_id'], 'security', 'Password changed',
                 'Your password was reset successfully. If this was not you, contact support immediately.');

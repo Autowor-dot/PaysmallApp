@@ -184,3 +184,4 @@ INSERT IGNORE INTO site_settings (setting_key, setting_value) VALUES ('notify_em
 -- Added with the Brevo email integration: welcome emails and customer receipts switches
 INSERT IGNORE INTO site_settings (setting_key, setting_value) VALUES ('notify_email_registration', '1');
 INSERT IGNORE INTO site_settings (setting_key, setting_value) VALUES ('notify_email_payment_receipt_customer', '1');
+INSERT IGNORE INTO site_settings (setting_key, setting_value) VALUES ('notify_email_security', '1');

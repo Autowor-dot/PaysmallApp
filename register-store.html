@@ -266,6 +266,18 @@
                     <label for="storeEmail" style="font-size: 0.825rem; font-weight: 700;">Business Email</label>
                     <input type="email" id="storeEmail" name="email" class="input-field" placeholder="store@example.com" autocomplete="email" required>
 
+                    <div id="storeAccountFields">
+                        <div style="margin: 14px 0 6px; padding: 10px 12px; border-radius: 10px; background: #eff6ff; color: #1e40af; font-size: 0.8rem; line-height: 1.5;">
+                            <i class="fa-solid fa-key"></i> <strong>Seller login.</strong> Choose a password: you will use this email (or phone) and password to log in to your Seller Hub.
+                            Already have a LipaLink account? <a href="login.html?as=seller&next=register-store.html" style="color: var(--primary); font-weight: 700;">Log in first</a> and the store will be added to it.
+                        </div>
+                        <label for="storePassword" style="font-size: 0.825rem; font-weight: 700;">Password</label>
+                        <input type="password" id="storePassword" name="password" class="input-field" placeholder="At least 8 characters" autocomplete="new-password" minlength="8">
+
+                        <label for="storeConfirmPassword" style="font-size: 0.825rem; font-weight: 700;">Confirm Password</label>
+                        <input type="password" id="storeConfirmPassword" name="confirm_password" class="input-field" placeholder="Re-enter password" autocomplete="new-password">
+                    </div>
+
                     <label for="storeLocation" style="font-size: 0.825rem; font-weight: 700;">Store Location (City / Area)</label>
                     <input type="text" id="storeLocation" name="location" class="input-field" placeholder="e.g. Kariakoo, Dar es Salaam">
 
@@ -300,6 +312,7 @@
     <footer>
         <p>© 2026 LipaLink. All rights reserved. &nbsp; <a href="about.html" style="color: #94a3b8;">About</a> · <a href="faq.html" style="color: #94a3b8;">FAQ</a> · <a href="contact.html" style="color: #94a3b8;">Contact</a> · <a href="terms.html" style="color: #94a3b8;">Terms</a> · <a href="privacy.html" style="color: #94a3b8;">Privacy</a> · <a href="admin/" style="color: #94a3b8;">Admin</a></p>
     </footer>
+    <script src="assets/js/password-toggle.js" defer></script>
     <script>
         const navbar = document.querySelector('.navbar');
         const toggle = document.querySelector('.mobile-toggle');
@@ -314,6 +327,13 @@
         // --- Store registration ---
         const storeForm = document.getElementById('storeForm');
         const storeMessage = document.getElementById('storeMessage');
+        // Password fields are only needed when nobody is signed in (the store is then its own login)
+        const accountFields = document.getElementById('storeAccountFields');
+        const signedInUser = (function () { try { return JSON.parse(sessionStorage.getItem('lipalink_user') || 'null'); } catch (_) { return null; } })();
+        if (signedInUser && accountFields) {
+            accountFields.innerHTML = '<div style="margin: 14px 0 6px; padding: 10px 12px; border-radius: 10px; background: #f0fdf4; color: #166534; font-size: 0.8rem; line-height: 1.5;"><i class="fa-solid fa-user-check"></i> Signed in as <strong>' + String(signedInUser.full_name || signedInUser.email || 'you').replace(/</g, '&lt;') + '</strong>. The store will be added to this account; no new password needed.</div>';
+        }
+
 
         function showStoreMessage(type, text) {
             storeMessage.textContent = text;
@@ -367,6 +387,14 @@
                 }
             }
 
+            const pwEl = document.getElementById('storePassword');
+            const pwConfirmEl = document.getElementById('storeConfirmPassword');
+            if (!signedInUser && pwEl && pwConfirmEl) {
+                pwEl.classList.remove('is-invalid'); pwConfirmEl.classList.remove('is-invalid');
+                if (pwEl.value.length < 8) { pwEl.classList.add('is-invalid'); pwEl.focus(); showStoreMessage('error', 'Please choose a password of at least 8 characters for your seller login.'); return; }
+                if (pwEl.value !== pwConfirmEl.value) { pwConfirmEl.classList.add('is-invalid'); pwConfirmEl.focus(); showStoreMessage('error', 'The passwords do not match.'); return; }
+            }
+
             const formData = new FormData(storeForm);
             formData.set('phone', phone);
 
@@ -386,14 +414,17 @@
                 if (!response.ok || !data.success) {
                     throw new Error(data.message || 'Store registration failed. Please check your details.');
                 }
-                showStoreMessage('success', (data.message || 'Your store has been registered!') + ' Create a customer login to manage it, or log in if you already have one.');
+                if (data.signed_in && data.user) { try { sessionStorage.setItem('lipalink_user', JSON.stringify(data.user)); } catch (_) { /* ignore */ } }
+                const nowSignedIn = !!(data.signed_in || signedInUser);
+                showStoreMessage('success', (data.message || 'Your store has been registered!') + (nowSignedIn ? ' Opening your Seller Hub…' : ' Log in to manage it.'));
+                if (nowSignedIn) { setTimeout(function () { window.location.href = 'seller.html'; }, 1500); }
                 storeForm.reset();
                 storeForm.style.display = 'none';
                 storeMessage.insertAdjacentHTML('afterend',
                     '<div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">' +
-                    (sessionStorage.getItem('lipalink_user')
+                    (nowSignedIn
                         ? '<a href="seller.html" class="btn btn-primary"><i class="fa-solid fa-store"></i> Open my Seller Hub</a>'
-                        : '<a href="register.html" class="btn btn-primary">Create Account</a>' + '<a href="login.html" class="btn btn-outline">Log In</a>') +
+                        : '<a href="login.html?as=seller" class="btn btn-primary"><i class="fa-solid fa-store"></i> Seller Log In</a>') +
                     '</div>');
             } catch (error) {
                 console.error('Store registration error:', error);

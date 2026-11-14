@@ -598,3 +598,46 @@ function seller_by_contact(string $email, string $phone = ''): ?array
     );
     return $rows[0] ?? null;
 }
+
+/**
+ * Simple abuse throttle for anonymous endpoints. Returns true when the subject (IP, email…)
+ * has already performed $action $max times within $windowSeconds; otherwise records this attempt.
+ */
+function throttle_hit(string $action, string $subject, int $max, int $windowSeconds): bool
+{
+    if (!table_exists('auth_throttle')) {
+        return false;
+    }
+    $subject = mb_substr(strtolower(trim($subject)), 0, 190);
+    try {
+        db_execute('DELETE FROM auth_throttle WHERE created_at < (NOW() - INTERVAL 1 DAY)');
+        $n = db_select('SELECT COUNT(*) AS n FROM auth_throttle WHERE action = ? AND subject = ? AND created_at >= (NOW() - INTERVAL ? SECOND)', 'ssi', [$action, $subject, $windowSeconds]);
+        if ((int) ($n[0]['n'] ?? 0) >= $max) {
+            return true;
+        }
+        db_execute('INSERT INTO auth_throttle (action, subject) VALUES (?, ?)', 'ss', [$action, $subject]);
+    } catch (Throwable $e) {
+        error_log('LipaLink throttle error: ' . $e->getMessage());
+    }
+    return false;
+}
+
+function client_ip(): string
+{
+    return (string) ($_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
+}
+
+/** Account-security email (password changed, new sign-in method…). Never throws. */
+function send_security_email(array $user, string $subject, string $body): void
+{
+    try {
+        if (!empty($user['email']) && site_flag('notify_email_security', true)) {
+            send_mail((string) $user['email'], cfg('app_name') . ': ' . $subject,
+                sprintf("Hello %s,\n\n%s\n\nIf this was not you, reset your password immediately from %s/forgot-password.html and contact support.\n\n— %s",
+                    $user['full_name'] ?? 'there', $body, app_base_url(), cfg('app_name')),
+                'security_notice', 'user', (string) ($user['id'] ?? ''));
+        }
+    } catch (Throwable $e) {
+        error_log('LipaLink security email error: ' . $e->getMessage());
+    }
+}

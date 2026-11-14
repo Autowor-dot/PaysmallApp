@@ -59,9 +59,23 @@ try {
     }
     $fullName = mb_substr($fullName, 0, 120);
 
-    // 3) Existing account -> sign in
-    $rows = db_select('SELECT * FROM users WHERE email = ? LIMIT 1', 's', [$email]);
-    $user = $rows[0] ?? null;
+    $googleSub = trim((string) ($info['sub'] ?? ($profile['sub'] ?? '')));
+    $hasSubCol = column_exists('users', 'google_sub');
+
+    // 3) Existing account: by Google ID first, then by the Google-verified email
+    $user = null;
+    if ($hasSubCol && $googleSub !== '') {
+        $user = db_select('SELECT * FROM users WHERE google_sub = ? LIMIT 1', 's', [$googleSub])[0] ?? null;
+    }
+    if ($user === null) {
+        $user = db_select('SELECT * FROM users WHERE email = ? LIMIT 1', 's', [$email])[0] ?? null;
+        if ($user !== null && $hasSubCol && $googleSub !== '' && empty($user['google_sub'])) {
+            // First Google sign-in on an existing account (email verified by Google): remember the Google ID
+            db_execute('UPDATE users SET google_sub = ? WHERE id = ?', 'si', [$googleSub, (int) $user['id']]);
+            add_notification((int) $user['id'], 'security', 'Google sign-in linked', 'Your Google account can now be used to sign in to LipaLink.');
+            send_security_email($user, 'Google sign-in linked to your account', sprintf('Your Google account (%s) was linked to your %s account on %s. You can now use "Continue with Google" to sign in.', $email, cfg('app_name'), date('j M Y H:i')));
+        }
+    }
 
     if ($user !== null) {
         $blocked = account_block_message((int) $user['id']);
@@ -106,6 +120,9 @@ try {
         }
         $created = create_user_from_seller($seller);
         if ($created !== null) {
+            if ($hasSubCol && $googleSub !== '') {
+                db_execute('UPDATE users SET google_sub = ? WHERE id = ?', 'si', [$googleSub, (int) $created['id']]);
+            }
             if (column_exists('users', 'last_login_at')) {
                 db_execute('UPDATE users SET last_login_at = NOW() WHERE id = ?', 'i', [(int) $created['id']]);
             }
@@ -146,6 +163,9 @@ try {
         [$fullName, $phone, $email, $hash]
     );
     $userId = (int) db()->insert_id;
+    if ($hasSubCol && $googleSub !== '') {
+        db_execute('UPDATE users SET google_sub = ? WHERE id = ?', 'si', [$googleSub, $userId]);
+    }
 
     if (table_exists('sellers')) {
         link_seller_stores($userId, $email, $phone);

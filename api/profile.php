@@ -90,6 +90,8 @@ try {
 
             $hash = password_hash($new, PASSWORD_DEFAULT);
             db_execute('UPDATE users SET password_hash = ? WHERE id = ?', 'si', [$hash, $userId]);
+            add_notification($userId, 'security', 'Password changed', 'Your password was changed from your account settings. If this was not you, contact support immediately.');
+            send_security_email($userRow, 'your password was changed', sprintf('The password of your %s account was changed from the account settings on %s.', cfg('app_name'), date('j M Y H:i')));
 
             json_response(200, ['success' => true, 'message' => 'Your password has been changed.']);
             break;

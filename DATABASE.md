@@ -7,7 +7,7 @@ Two migration files, both **additive and idempotent** (safe to re-run):
 
 | File | Applied by | Contents |
 | --- | --- | --- |
-| `api/schema.sql` | `api/install.php?key=<install_key>` | Core tables (001) + seller hub / contact / reminders (002) |
+| `api/schema.sql` | `api/install.php?key=<install_key>` | Core tables (001) + seller hub / contact / reminders (002) + auth hardening (003: `users.google_sub`, `auth_throttle`) |
 | `admin/migrations/001_admin_panel.sql` | `admin/setup.php` (install key) | Admin accounts, audit log, settings, email log, cases, status columns |
 
 ## Core tables
@@ -22,6 +22,7 @@ Two migration files, both **additive and idempotent** (safe to re-run):
 | password_hash | VARCHAR(255) | `password_hash()` (bcrypt/argon) |
 | settings_json | TEXT | notification preferences from settings.html |
 | status | ENUM active/suspended/deactivated | set by admins; blocked at login and on every API call |
+| google_sub | VARCHAR(64) UNIQUE NULL | Google account ID for "Continue with Google" (003) |
 | status_reason, status_changed_at, last_login_at | | admin migration |
 | created_at, updated_at | TIMESTAMP | |
 
@@ -112,3 +113,6 @@ installment_payments 1─∞ installment_reminders
 
 `admin/backup.php` (Super Admin) or `api/backup.php?key=<install_key>` writes a full SQL dump to `/backups`
 (web access denied). Restore by importing the file in phpMyAdmin.
+
+### auth_throttle (003) — abuse throttle for anonymous endpoints
+id, action (e.g. `reset_ip`, `reset_login`), subject (IP or identifier), created_at. Rows older than a day are pruned on use.

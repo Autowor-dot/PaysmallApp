@@ -46,8 +46,34 @@ try {
         json_error(409, 'A store with this email address or phone number is already registered.');
     }
 
-    // Link to the signed-in customer account when there is one
-    $userId = current_user_id();
+    // Link to the signed-in account when there is one; otherwise create the seller's login now.
+    $userId      = current_user_id();
+    $createdUser = null;
+    if ($userId === null) {
+        $password = (string) ($input['password'] ?? '');
+        $confirm  = (string) ($input['confirm_password'] ?? '');
+        if ($password === '' || $confirm === '') {
+            json_error(400, 'Please choose a password for your seller login (and confirm it).');
+        }
+        if (strlen($password) < 8) {
+            json_error(400, 'Your password must be at least 8 characters long.');
+        }
+        if ($password !== $confirm) {
+            json_error(400, 'The passwords do not match.');
+        }
+        if (!site_flag('allow_user_registration', true)) {
+            json_error(403, 'New registrations are temporarily closed. Please try again later.');
+        }
+        $clash = db_select('SELECT id, email, phone FROM users WHERE email = ? OR phone = ? LIMIT 1', 'ss', [$email, $phone]);
+        if (!empty($clash)) {
+            $which = strtolower((string) $clash[0]['email']) === $email ? 'email address' : 'phone number';
+            json_error(409, 'A LipaLink account already uses this ' . $which . '. Log in with that account first, then register the store from your Seller Hub.');
+        }
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        db_execute('INSERT INTO users (full_name, phone, email, password_hash) VALUES (?, ?, ?, ?)', 'ssss', [$fullName, $phone, $email, $hash]);
+        $userId      = (int) db()->insert_id;
+        $createdUser = db_select('SELECT * FROM users WHERE id = ? LIMIT 1', 'i', [$userId])[0] ?? null;
+    }
 
     db_execute(
         'INSERT INTO sellers (user_id, business_name, full_name, phone, email, location, category, payout_method, status)
@@ -61,13 +87,27 @@ try {
         send_mail(
             $email,
             cfg('app_name') . ': store "' . $businessName . '" registered',
-            sprintf("Hello %s,\n\nYour store \"%s\" has been registered on %s and is pending verification by our team.\n\nWhile you wait you can sign in and open your Seller Hub to add products and set your installment defaults:\n%s/seller.html\n\nYou will be notified once verification is complete.\n\n— %s",
+            sprintf("Hello %s,\n\nYour store \"%s\" has been registered on %s and is pending verification by our team.\n\nLog in with this email (or your phone number) and your password, choose Seller, and open your Seller Hub to add products and set your installment defaults:\n%s/seller.html\n\nYou will be notified once verification is complete.\n\n— %s",
                 $fullName, $businessName, cfg('app_name'), app_base_url(), cfg('app_name')),
             'store_registered', 'seller', (string) $sellerId
         );
     }
 
     json_response(201, [
+    if ($createdUser !== null) {
+        sign_in_user($userId);
+        if (column_exists('users', 'last_login_at')) {
+            db_execute('UPDATE users SET last_login_at = NOW() WHERE id = ?', 'i', [$userId]);
+        }
+        json_response(201, [
+            'success'   => true,
+            'message'   => 'Your store has been registered and your seller login is ready. Welcome to your Seller Hub!',
+            'seller_id' => $sellerId,
+            'signed_in' => true,
+            'user'      => public_user($createdUser),
+        ]);
+    }
+
         'success'   => true,
         'message'   => 'Your store has been registered and is pending verification.',
         'seller_id' => $sellerId,

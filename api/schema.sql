@@ -299,3 +299,22 @@ CREATE TABLE IF NOT EXISTS scheduled_runs (
     last_result VARCHAR(255) NULL,
     PRIMARY KEY (task)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- =====================================================================
+-- Migration 003 — authentication hardening
+-- (additive and idempotent)
+-- =====================================================================
+
+-- Google account identifier ("sub") for users who sign in with Google; matched before the email
+ALTER TABLE users ADD COLUMN IF NOT EXISTS google_sub VARCHAR(64) NULL;
+ALTER TABLE users ADD UNIQUE KEY IF NOT EXISTS uq_users_google_sub (google_sub);
+
+-- Throttle bookkeeping for anonymous endpoints (password reset requests, login attempts)
+CREATE TABLE IF NOT EXISTS auth_throttle (
+    id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    action     VARCHAR(40)  NOT NULL,
+    subject    VARCHAR(190) NOT NULL,
+    created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_auth_throttle (action, subject, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
