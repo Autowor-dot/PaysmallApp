@@ -394,7 +394,7 @@ try {
 
             json_response(201, [
                 'success' => true,
-                'message' => 'Payment recorded as a manual entry and the installment plan was updated.',
+                'message' => 'Payment recorded as a manual entry and the installment plan was updated. A receipt with the updated balance was emailed to you and the customer (check spam folders if it does not appear).',
                 'data'    => ['transaction' => public_transaction($updated)],
             ]);
             break;

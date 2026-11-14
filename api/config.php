@@ -365,6 +365,8 @@ function send_mail(string $to, string $subject, string $body, string $context = 
     }
     $from     = (string) cfg('mail_from');
     $siteName = (string) cfg('mail_from_name', site_setting('site_name', (string) cfg('app_name')));
+    // Shared-sender hint: Brevo free plan + freemail sender often lands in spam until marked "Not spam".
+    $body .= "\n\n--\nIf this message arrived in your spam or junk folder, please mark it as \"Not spam\" so future receipts and reminders from " . $siteName . " reach your inbox.";
     require_once __DIR__ . '/mail-lib.php';
     $result = deliver_email($to, $subject, $body, $from, $siteName);
     if (!$result['ok']) {

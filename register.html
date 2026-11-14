@@ -532,7 +532,7 @@
                 }
 
                 if (response.ok && data.success) {
-                    showMessage('success', (data.message || 'Your LipaLink account has been created!') + ' Redirecting to login...');
+                    showMessage('success', (data.message || 'Your LipaLink account has been created!') + ' A welcome email is on its way (check your spam folder if it does not arrive). Redirecting to login...');
                     setTimeout(function () {
                         window.location.href = 'login.html?registered=1';
                     }, 1200);

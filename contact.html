@@ -140,7 +140,7 @@
                     const res = await fetch('api/contact.php', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, credentials: 'same-origin', body: JSON.stringify(Object.fromEntries(new FormData(form))) });
                     let data; try { data = await res.json(); } catch (_) { throw new Error('The contact service is not responding. Please email us directly.'); }
                     if (!res.ok || !data.success) throw new Error(data.message || 'Could not send your message.');
-                    show('success', data.message); form.reset();
+                    show('success', data.message + " Our reply will come by email, so please also check your spam or junk folder."); form.reset();
                 } catch (err) { show('error', err.message); }
                 finally { btn.disabled = false; }
             });

@@ -156,7 +156,11 @@ function apply_payment_result(array $tx, string $newStatus, ?string $providerRef
     return fetch_transaction_by_code((string) $tx['transaction_code']) ?? $tx;
 }
 
-/** Payment receipt to the seller of the agreement behind a confirmed transaction. Never throws. */
+/**
+ * Payment receipts: emailed to the customer and to the seller of the agreement behind a confirmed
+ * transaction, with the amount paid now, the total paid so far, the remaining balance, the next
+ * installment and a summary of the agreement. Never throws.
+ */
 function notify_seller_of_payment(array $tx, ?string $verifiedVia): void
 {
     try {
@@ -165,7 +169,10 @@ function notify_seller_of_payment(array $tx, ?string $verifiedVia): void
             return;
         }
         $rows = db_select(
-            'SELECT a.id, a.agreement_code, a.seller_name, a.seller_email, a.seller_id, u.full_name AS customer_name, u.email AS customer_email, s.user_id AS seller_user_id
+            'SELECT a.id, a.agreement_code, a.seller_name, a.seller_email, a.seller_id, a.total_price AS agreed_total,
+                    a.initial_deposit, a.number_of_installments, a.payment_frequency, a.responded_at,
+                    pl.product_name AS plan_product, pl.total_price, pl.amount_paid, pl.next_payment_amount, pl.next_payment_due_date, pl.status AS plan_status,
+                    u.full_name AS customer_name, u.email AS customer_email, u.phone AS customer_phone, s.user_id AS seller_user_id
              FROM installment_plans pl
              JOIN agreements a ON a.id = pl.agreement_id
              JOIN users u ON u.id = a.customer_id
@@ -177,38 +184,77 @@ function notify_seller_of_payment(array $tx, ?string $verifiedVia): void
             return;
         }
         $a = $rows[0];
-        $amount = number_format((float) $tx['amount']);
-        $note = $verifiedVia === 'provider'
+
+        $amountNow  = (float) $tx['amount'];
+        $paidTotal  = (float) $a['amount_paid'];
+        $total      = (float) $a['total_price'];
+        $remaining  = max(0.0, $total - $paidTotal);
+        $paidBefore = max(0.0, $paidTotal - $amountNow);
+
+        $paidCount = 0;
+        $allCount  = 0;
+        if (table_exists('installment_payments')) {
+            $c = db_select("SELECT COUNT(*) AS n, SUM(status = 'paid') AS p FROM installment_payments WHERE plan_id = ? AND installment_number > 0", 'i', [$planId]);
+            $allCount  = (int) ($c[0]['n'] ?? 0);
+            $paidCount = (int) ($c[0]['p'] ?? 0);
+        }
+        $fmt = static function (float $v): string {
+            return 'TZS ' . number_format($v);
+        };
+        $fmtDate = static function (?string $d): string {
+            return ($d && strtotime($d)) ? date('j M Y', strtotime($d)) : '-';
+        };
+
+        $nextLine = ($a['plan_status'] === 'completed' || $remaining <= 0.005)
+            ? 'Plan status: FULLY PAID - all installments are settled.'
+            : sprintf('Next installment: %s due on %s', $fmt((float) $a['next_payment_amount']), $fmtDate($a['next_payment_due_date']));
+
+        $verifyNote = $verifiedVia === 'provider'
             ? 'This payment was confirmed by the payment provider.'
             : ($verifiedVia === 'simulator'
                 ? 'NOTE: this is a TEST payment confirmed by the development simulator; no money moved.'
-                : 'This payment has been recorded but not independently verified by a payment provider.');
+                : 'This payment was recorded manually and has not been independently verified by a payment provider.');
 
+        $paymentBlock = sprintf(
+            "PAYMENT\nReceipt no.: %s\nAmount paid now: %s\nMethod: %s\nProvider reference: %s\nDate: %s\n%s",
+            $tx['transaction_code'], $fmt($amountNow), $tx['payment_method'], $tx['provider_reference'] ?? '-', date('j M Y H:i'), $verifyNote
+        );
+        $balanceBlock = sprintf(
+            "BALANCE\nTotal agreed price: %s\nPaid before this payment: %s\nPaid now: %s\nTotal paid to date: %s\nRemaining balance: %s\nInstallments settled: %d of %d\n%s",
+            $fmt($total), $fmt($paidBefore), $fmt($amountNow), $fmt($paidTotal), $fmt($remaining), $paidCount, $allCount, $nextLine
+        );
+        $agreementBlock = sprintf(
+            "AGREEMENT\nReference: %s\nProduct/service: %s\nCustomer: %s (%s)\nSeller: %s\nTerms: deposit %s + %d x installments (%s)\nAccepted on: %s\nAgreement document: %s/agreement-document.html?id=%d",
+            $a['agreement_code'], $tx['product_name'] ?: $a['plan_product'], $a['customer_name'], $a['customer_phone'] ?: $a['customer_email'],
+            $a['seller_name'] ?: '-', $fmt((float) $a['initial_deposit']), (int) $a['number_of_installments'], $a['payment_frequency'] ?: '-',
+            $fmtDate($a['responded_at']), app_base_url(), (int) $a['id']
+        );
+
+        $amount = number_format($amountNow);
         if (!empty($a['seller_user_id'])) {
             add_notification((int) $a['seller_user_id'], 'payment', 'Installment payment received',
-                sprintf('%s paid TZS %s on agreement %s (ref %s).', $a['customer_name'], $amount, $a['agreement_code'], $tx['transaction_code']));
+                sprintf('%s paid TZS %s on agreement %s (ref %s). Paid to date TZS %s, remaining TZS %s.',
+                    $a['customer_name'], $amount, $a['agreement_code'], $tx['transaction_code'], number_format($paidTotal), number_format($remaining)));
         }
         if (!empty($a['customer_email']) && site_flag('notify_email_payment_receipt_customer', true)) {
             send_mail(
                 (string) $a['customer_email'],
-                cfg('app_name') . ': your payment receipt ' . $tx['transaction_code'],
-                sprintf("Hello %s,\n\nYour installment payment has been confirmed.\n\nReceipt no.: %s\nAgreement: %s\nSeller: %s\nProduct/service: %s\nAmount: TZS %s\nMethod: %s\nProvider reference: %s\nDate: %s\n\n%s\n\nView all receipts: %s/transactions.html\n\n— %s",
-                    $a['customer_name'], $tx['transaction_code'], $a['agreement_code'], $a['seller_name'] ?: '-', $tx['product_name'], $amount,
-                    $tx['payment_method'], $tx['provider_reference'] ?? '-', date('j M Y H:i'), $note, app_base_url(), cfg('app_name')),
+                cfg('app_name') . ': receipt ' . $tx['transaction_code'] . ' - paid ' . $fmt($amountNow) . ', remaining ' . $fmt($remaining),
+                sprintf("Hello %s,\n\nYour installment payment has been confirmed. Here is your receipt.\n\n%s\n\n%s\n\n%s\n\nView all receipts: %s/transactions.html\n\n— %s",
+                    $a['customer_name'], $paymentBlock, $balanceBlock, $agreementBlock, app_base_url(), cfg('app_name')),
                 'payment_receipt_customer', 'transaction', (string) $tx['id']
             );
         }
         if (!empty($a['seller_email']) && site_flag('notify_email_payment_receipt', true)) {
             send_mail(
                 (string) $a['seller_email'],
-                cfg('app_name') . ': payment receipt ' . $tx['transaction_code'],
-                sprintf("Hello %s,\n\nAn installment payment has been recorded on agreement %s.\n\nCustomer: %s\nProduct/service: %s\nAmount: TZS %s\nMethod: %s\nReference: %s\nProvider reference: %s\nDate: %s\n\n%s\n\n— %s",
-                    $a['seller_name'] ?: 'there', $a['agreement_code'], $a['customer_name'], $tx['product_name'], $amount,
-                    $tx['payment_method'], $tx['transaction_code'], $tx['provider_reference'] ?? '-', date('j M Y H:i'), $note, cfg('app_name')),
+                cfg('app_name') . ': ' . $a['customer_name'] . ' paid ' . $fmt($amountNow) . ' on ' . $a['agreement_code'] . ' - remaining ' . $fmt($remaining),
+                sprintf("Hello %s,\n\nAn installment payment has been recorded on one of your agreements.\n\n%s\n\n%s\n\n%s\n\nOpen your Seller Hub: %s/seller.html\n\n— %s",
+                    $a['seller_name'] ?: 'there', $paymentBlock, $balanceBlock, $agreementBlock, app_base_url(), cfg('app_name')),
                 'payment_receipt_seller', 'transaction', (string) $tx['id']
             );
         }
     } catch (Throwable $e) {
-        error_log('LipaLink seller receipt error: ' . $e->getMessage());
+        error_log('LipaLink payment receipt error: ' . $e->getMessage());
     }
 }
