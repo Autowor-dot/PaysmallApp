@@ -583,3 +583,18 @@ function create_user_from_seller(array $seller): ?array
     db_execute('UPDATE sellers SET user_id = ? WHERE id = ?', 'ii', [$userId, (int) $seller['id']]);
     return db_select('SELECT * FROM users WHERE id = ? LIMIT 1', 'i', [$userId])[0] ?? null;
 }
+
+/** A store registered with this contact email or phone, whoever owns it (null when none). */
+function seller_by_contact(string $email, string $phone = ''): ?array
+{
+    if (!table_exists('sellers')) {
+        return null;
+    }
+    $email = strtolower(trim($email));
+    $phone = normalize_phone($phone);
+    $rows = db_select(
+        'SELECT * FROM sellers WHERE LOWER(email) = ? OR (? <> \'\' AND phone = ?) ORDER BY id ASC LIMIT 1',
+        'sss', [$email, $phone, $phone]
+    );
+    return $rows[0] ?? null;
+}

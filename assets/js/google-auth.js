@@ -158,6 +158,7 @@
             '<form style="background:#fff;border-radius:16px;padding:28px 24px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.25);font-family:inherit;">' +
             '  <h3 style="margin:0 0 6px;font-size:1.2rem;color:#0f172a;">One more step</h3>' +
             '  <p style="margin:0 0 16px;color:#475569;font-size:0.92rem;line-height:1.5;">Hi ' + escapeHtml(data.name || '') + '. We found no LipaLink account for <strong>' + escapeHtml(data.email || '') + '</strong>. Add the phone number you use for Mobile Money and we will create your account.</p>' +
+            (data.notice ? '  <p style="margin:-6px 0 16px;padding:10px 12px;border-radius:8px;background:#fffbeb;color:#92400e;font-size:0.85rem;line-height:1.5;">' + escapeHtml(data.notice) + '</p>' : '') +
             '  <label style="display:block;font-size:0.85rem;font-weight:600;color:#334155;margin-bottom:6px;">Phone number</label>' +
             '  <input type="tel" name="phone" required placeholder="0712 345 678" autocomplete="tel" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:1rem;box-sizing:border-box;">' +
             '  <div data-role="err" style="display:none;margin-top:10px;padding:10px 12px;border-radius:8px;background:#fef2f2;color:#991b1b;font-size:0.85rem;"></div>' +

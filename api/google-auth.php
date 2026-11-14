@@ -88,6 +88,15 @@ try {
         json_error(403, 'New registrations are currently closed. Please try again later.');
     }
     $seller = orphan_seller_by_contact($email, $phone);
+    $notice = '';
+    if ($seller === null) {
+        $linked = seller_by_contact($email, '');
+        if ($linked !== null && !empty($linked['user_id'])) {
+            $owner = db_select('SELECT email FROM users WHERE id = ? LIMIT 1', 'i', [(int) $linked['user_id']])[0] ?? null;
+            $notice = sprintf('This email is the contact address of the store "%s", which is managed by the LipaLink account %s. To open that Seller Hub, log in with that account instead. Continuing here creates a separate customer account.',
+                $linked['business_name'], $owner ? mask_email((string) $owner['email']) : 'of its owner');
+        }
+    }
     if ($seller !== null && $phone === '') {
         $sellerPhone = normalize_phone((string) $seller['phone']);
         $owner = $sellerPhone !== '' ? (db_select('SELECT id, email FROM users WHERE phone = ? LIMIT 1', 's', [$sellerPhone])[0] ?? null) : null;
@@ -115,6 +124,7 @@ try {
             'success'     => true,
             'needs_phone' => true,
             'message'     => 'Almost done - add the phone number you use for Mobile Money.',
+            'notice'      => $notice,
             'name'        => $fullName,
             'email'       => $email,
         ]);

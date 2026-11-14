@@ -41,8 +41,16 @@ try {
             $note    = '';
             if ($user === null) {
                 // Store registered without a login account (register-store.html while signed out)?
-                $seller = orphan_seller_by_contact(strtolower($login), $phone);
-                if ($seller !== null) {
+                $seller = seller_by_contact(strtolower($login), $phone);
+                if ($seller !== null && !empty($seller['user_id'])) {
+                    // The store already belongs to an account: the reset goes to that account's own email.
+                    $owner = db_select('SELECT * FROM users WHERE id = ? LIMIT 1', 'i', [(int) $seller['user_id']])[0] ?? null;
+                    if ($owner !== null) {
+                        $user = $owner;
+                        $note = sprintf('The store "%s" is managed by the LipaLink account %s, so the reset link was sent to that account\x27s email address. Log in with that account to open the Seller Hub.',
+                            $seller['business_name'], mask_email((string) $owner['email']));
+                    }
+                } elseif ($seller !== null) {
                     $sellerPhone = normalize_phone((string) $seller['phone']);
                     $owner = $sellerPhone !== '' ? (db_select('SELECT * FROM users WHERE phone = ? LIMIT 1', 's', [$sellerPhone])[0] ?? null) : null;
                     if ($owner !== null) {
