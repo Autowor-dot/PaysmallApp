@@ -38,6 +38,27 @@ try {
             $user  = $rows[0] ?? null;
 
             $generic = 'If an account matches those details, a password reset link has been sent to its email address.';
+            $note    = '';
+            if ($user === null) {
+                // Store registered without a login account (register-store.html while signed out)?
+                $seller = orphan_seller_by_contact(strtolower($login), $phone);
+                if ($seller !== null) {
+                    $sellerPhone = normalize_phone((string) $seller['phone']);
+                    $owner = $sellerPhone !== '' ? (db_select('SELECT * FROM users WHERE phone = ? LIMIT 1', 's', [$sellerPhone])[0] ?? null) : null;
+                    if ($owner !== null) {
+                        // The store's phone already belongs to an account: that account owns the store.
+                        db_execute('UPDATE sellers SET user_id = ? WHERE id = ?', 'ii', [(int) $owner['id'], (int) $seller['id']]);
+                        $user = $owner;
+                        $note = sprintf('The store "%s" is registered with the phone number of the account %s, so the reset link was sent to that account\'s email address. Log in with that account to manage the store.',
+                            $seller['business_name'], mask_email((string) $owner['email']));
+                    } else {
+                        $user = create_user_from_seller($seller);
+                        if ($user !== null) {
+                            $note = sprintf('We created the login account for your store "%s". Open the link in the email to choose your password.', $seller['business_name']);
+                        }
+                    }
+                }
+            }
             if ($user === null) {
                 json_response(200, ['success' => true, 'message' => $generic]);
             }
@@ -62,7 +83,7 @@ try {
                 'password_reset', 'user', (string) $user['id']
             );
 
-            $payload = ['success' => true, 'message' => $generic, 'email_sent' => $sent];
+            $payload = ['success' => true, 'message' => $note !== '' ? $note : $generic, 'email_sent' => $sent];
             if (is_development()) {
                 $payload['reset_url'] = $resetUrl; // testing aid only
             }

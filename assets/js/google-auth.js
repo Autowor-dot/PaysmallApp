@@ -50,6 +50,7 @@
         var safeNext = /^[a-z0-9-]+\.html(\?[^\s]*)?$/i.test(next) ? next : 'dashboard.html';
         var seller = window.lipalinkLoginRole === 'seller' || new URLSearchParams(window.location.search).get('as') === 'seller';
         if (mode === 'register') { safeNext = 'dashboard.html'; }
+        if (window.lipalinkSellerHub) { safeNext = 'seller.html'; }
         else if (safeNext === 'dashboard.html' && seller) { safeNext = 'seller.html'; }
         setTimeout(function () { window.location.href = safeNext; }, 900);
     }
@@ -135,6 +136,7 @@
                 try { if (r.data.user) { sessionStorage.setItem("lipalink_user", JSON.stringify(r.data.user)); } } catch (_) { /* ignore storage errors */ }
                 setBusy(false);
                 say('success', r.data.message || 'Signed in with Google.');
+                window.lipalinkSellerHub = !!r.data.seller_hub;
                 redirectAfterLogin(r.data.created ? 'register' : currentMode);
             })
             .catch(function (err) {

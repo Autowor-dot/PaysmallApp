@@ -72,7 +72,7 @@ try {
             db_execute('UPDATE users SET last_login_at = NOW() WHERE id = ?', 'i', [(int) $user['id']]);
         }
         if (table_exists('sellers')) {
-            db_execute('UPDATE sellers SET user_id = ? WHERE user_id IS NULL AND LOWER(email) = ?', 'is', [(int) $user['id'], $email]);
+            link_seller_stores((int) $user['id'], $email, (string) $user['phone']);
         }
         sign_in_user((int) $user['id']);
         json_response(200, [
@@ -83,9 +83,32 @@ try {
         ]);
     }
 
-    // 4) New account
+    // 4) New account. A store registered with this Google email (and no login yet) becomes the account.
     if (!site_flag('allow_user_registration', true)) {
         json_error(403, 'New registrations are currently closed. Please try again later.');
+    }
+    $seller = orphan_seller_by_contact($email, $phone);
+    if ($seller !== null && $phone === '') {
+        $sellerPhone = normalize_phone((string) $seller['phone']);
+        $owner = $sellerPhone !== '' ? (db_select('SELECT id, email FROM users WHERE phone = ? LIMIT 1', 's', [$sellerPhone])[0] ?? null) : null;
+        if ($owner !== null) {
+            json_error(409, sprintf('The store "%s" is registered with this Google email, but its phone number already belongs to the LipaLink account %s. Log in with that account (email/phone and password, or "Forgot password") and the store will appear in its Seller Hub.',
+                $seller['business_name'], mask_email((string) $owner['email'])));
+        }
+        $created = create_user_from_seller($seller);
+        if ($created !== null) {
+            if (column_exists('users', 'last_login_at')) {
+                db_execute('UPDATE users SET last_login_at = NOW() WHERE id = ?', 'i', [(int) $created['id']]);
+            }
+            sign_in_user((int) $created['id']);
+            json_response(201, [
+                'success'    => true,
+                'created'    => true,
+                'seller_hub' => true,
+                'message'    => 'Welcome, ' . $created['full_name'] . '! Your store "' . $seller['business_name'] . '" is now linked to your Google sign-in.',
+                'user'       => public_user($created),
+            ]);
+        }
     }
     if ($phone === '') {
         json_response(200, [
@@ -115,7 +138,7 @@ try {
     $userId = (int) db()->insert_id;
 
     if (table_exists('sellers')) {
-        db_execute('UPDATE sellers SET user_id = ? WHERE user_id IS NULL AND LOWER(email) = ?', 'is', [$userId, $email]);
+        link_seller_stores($userId, $email, $phone);
     }
     if (site_flag('notify_email_registration', true)) {
         send_mail(

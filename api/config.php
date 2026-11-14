@@ -513,3 +513,73 @@ if (!defined('LIPALINK_ADMIN')) {
     }
     unset($script);
 }
+
+/**
+ * Attach store registrations that have no owner account yet to this user, matching the store's
+ * contact email OR phone. Stores can be registered before a login exists (register-store.html while
+ * signed out), so every sign-in / sign-up path calls this.
+ */
+function link_seller_stores(int $userId, string $email, string $phone = ''): void
+{
+    if ($userId <= 0 || !table_exists('sellers')) {
+        return;
+    }
+    $email = strtolower(trim($email));
+    $phone = normalize_phone($phone);
+    if ($phone !== '') {
+        db_execute('UPDATE sellers SET user_id = ? WHERE user_id IS NULL AND (LOWER(email) = ? OR phone = ?)', 'iss', [$userId, $email, $phone]);
+    } elseif ($email !== '') {
+        db_execute('UPDATE sellers SET user_id = ? WHERE user_id IS NULL AND LOWER(email) = ?', 'is', [$userId, $email]);
+    }
+}
+
+/** A store registered with this email or phone that has no owner account yet (null when none). */
+function orphan_seller_by_contact(string $email, string $phone = ''): ?array
+{
+    if (!table_exists('sellers')) {
+        return null;
+    }
+    $email = strtolower(trim($email));
+    $phone = normalize_phone($phone);
+    $rows = db_select(
+        'SELECT * FROM sellers WHERE user_id IS NULL AND (LOWER(email) = ? OR (? <> \'\' AND phone = ?)) ORDER BY id ASC LIMIT 1',
+        'sss', [$email, $phone, $phone]
+    );
+    return $rows[0] ?? null;
+}
+
+/** i****k@gmail.com style masking for messages that mention another account's email. */
+function mask_email(string $email): string
+{
+    $at = strpos($email, '@');
+    if ($at === false || $at < 1) {
+        return '***';
+    }
+    $local  = substr($email, 0, $at);
+    $domain = substr($email, $at);
+    return substr($local, 0, 1) . str_repeat('*', max(2, strlen($local) - 2)) . substr($local, -1) . $domain;
+}
+
+/**
+ * Create a login account for a store that was registered without one, using the store's contact
+ * details. Returns the new users row, or null when the store's phone already belongs to a user
+ * (the caller decides what to tell the person).
+ */
+function create_user_from_seller(array $seller): ?array
+{
+    $email = strtolower((string) $seller['email']);
+    $phone = normalize_phone((string) $seller['phone']);
+    if (!is_valid_email($email) || $phone === '') {
+        return null;
+    }
+    $clash = db_select('SELECT id FROM users WHERE email = ? OR phone = ? LIMIT 1', 'ss', [$email, $phone]);
+    if (!empty($clash)) {
+        return null;
+    }
+    $name = trim((string) ($seller['full_name'] ?? '')) ?: trim((string) ($seller['business_name'] ?? '')) ?: 'Store owner';
+    $hash = password_hash(bin2hex(random_bytes(32)), PASSWORD_DEFAULT);
+    db_execute('INSERT INTO users (full_name, phone, email, password_hash) VALUES (?, ?, ?, ?)', 'ssss', [mb_substr($name, 0, 120), $phone, $email, $hash]);
+    $userId = (int) db()->insert_id;
+    db_execute('UPDATE sellers SET user_id = ? WHERE id = ?', 'ii', [$userId, (int) $seller['id']]);
+    return db_select('SELECT * FROM users WHERE id = ? LIMIT 1', 'i', [$userId])[0] ?? null;
+}

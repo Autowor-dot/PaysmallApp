@@ -50,7 +50,7 @@ try {
 
     // Link stores registered with this email before the account existed
     if (table_exists('sellers')) {
-        db_execute('UPDATE sellers SET user_id = ? WHERE user_id IS NULL AND LOWER(email) = ?', 'is', [(int) $user['id'], strtolower((string) $user['email'])]);
+        link_seller_stores((int) $user['id'], (string) $user['email'], (string) $user['phone']);
     }
 
     sign_in_user((int) $user['id']);

@@ -59,6 +59,7 @@ try {
     );
 
     $userId = (int) db()->insert_id;
+    link_seller_stores($userId, $email, $phone);
 
     if (site_flag('notify_email_registration', true)) {
         send_mail(

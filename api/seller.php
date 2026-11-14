@@ -38,7 +38,7 @@ function seller_for_user(int $userId, array $userRow): ?array
     // Link a store registered with this email before the account existed
     $email = strtolower((string) ($userRow['email'] ?? ''));
     if ($email !== '') {
-        db_execute('UPDATE sellers SET user_id = ? WHERE user_id IS NULL AND LOWER(email) = ?', 'is', [$userId, $email]);
+        link_seller_stores($userId, $email, (string) ($userRow['phone'] ?? ''));
         $rows = db_select('SELECT * FROM sellers WHERE user_id = ? ORDER BY id ASC LIMIT 1', 'i', [$userId]);
         if (!empty($rows)) {
             return $rows[0];
