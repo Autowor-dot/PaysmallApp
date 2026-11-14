@@ -93,7 +93,6 @@ try {
         );
     }
 
-    json_response(201, [
     if ($createdUser !== null) {
         sign_in_user($userId);
         if (column_exists('users', 'last_login_at')) {
@@ -108,6 +107,7 @@ try {
         ]);
     }
 
+    json_response(201, [
         'success'   => true,
         'message'   => 'Your store has been registered and is pending verification.',
         'seller_id' => $sellerId,
