@@ -622,7 +622,7 @@ function throttle_hit(string $action, string $subject, int $max, int $windowSeco
     return false;
 }
 
-function client_ip(): string
+function request_client_ip(): string
 {
     return (string) ($_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
 }

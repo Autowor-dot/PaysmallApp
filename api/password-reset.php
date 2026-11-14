@@ -33,7 +33,7 @@ try {
                 json_error(400, 'Please enter your email address or phone number.');
             }
             // Abuse protection: 5 requests per IP per 15 minutes, 3 per identifier per hour (same generic reply)
-            if (throttle_hit('reset_ip', client_ip(), 5, 900) || throttle_hit('reset_login', $login, 3, 3600)) {
+            if (throttle_hit('reset_ip', request_client_ip(), 5, 900) || throttle_hit('reset_login', $login, 3, 3600)) {
                 json_response(200, ['success' => true, 'message' => 'If an account matches those details, a password reset link has been sent to its email address.']);
             }
 
